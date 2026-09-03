@@ -8,11 +8,13 @@ const quickLinks = [
   { title: "Sell Your Car", img: "sell-your-car.jpg", href: "/sell-your-car" },
 ]
 
-const newsItems = [
-  { category: "News", title: "New Arrival: Rolls Royce Cullinan Novitec", img: "news-1.jpg", date: "Aug 2026" },
-  { category: "Reviews", title: "First Drive: Lamborghini Huracan Evo", img: "news-2.jpg", date: "Jul 2026" },
-  { category: "News", title: "Automotive Hub Expands Showroom", img: "news-3.jpg", date: "Jun 2026" },
-]
+type MotorNewsItem = {
+  category: string
+  title: string
+  link: string
+  img: string
+  date: string
+}
 
 type InstagramPost = {
   images: string[]
@@ -114,7 +116,6 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
           ✕
         </button>
 
-        {/* image */}
         <div className="relative bg-black">
           <img
             src={post.images[imgIndex]}
@@ -149,7 +150,6 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
           )}
         </div>
 
-        {/* header */}
         <div className="flex items-center gap-3 px-5 pt-5">
           <img src="/full-logo-BG.png" alt="Automotive Hub" className="w-9 h-9 object-contain" />
           <div className="leading-tight">
@@ -158,12 +158,10 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
           </div>
         </div>
 
-        {/* caption */}
         <p className="px-5 pt-4 text-zinc-400 text-sm leading-relaxed whitespace-pre-line">
           {post.caption}
         </p>
 
-        {/* stats */}
         <div className="flex items-center gap-5 px-5 py-5 mt-2 border-t border-zinc-800 text-zinc-400">
           <span className="flex items-center gap-2 text-sm">
             <HeartIcon /> {post.likes}
@@ -211,6 +209,7 @@ export default function Home() {
   const [newsFilter, setNewsFilter] = useState('All')
   const [email, setEmail] = useState('')
   const [igActiveIndex, setIgActiveIndex] = useState<number | null>(null)
+  const [motorNews, setMotorNews] = useState<MotorNewsItem[]>([])
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -224,12 +223,19 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-  client.fetch(`*[_type == "car"] | order(_createdAt desc)[0...6]`)
-    .then((data: any) => setCars(data))
-    .catch((err: any) => console.error(err))
-}, [])
+    client.fetch(`*[_type == "car"] | order(_createdAt desc)[0...6]`)
+      .then((data) => setCars(data))
+      .catch((err) => console.error(err))
+  }, [])
 
-  const filteredNews = newsFilter === 'All' ? newsItems : newsItems.filter(n => n.category === newsFilter)
+  useEffect(() => {
+    fetch('/api/motor1-news')
+      .then((res) => res.json())
+      .then((data) => setMotorNews(data))
+      .catch((err) => console.error(err))
+  }, [])
+
+  const filteredNews = newsFilter === 'All' ? motorNews : motorNews.filter(n => n.category === newsFilter)
 
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
@@ -308,7 +314,6 @@ export default function Home() {
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
 
-        {/* Gradient أتخن */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black z-20" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,1) 100%)' }} />
 
         <div className="absolute bottom-24 left-0 right-0 text-center px-6 z-30 animate-fadeUp">
@@ -374,27 +379,27 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {cars.map((car, i) => (
-              <AnimatedCard key={car._id} index={i}>
-                <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
-                  <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }}>
-                    {car.images?.[0] && (
-                      <img src={urlFor(car.images[0]).width(800).url()} alt={car.title}
-                        className="w-full h-full object-cover" />
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="text-zinc-500 text-xs tracking-widest mb-1">{car.make?.toUpperCase()}</p>
-                    <p className="text-white text-xl font-light mb-3">{car.model}</p>
-                    <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
-                      <span>{car.mileage?.toLocaleString()} km</span>
-                      <span>·</span>
-                      <span>{car.year}</span>
-                    </div>
-                    <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
-                  </div>
-                </a>
-              </AnimatedCard>
-            ))}
+  <AnimatedCard key={car._id} index={i}>
+    <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
+      <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }}>
+        {car.thumbnail && (
+          <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
+            className="w-full h-full object-cover" />
+        )}
+      </div>
+      <div className="p-4">
+        <p className="text-white text-xl font-light mb-3">{car.title}</p>
+        <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
+          <span>{car.mileage?.toLocaleString()} km</span>
+          <span>·</span>
+          <span>{car.year}</span>
+        </div>
+        <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
+      </div>
+    </a>
+  </AnimatedCard>
+))}
+            
           </div>
         )}
         <a href="/inventory"
@@ -419,7 +424,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* NEWS SECTION */}
+      {/* NEWS SECTION - لايف من Motor1 */}
       <section className="bg-zinc-950 py-16 border-t border-zinc-900">
         <div className="px-6 mb-8">
           <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p>
@@ -434,22 +439,30 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="news-scroll flex gap-5 overflow-x-auto px-6 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
-          {filteredNews.map((news, i) => (
-            <a href="#" key={i}
-              className="flex-shrink-0 w-72 bg-zinc-900 rounded-2xl overflow-hidden block"
-              style={{ scrollSnapAlign: 'start' }}>
-              <div className="w-full h-44 bg-zinc-800 flex items-center justify-center text-zinc-600 text-xs">
-                <img src={`/${news.img}`} alt={news.title} className="w-full h-full object-cover" />
-              </div>
-              <div className="p-4">
-                <p className="text-red-600 text-xs tracking-widest mb-2">{news.category.toUpperCase()}</p>
-                <p className="text-white text-base font-light mb-2 leading-snug">{news.title}</p>
-                <p className="text-zinc-500 text-xs">{news.date}</p>
-              </div>
-            </a>
-          ))}
-        </div>
+        {filteredNews.length === 0 ? (
+          <p className="px-6 text-zinc-600 text-sm">Loading...</p>
+        ) : (
+          <div className="news-scroll flex gap-5 overflow-x-auto px-6 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
+            {filteredNews.map((news, i) => (
+              <a href={news.link} target="_blank" rel="noopener noreferrer" key={i}
+                className="flex-shrink-0 w-72 bg-zinc-900 rounded-2xl overflow-hidden block"
+                style={{ scrollSnapAlign: 'start' }}>
+                <div className="w-full h-44 bg-zinc-800 flex items-center justify-center text-zinc-600 text-xs overflow-hidden">
+                  {news.img ? (
+                    <img src={news.img} alt={news.title} className="w-full h-full object-cover" />
+                  ) : (
+                    <span>Automotive Hub</span>
+                  )}
+                </div>
+                <div className="p-4">
+                  <p className="text-red-600 text-xs tracking-widest mb-2">{news.category.toUpperCase()}</p>
+                  <p className="text-white text-base font-light mb-2 leading-snug">{news.title}</p>
+                  <p className="text-zinc-500 text-xs">{news.date}</p>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* INSTAGRAM */}
