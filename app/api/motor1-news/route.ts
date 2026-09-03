@@ -48,13 +48,13 @@ function parseRss(xml: string, category: 'News' | 'Reviews'): NewsItem[] {
 export async function GET() {
   try {
     const [newsRes, reviewsRes] = await Promise.all([
-      fetch('https://me.motor1.com/rss/news/all/', { next: { revalidate: 1800 } }),
-      fetch('https://me.motor1.com/rss/reviews/all/', { next: { revalidate: 1800 } }),
+      fetch('https://www.motor1.com/rss/news/all/', { next: { revalidate: 1800 } }),
+      fetch('https://www.motor1.com/rss/reviews/all/', { next: { revalidate: 1800 } }),
     ])
     const [newsXml, reviewsXml] = await Promise.all([newsRes.text(), reviewsRes.text()])
 
-    const news = parseRss(newsXml, 'News').slice(0, 6)
-    const reviews = parseRss(reviewsXml, 'Reviews').slice(0, 6)
+    const news = parseRss(newsXml, 'News').slice(0, 12)
+    const reviews = parseRss(reviewsXml, 'Reviews').slice(0, 12)
 
     return NextResponse.json([...news, ...reviews])
   } catch {

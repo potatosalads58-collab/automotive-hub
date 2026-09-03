@@ -151,7 +151,7 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
         </div>
 
         <div className="flex items-center gap-3 px-5 pt-5">
-          <img src="/logo-full.png" alt="Automotive Hub" className="w-9 h-9 object-contain rounded-full" />
+          <img src="/logo-full-bg.png" alt="Automotive Hub" className="w-9 h-9 object-contain rounded-full" />
           <div className="leading-tight">
             <p className="text-white text-sm font-medium">automotivehubegy</p>
             <p className="text-zinc-500 text-xs tracking-widest">PREMIUM CAR DEALERSHIP</p>
