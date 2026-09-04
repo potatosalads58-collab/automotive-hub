@@ -412,7 +412,7 @@ export default function Home() {
       <section className="bg-black px-6 pb-16">
         <div className="grid grid-cols-1 gap-5">
           {quickLinks.map((link, i) => (
-            <a href={link.href} key={i} className="relative overflow-hidden rounded-1xl block h-48 group">
+            <a href={link.href} key={i} className="relative overflow-hidden rounded-2xl block h-60 group">
               <img src={`/${link.img}`} alt={link.title}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-black/50" />
