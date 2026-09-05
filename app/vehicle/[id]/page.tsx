@@ -49,7 +49,7 @@ function LinkIcon() {
   )
 }
 
-const PHONE = '01006666802'
+const PHONE = '01096822131'
 const WA_NUMBER = '20' + PHONE.slice(1)
 
 function AnimatedTitle({ text }: { text: string }) {
