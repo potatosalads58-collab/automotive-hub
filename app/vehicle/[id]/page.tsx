@@ -3,6 +3,51 @@ import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import { client, Car } from '../../../sanity/lib/client'
 import { urlFor } from '../../../sanity/lib/imageUrl'
+function WhatsappIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.86 9.86 0 0 0 12.04 2z"/>
+    </svg>
+  )
+}
+function FacebookIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M22 12a10 10 0 1 0-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0 0 22 12z"/>
+    </svg>
+  )
+}
+function InstagramIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="3.5" />
+      <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+function XIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M18.9 2H22l-7.4 8.4L23 22h-6.9l-5.4-6.9L4.6 22H1.5l7.9-9L1 2h7l4.9 6.3L18.9 2zm-1.2 18h1.9L7.5 4H5.5l12.2 16z"/>
+    </svg>
+  )
+}
+function SmsIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 4h16v12H8l-4 4V4z" />
+    </svg>
+  )
+}
+function LinkIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11 4.93" />
+      <path d="M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.9 19.1" />
+    </svg>
+  )
+}
 
 const PHONE = '01006666802'
 const WA_NUMBER = '20' + PHONE.slice(1)
@@ -84,6 +129,9 @@ export default function VehiclePage() {
   const [imgIndex, setImgIndex] = useState(0)
   const [descExpanded, setDescExpanded] = useState(false)
   const [shareMsg, setShareMsg] = useState('')
+  const [shareOpen, setShareOpen] = useState(false)
+  const [messageOpen, setMessageOpen] = useState(false)
+  const [linkCopied, setLinkCopied] = useState(false)
 
   const [form, setForm] = useState({ name: '', email: '', phone: '', message: '' })
   const [agreed, setAgreed] = useState(false)
@@ -115,20 +163,23 @@ export default function VehiclePage() {
   const nextImg = () => setImgIndex((i) => (i + 1) % images.length)
   const prevImg = () => setImgIndex((i) => (i - 1 + images.length) % images.length)
 
-  const handleShare = async () => {
-    const url = typeof window !== 'undefined' ? window.location.href : ''
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: car?.title, url })
-      } catch {}
-    } else {
-      try {
-        await navigator.clipboard.writeText(url)
-        setShareMsg('Link copied!')
-        setTimeout(() => setShareMsg(''), 2000)
-      } catch {}
-    }
-  }
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : ''
+const shareText = `Check out this ${car?.title || 'car'} on Automotive Hub`
+
+const copyLink = async () => {
+  try {
+    await navigator.clipboard.writeText(pageUrl)
+    setLinkCopied(true)
+    setTimeout(() => setLinkCopied(false), 2000)
+  } catch {}
+}
+
+const shareLinks = {
+  whatsapp: `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + pageUrl)}`,
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`,
+  x: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(pageUrl)}`,
+  instagram: `https://instagram.com`,
+}
 
   const waLink = (extra = '') => {
     const text = encodeURIComponent(
@@ -268,10 +319,10 @@ export default function VehiclePage() {
 
           {/* SHARE - تحت الاسم والسعر */}
           <section className="px-6 pb-6">
-            <button onClick={handleShare}
-              className="btn-outline w-full border border-zinc-700 text-white flex items-center justify-center gap-3 py-4 rounded-xl text-xs tracking-[0.3em]">
-              <ShareIcon /> {shareMsg || 'SHARE THIS CAR'}
-            </button>
+           <button onClick={() => setShareOpen(true)}
+  className="btn-outline w-full border border-zinc-700 text-white flex items-center justify-center gap-3 py-4 rounded-xl text-xs tracking-[0.3em]">
+  <ShareIcon /> SHARE THIS CAR
+</button>
           </section>
 
           {/* SPEC / ODOMETER / MODEL YEAR - شريط علوي زي f1rst */}
@@ -350,10 +401,10 @@ export default function VehiclePage() {
               className="btn-primary bg-white text-black flex items-center justify-center gap-2 py-4 rounded-xl text-xs tracking-[0.3em] font-medium">
               📞 CALL
             </a>
-            <a href={waLink()} target="_blank" rel="noopener noreferrer"
-              className="btn-outline border border-zinc-700 text-white flex items-center justify-center gap-2 py-4 rounded-xl text-xs tracking-[0.3em]">
-              💬 MESSAGE
-            </a>
+            <button onClick={() => setMessageOpen(true)}
+  className="btn-outline border border-zinc-700 text-white flex items-center justify-center gap-2 py-4 rounded-xl text-xs tracking-[0.3em]">
+  💬 MESSAGE
+</button>
           </section>
 
           {/* DESCRIPTION */}
@@ -491,6 +542,59 @@ export default function VehiclePage() {
         </div>
       </footer>
 
+{/* SHARE BOTTOM SHEET */}
+{shareOpen && (
+  <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70" onClick={() => setShareOpen(false)}>
+    <div className="w-full max-w-md bg-zinc-950 border-t border-zinc-800 rounded-t-3xl p-6 pb-8" onClick={e => e.stopPropagation()}>
+      <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-6" />
+      <p className="text-xs tracking-[0.3em] text-zinc-500 mb-6">SHARE THIS CAR</p>
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <a href={shareLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2">
+          <div className="w-14 h-14 rounded-full border border-zinc-700 flex items-center justify-center text-white"><WhatsappIcon /></div>
+          <span className="text-[10px] tracking-widest text-zinc-500">WHATSAPP</span>
+        </a>
+        <a href={shareLinks.facebook} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2">
+          <div className="w-14 h-14 rounded-full border border-zinc-700 flex items-center justify-center text-white"><FacebookIcon /></div>
+          <span className="text-[10px] tracking-widest text-zinc-500">FACEBOOK</span>
+        </a>
+        <a href={shareLinks.instagram} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2">
+          <div className="w-14 h-14 rounded-full border border-zinc-700 flex items-center justify-center text-white"><InstagramIcon /></div>
+          <span className="text-[10px] tracking-widest text-zinc-500">INSTAGRAM</span>
+        </a>
+        <a href={shareLinks.x} target="_blank" rel="noopener noreferrer" className="flex flex-col items-center gap-2">
+          <div className="w-14 h-14 rounded-full border border-zinc-700 flex items-center justify-center text-white"><XIcon /></div>
+          <span className="text-[10px] tracking-widest text-zinc-500">X</span>
+        </a>
+      </div>
+      <button onClick={copyLink}
+        className="w-full flex items-center justify-center gap-3 border border-zinc-700 text-white py-4 rounded-xl text-xs tracking-[0.3em]">
+        <LinkIcon /> {linkCopied ? 'LINK COPIED!' : 'COPY LINK'}
+      </button>
+    </div>
+  </div>
+)}
+
+{/* MESSAGE CHOICE BOTTOM SHEET */}
+{messageOpen && (
+  <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70" onClick={() => setMessageOpen(false)}>
+    <div className="w-full max-w-md bg-zinc-950 border-t border-zinc-800 rounded-t-3xl p-6 pb-8" onClick={e => e.stopPropagation()}>
+      <div className="w-10 h-1 bg-zinc-700 rounded-full mx-auto mb-6" />
+      <p className="text-xs tracking-[0.3em] text-zinc-500 mb-6">MESSAGE US VIA</p>
+      <div className="flex flex-col gap-3">
+        <a href={waLink()} target="_blank" rel="noopener noreferrer"
+          className="flex items-center gap-4 border border-zinc-700 text-white py-4 px-5 rounded-xl">
+          <WhatsappIcon />
+          <span className="text-sm">WhatsApp</span>
+        </a>
+        <a href={`sms:${PHONE}?body=${encodeURIComponent(`Hi, I'm interested in the ${car?.title || 'car'}.`)}`}
+          className="flex items-center gap-4 border border-zinc-700 text-white py-4 px-5 rounded-xl">
+          <SmsIcon />
+          <span className="text-sm">SMS</span>
+        </a>
+      </div>
+    </div>
+  </div>
+)}
     </main>
   )
 }
