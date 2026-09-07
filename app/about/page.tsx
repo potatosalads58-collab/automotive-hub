@@ -129,13 +129,16 @@ export default function AboutPage() {
       </div>
 
       {/* ========== HERO ========== */}
-      <section className="relative h-[62vh] md:h-[70vh] min-h-[420px] w-full overflow-hidden">
-        <img
-          src="/about-hero.jpg"
-          alt="Automotive Hub showroom"
-          className="absolute inset-0 w-full h-full object-cover object-top"
-        />
-        <div className="absolute inset-0 hero-fade" />
+      <section className="relative w-full overflow-hidden aspect-[1448/500] max-h-[70vh] min-h-[280px]">
+  <img
+    src="/about-hero.jpg"
+    alt="Automotive Hub showroom"
+    className="absolute inset-0 w-full h-full object-cover object-top"
+  />
+  <div className="absolute inset-0 hero-fade" />
+
+  {/* باقي محتوى الهيرو زي ما هو */}
+
 
         <div className="absolute bottom-10 md:bottom-14 left-0 right-0 px-6 md:px-16">
           <div
