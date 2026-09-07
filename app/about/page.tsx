@@ -1,29 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, ReactNode } from 'react'
+const PHONE = '+2010000000'
 
-const PHONE = '+201000000000' // replace with real number
-
-/*
-  ============================================================
-  IMAGES — drop these into your /public folder with these
-  exact filenames:
-
-  /logo-nav.png            — existing navbar logo
-  /logo-full.png           — existing footer logo
-  /wraith-hero.jpg         — blue Wraith outside showroom (HERO)
-  /wraith-detail-main.jpg  — "WRAITH" sill plate (DETAIL — main)
-  /wraith-detail-1.jpg     — silver control dial (DETAIL — mosaic)
-  /wraith-detail-2.jpg     — dashboard screen (DETAIL — mosaic)
-  /wraith-detail-3.jpg     — headrest / starlight (DETAIL — mosaic)
-  /wraith-cinematic.jpg    — door handle + RR badge, dusk (CINEMATIC BREAK)
-  /showroom.jpg            — black Wraith front end (SHOWROOM)
-  /wraith-closing.jpg      — steering wheel wide shot (CLOSING bg)
-  ============================================================
-*/
-
-function useReveal(threshold = 0.2) {
-  const ref = useRef(null)
+function useReveal(threshold = 0.2): [React.RefObject<HTMLDivElement | null>, boolean] {
+  const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -45,7 +26,15 @@ function useReveal(threshold = 0.2) {
   return [ref, visible]
 }
 
-function Reveal({ children, className = '', delay = 0 }) {
+function Reveal({
+  children,
+  className = '',
+  delay = 0,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
   const [ref, visible] = useReveal()
   return (
     <div
