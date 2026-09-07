@@ -162,27 +162,39 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ========== STORY (text-only, no second image needed) ========== */}
-      <section className="bg-black px-6 md:px-16 py-20 md:py-28 border-t border-zinc-900">
-        <div
-          ref={story.ref}
-          className={`reveal-up ${story.inView ? 'in' : ''} max-w-2xl mx-auto text-center`}
-        >
-          <p className="text-xs tracking-[0.35em] text-zinc-500 mb-6">OUR STORY</p>
-          <h2 className="font-display text-3xl md:text-5xl font-light mb-8 leading-snug">
-            We started with one rule: never sell a car we wouldn't drive.
-          </h2>
-          <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-4">
-            Automotive Hub began three years ago as a small team tired of the guesswork that
-            comes with buying a used luxury car in Egypt. Since then, we've sold over a
-            thousand vehicles — but the rule hasn't changed.
-          </p>
-          <p className="text-zinc-400 text-sm md:text-base leading-relaxed">
-            Every car that reaches our floor is inspected, priced honestly, and backed by
-            someone you can actually call back. That's the whole business model.
-          </p>
-        </div>
-      </section>
+      {/* ========== STORY ========== */}
+<section className="bg-black px-6 md:px-16 py-20 md:py-28 border-t border-zinc-900">
+  <div className="grid md:grid-cols-2 gap-12 md:gap-8 items-center max-w-6xl mx-auto">
+    <div
+      ref={story.ref}
+      className={`reveal-up ${story.inView ? 'in' : ''} order-2 md:order-1'`}
+    >
+      <p className="text-xs tracking-[0.35em] text-zinc-500 mb-6">OUR STORY</p>
+      <h2 className="font-display text-3xl md:text-4xl font-light mb-6 leading-snug">
+        We started with one rule: never sell a car we wouldn't drive.
+      </h2>
+      <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-4 max-w-md">
+        Automotive Hub began three years ago as a small team tired of the guesswork that
+        comes with buying a used luxury car in Egypt. Since then, we've sold over a
+        thousand vehicles — but the rule hasn't changed.
+      </p>
+      <p className="text-zinc-400 text-sm md:text-base leading-relaxed max-w-md">
+        Every car that reaches our floor is inspected, priced honestly, and backed by
+        someone you can actually call back. That's the whole business model.
+      </p>
+    </div>
+
+    <div
+      className={`reveal-up reveal-delay-2 ${story.inView ? 'in' : ''} order-1 md:order-2`}
+    >
+      <img
+        src="/about-story.jpg"
+        alt="Inside the showroom"
+        className="w-full rounded-2xl object-cover aspect-[4/5]"
+      />
+    </div>
+  </div>
+</section>
 
       {/* ========== WHY US ========== */}
       <section className="bg-black px-6 md:px-16 py-20 md:py-28 border-t border-zinc-900">
