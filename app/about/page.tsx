@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const PHONE = '+201000000000' // replace with real number
 
@@ -22,6 +22,42 @@ const PHONE = '+201000000000' // replace with real number
   ============================================================
 */
 
+function useReveal(threshold = 0.2) {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          obs.disconnect()
+        }
+      },
+      { threshold }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
+
+  return [ref, visible]
+}
+
+function Reveal({ children, className = '', delay = 0 }) {
+  const [ref, visible] = useReveal()
+  return (
+    <div
+      ref={ref}
+      className={`reveal ${visible ? 'reveal-visible' : ''} ${className}`}
+      style={{ transitionDelay: visible ? `${delay}ms` : '0ms' }}
+    >
+      {children}
+    </div>
+  )
+}
+
 export default function AboutPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -33,7 +69,7 @@ export default function AboutPage() {
   }, [])
 
   return (
-    <main className="bg-black text-white">
+    <main className="bg-black text-white overflow-x-hidden">
       {/* ========== NAVBAR (existing, shared) ========== */}
       <nav
         className={`fixed top-0 left-0 right-0 z-[55] flex items-center justify-between px-6 py-5 transition-all duration-500 ${
@@ -86,62 +122,69 @@ export default function AboutPage() {
         <img
           src="/wraith-hero.jpg"
           alt="Rolls-Royce Wraith at Automotive Hub"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="kenburns absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
 
         <div className="absolute bottom-0 left-0 right-0 px-6 pb-16">
-          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">ABOUT AUTOMOTIVE HUB</p>
-          <h1 className="font-display text-4xl font-light leading-[1.15] mb-6">
-            A different standard
-            <br />
-            of automotive.
-          </h1>
-          <p className="text-sm text-zinc-300 leading-relaxed max-w-xs mb-10">
-            Automotive Hub is an Egypt-based premium automotive house built around
-            exceptional cars, considered selection, and an uncompromising approach
-            to quality.
-          </p>
-          <div className="flex flex-col items-start gap-2 text-zinc-500">
-            <span className="text-[10px] tracking-[0.3em]">SCROLL</span>
-            <span className="text-sm">↓</span>
-          </div>
+          <Reveal delay={0}>
+            <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">ABOUT AUTOMOTIVE HUB</p>
+          </Reveal>
+          <Reveal delay={150}>
+            <h1 className="font-display text-4xl font-light leading-[1.15] mb-6">
+              A different standard
+              <br />
+              of automotive.
+            </h1>
+          </Reveal>
+          <Reveal delay={300}>
+            <p className="text-sm text-zinc-300 leading-relaxed max-w-xs mb-10">
+              Automotive Hub is an Egypt-based premium automotive house built around
+              exceptional cars, considered selection, and an uncompromising approach
+              to quality.
+            </p>
+          </Reveal>
+          <Reveal delay={450}>
+            <div className="flex flex-col items-start gap-2 text-zinc-500">
+              <span className="text-[10px] tracking-[0.3em]">SCROLL</span>
+              <span className="text-sm">↓</span>
+            </div>
+          </Reveal>
         </div>
       </section>
 
       {/* ========== 02 — BRAND PHILOSOPHY ========== */}
       <section className="bg-black px-6 py-24">
-        <div className="flex items-center gap-4 mb-8">
-          <span className="text-xs tracking-[0.3em] text-zinc-500">01 / THE HOUSE</span>
-          <span className="h-px flex-1 bg-zinc-800" />
-        </div>
-        <h2 className="font-display text-3xl font-light leading-snug max-w-sm">
-          We believe the right car should feel exceptional before you even
-          drive it.
-        </h2>
+        <Reveal>
+          <div className="flex items-center gap-4 mb-8">
+            <span className="text-xs tracking-[0.3em] text-zinc-500">01 / THE HOUSE</span>
+            <span className="h-px flex-1 bg-zinc-800" />
+          </div>
+        </Reveal>
+        <Reveal delay={120}>
+          <h2 className="font-display text-3xl font-light leading-snug max-w-sm">
+            We believe the right car should feel exceptional before you even
+            drive it.
+          </h2>
+        </Reveal>
       </section>
 
       {/* ========== 03 — OUR STORY ========== */}
       <section className="bg-black px-6 pb-24">
-        <p className="text-xs tracking-[0.3em] text-zinc-500 mb-8">OUR STORY</p>
+        <Reveal>
+          <p className="text-xs tracking-[0.3em] text-zinc-500 mb-8">OUR STORY</p>
+        </Reveal>
         <div className="space-y-6 text-zinc-400 text-[15px] leading-relaxed max-w-md">
-          <p>
-            Automotive Hub was created with a simple idea: exceptional cars
-            deserve a different kind of destination.
-          </p>
-          <p>
-            We curate a collection defined not by volume, but by character —
-            bringing together premium automobiles, rare specifications and
-            remarkable examples for clients who understand the difference.
-          </p>
-          <p>
-            From the moment a car enters our collection to the moment it
-            finds its next owner, every detail is considered.
-          </p>
-          <p>
-            Because at this level, the experience surrounding the car matters
-            just as much as the car itself.
-          </p>
+          {[
+            'Automotive Hub was created with a simple idea: exceptional cars deserve a different kind of destination.',
+            'We curate a collection defined not by volume, but by character — bringing together premium automobiles, rare specifications and remarkable examples for clients who understand the difference.',
+            'From the moment a car enters our collection to the moment it finds its next owner, every detail is considered.',
+            'Because at this level, the experience surrounding the car matters just as much as the car itself.',
+          ].map((p, i) => (
+            <Reveal key={i} delay={i * 100}>
+              <p>{p}</p>
+            </Reveal>
+          ))}
         </div>
       </section>
 
@@ -150,20 +193,26 @@ export default function AboutPage() {
         <div className="w-full aspect-[4/5] overflow-hidden">
           <img
             src="/wraith-detail-main.jpg"
-            alt="Rolls-Royce Wraith Wraith sill plate detail"
+            alt="Rolls-Royce Wraith sill plate detail"
             className="h-full w-full object-cover"
           />
         </div>
 
         <div className="px-6 py-14">
-          <p className="text-xs tracking-[0.3em] text-zinc-500 mb-6">DETAIL MATTERS.</p>
-          <h3 className="font-display text-2xl font-light leading-snug mb-6 max-w-sm">
-            Our approach is defined by the details others overlook.
-          </h3>
-          <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
-            It's in the materials, the craftsmanship, the finishes, and the
-            little things that turn a great car into something unforgettable.
-          </p>
+          <Reveal>
+            <p className="text-xs tracking-[0.3em] text-zinc-500 mb-6">DETAIL MATTERS.</p>
+          </Reveal>
+          <Reveal delay={120}>
+            <h3 className="font-display text-2xl font-light leading-snug mb-6 max-w-sm">
+              Our approach is defined by the details others overlook.
+            </h3>
+          </Reveal>
+          <Reveal delay={240}>
+            <p className="text-sm text-zinc-400 leading-relaxed max-w-sm">
+              It's in the materials, the craftsmanship, the finishes, and the
+              little things that turn a great car into something unforgettable.
+            </p>
+          </Reveal>
         </div>
 
         <div className="grid grid-cols-[1.2fr_1fr] gap-[2px] px-6 pb-24">
@@ -181,9 +230,11 @@ export default function AboutPage() {
 
       {/* ========== 05 — THE AUTOMOTIVE HUB APPROACH ========== */}
       <section className="bg-black px-6 py-24">
-        <p className="text-xs tracking-[0.3em] text-zinc-500 mb-2">
-          THE AUTOMOTIVE HUB APPROACH
-        </p>
+        <Reveal>
+          <p className="text-xs tracking-[0.3em] text-zinc-500 mb-2">
+            THE AUTOMOTIVE HUB APPROACH
+          </p>
+        </Reveal>
         <span className="block h-px w-10 bg-zinc-700 mb-14" />
 
         <div className="divide-y divide-zinc-900">
@@ -203,19 +254,21 @@ export default function AboutPage() {
               title: 'EXPERIENCE',
               body: 'From selection to presentation, every interaction should feel considered.',
             },
-          ].map((item) => (
-            <div key={item.n} className="py-8 flex gap-6">
-              <span className="font-display text-4xl font-light text-zinc-600 leading-none w-12 shrink-0">
-                {item.n}
-              </span>
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-3">
-                  <span className="text-xs tracking-[0.25em] text-white">{item.title}</span>
-                  <span className="h-px flex-1 bg-zinc-800" />
+          ].map((item, i) => (
+            <Reveal key={item.n} delay={i * 100}>
+              <div className="py-8 flex gap-6">
+                <span className="font-display text-4xl font-light text-zinc-600 leading-none w-12 shrink-0">
+                  {item.n}
+                </span>
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-3">
+                    <span className="text-xs tracking-[0.25em] text-white">{item.title}</span>
+                    <span className="h-px flex-1 bg-zinc-800" />
+                  </div>
+                  <p className="text-sm text-zinc-400 leading-relaxed">{item.body}</p>
                 </div>
-                <p className="text-sm text-zinc-400 leading-relaxed">{item.body}</p>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -225,29 +278,37 @@ export default function AboutPage() {
         <img
           src="/wraith-cinematic.jpg"
           alt="Rolls-Royce Wraith door handle detail"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="kenburns absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-black/55" />
-        <div className="relative text-center px-6">
+        <Reveal className="relative text-center px-6">
           <p className="font-display text-2xl font-light mb-3">
             Exceptional is in the details.
           </p>
           <p className="text-[10px] tracking-[0.35em] text-zinc-400">AUTOMOTIVE HUB</p>
-        </div>
+        </Reveal>
       </section>
 
       {/* ========== 07 — THE SHOWROOM ========== */}
       <section className="bg-black px-6 py-24">
-        <p className="text-xs tracking-[0.3em] text-zinc-500 mb-6">THE SHOWROOM</p>
-        <h3 className="font-display text-2xl font-light leading-snug mb-6 max-w-xs">
-          A physical destination built around the cars themselves.
-        </h3>
-        <p className="text-sm text-zinc-400 leading-relaxed max-w-sm mb-10">
-          Located in Egypt, Automotive Hub was designed to give exceptional
-          automobiles the environment they deserve — considered, private and
-          focused entirely on the experience of the car.
-        </p>
-        <div className="ml-10 w-full aspect-[4/3] overflow-hidden">
+        <Reveal>
+          <p className="text-xs tracking-[0.3em] text-zinc-500 mb-6">THE SHOWROOM</p>
+        </Reveal>
+        <Reveal delay={120}>
+          <h3 className="font-display text-2xl font-light leading-snug mb-6 max-w-xs">
+            A physical destination built around the cars themselves.
+          </h3>
+        </Reveal>
+        <Reveal delay={240}>
+          <p className="text-sm text-zinc-400 leading-relaxed max-w-sm mb-10">
+            Located in Egypt, Automotive Hub was designed to give exceptional
+            automobiles the environment they deserve — considered, private and
+            focused entirely on the experience of the car.
+          </p>
+        </Reveal>
+        {/* FIX: was ml-10 + w-full, which pushed the image past the right
+            edge and forced the browser to zoom the whole page out. */}
+        <div className="ml-10 w-[calc(100%-2.5rem)] aspect-[4/3] overflow-hidden">
           <img
             src="/showroom.jpg"
             alt="Automotive Hub showroom"
@@ -261,10 +322,10 @@ export default function AboutPage() {
         <img
           src="/wraith-closing.jpg"
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-25"
+          className="kenburns absolute inset-0 h-full w-full object-cover opacity-25"
         />
         <div className="absolute inset-0 bg-black/65" />
-        <div className="relative">
+        <Reveal className="relative">
           <h3 className="font-display text-3xl font-light leading-snug mb-8">
             Some cars are
             <br />
@@ -276,7 +337,7 @@ export default function AboutPage() {
           >
             EXPLORE THE COLLECTION →
           </a>
-        </div>
+        </Reveal>
       </section>
 
       {/* ========== NEWSLETTER (existing, shared) ========== */}
@@ -376,6 +437,40 @@ export default function AboutPage() {
           <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
         </div>
       </footer>
+
+      <style jsx global>{`
+        .reveal {
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .kenburns {
+          animation: kenburns 18s ease-out forwards;
+        }
+        @keyframes kenburns {
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1.08);
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .reveal {
+            transition: none;
+            opacity: 1;
+            transform: none;
+          }
+          .kenburns {
+            animation: none;
+          }
+        }
+      `}</style>
     </main>
   )
 }
