@@ -186,9 +186,10 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
       ref={ref}
       className={className}
       style={{
-        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms, filter 0.7s ease ${delay}ms`,
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0px)' : 'translateY(20px)',
+        transform: visible ? 'translateY(0px)' : 'translateY(28px)',
+        filter: visible ? 'blur(0px)' : 'blur(6px)',
       }}
     >
       {children}
@@ -425,8 +426,8 @@ export default function Home() {
 
        {/* FEATURED CARS */}
       <section className="bg-black px-6 py-16">
-        <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p></Reveal>
-        <RevealWords as="h2" text="Featured Cars" className="font-display text-3xl font-light mb-10" />
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p>
+        <h2 className="font-display text-3xl font-light mb-10">Featured Cars</h2>
         {cars.length === 0 ? (
           <p className="text-zinc-600 text-sm">Loading...</p>
         ) : (
