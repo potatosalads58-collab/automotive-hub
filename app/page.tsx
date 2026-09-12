@@ -196,6 +196,22 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
     </div>
   )
 }
+function Rreveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+  const [ref, visible] = useInView<HTMLDivElement>()
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0px)' : 'translateY(20px)',
+      }}
+    >
+      {children}
+    </div>
+  )
+}
 
 // Word-by-word reveal — reserved for the two brand statements only
 // (hero + "why" headline). Ref goes directly on the heading tag
@@ -516,7 +532,7 @@ export default function Home() {
                     <p className="text-zinc-500 text-xs">{news.date}</p>
                   </div>
                 </a>
-              </Reveal>
+              </Rreveal>
             ))}
           </div>
         )}
@@ -557,7 +573,7 @@ export default function Home() {
                   </span>
                 </div>
               </button>
-            </Reveal>
+            </Rreveal>
           ))}
         </div>
       </section>
