@@ -573,7 +573,7 @@ export default function Home() {
                   </span>
                 </div>
               </button>
-            </NofadeRreveal>
+            </NofadeReveal>
           ))}
         </div>
       </section>
