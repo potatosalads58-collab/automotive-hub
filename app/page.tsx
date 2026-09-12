@@ -196,7 +196,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
     </div>
   )
 }
-function Rreveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+function NofadeReveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
   const [ref, visible] = useInView<HTMLDivElement>()
   return (
     <div
@@ -515,7 +515,7 @@ export default function Home() {
         ) : (
           <div className="news-scroll flex gap-5 overflow-x-auto px-6 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
             {filteredNews.map((news, i) => (
-              <Reveal key={i} delay={i * 70} className="flex-shrink-0">
+              <NofadeReveal key={i} delay={i * 70} className="flex-shrink-0">
                 <a href={news.link} target="_blank" rel="noopener noreferrer"
                   className="flex-shrink-0 w-72 bg-zinc-900 rounded-2xl overflow-hidden block"
                   style={{ scrollSnapAlign: 'start' }}>
@@ -532,7 +532,7 @@ export default function Home() {
                     <p className="text-zinc-500 text-xs">{news.date}</p>
                   </div>
                 </a>
-              </Rreveal>
+              </NofadeReveal>
             ))}
           </div>
         )}
@@ -558,7 +558,7 @@ export default function Home() {
 
         <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3">
           {instagramPosts.map((post, i) => (
-            <Reveal key={i} delay={i * 60}>
+            <NofadeReveal key={i} delay={i * 60}>
               <button
                 onClick={() => setIgActiveIndex(i)}
                 className="group relative aspect-square overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 w-full"
@@ -573,7 +573,7 @@ export default function Home() {
                   </span>
                 </div>
               </button>
-            </Rreveal>
+            </NofadeRreveal>
           ))}
         </div>
       </section>
