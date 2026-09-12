@@ -2,6 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { client, Car } from '../sanity/lib/client'
 import { urlFor } from '../sanity/lib/imageUrl'
+const PHONE = '01010166333'
 
 const quickLinks = [
   { title: "Available Vehicles", img: "available-vehicles.jpg", href: "/inventory" },
