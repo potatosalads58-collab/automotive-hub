@@ -1,4 +1,5 @@
 import React from 'react';
+const PHONE = "01010166333";
 
 export default function PrivacyPolicyPage() {
   return (
