@@ -466,4 +466,61 @@ export default function AboutPage() {
         </div>
         <div className="border-t border-zinc-900 pt-10 text-center flex flex-col items-center gap-6">
           <p className="text-zinc-600 text-xs">© 2026 Automotive Hub. All rights reserved.</p>
-         
+          <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
+        </div>
+      </footer>
+
+      <style jsx global>{`
+        .reveal {
+          opacity: 0;
+          transform: translateY(24px);
+          transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .kenburns {
+          animation: kenburns 18s ease-out forwards;
+        }
+        @keyframes kenburns {
+          0% {
+            transform: scale(1);
+          }
+          100% {
+            transform: scale(1.08);
+          }
+        }
+        .bar {
+          display: block;
+          width: 24px;
+          height: 1px;
+          background: white;
+          transition: transform 0.4s ease, opacity 0.3s ease;
+          transform-origin: center;
+        }
+        .bar-1-open {
+          transform: translateY(5px) rotate(45deg);
+        }
+        .bar-2-open {
+          opacity: 0;
+          transform: scaleX(0);
+        }
+        .bar-3-open {
+          transform: translateY(-5px) rotate(-45deg);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .reveal {
+            transition: none;
+            opacity: 1;
+            transform: none;
+          }
+          .kenburns {
+            animation: none;
+          }
+        }
+      `}</style>
+    </main>
+  )
+}
