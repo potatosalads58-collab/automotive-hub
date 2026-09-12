@@ -157,10 +157,7 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
   )
 }
 
-/* ============ SHARED ANIMATION SYSTEM ============
-   One repeatable observer hook + two building blocks
-   (Reveal for blocks/cards, RevealWords for headlines)
-   used everywhere on the page for a consistent, premium feel. */
+/* ============ ANIMATION — used sparingly on purpose ============ */
 
 function useInView<T extends HTMLElement>(threshold = 0.15): [React.RefObject<T | null>, boolean] {
   const ref = useRef<T>(null)
@@ -180,6 +177,8 @@ function useInView<T extends HTMLElement>(threshold = 0.15): [React.RefObject<T 
   return [ref, visible]
 }
 
+// Light card/grid reveal — fade + small rise, no blur. Used only on
+// grids where a stagger genuinely reads well (cars, news, instagram).
 function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
   const [ref, visible] = useInView<HTMLDivElement>()
   return (
@@ -187,10 +186,9 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
       ref={ref}
       className={className}
       style={{
-        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms, filter 0.7s ease ${delay}ms`,
+        transition: `opacity 0.6s ease ${delay}ms, transform 0.6s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0px)' : 'translateY(28px)',
-        filter: visible ? 'blur(0px)' : 'blur(6px)',
+        transform: visible ? 'translateY(0px)' : 'translateY(20px)',
       }}
     >
       {children}
@@ -198,39 +196,51 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
   )
 }
 
-function RevealWords({
+// Word-by-word reveal — reserved for the two brand statements only
+// (hero + "why" headline). Ref goes directly on the heading tag
+// itself (not a wrapper div) so IntersectionObserver actually works.
+function RevealHeading({
   text,
-  as: Tag = 'h2',
+  as = 'h2',
   className = '',
   wordDelay = 70,
 }: {
   text: string
-  as?: 'h1' | 'h2' | 'h3'
+  as?: 'h1' | 'h2'
   className?: string
   wordDelay?: number
 }) {
-  const [ref, visible] = useInView<HTMLDivElement>()
-  const words = text.split(' ')
-  return (
-    <div ref={ref} style={{ display: 'contents' }}>
-      <Tag className={className}>
-        {words.map((word, i) => (
-          <span key={i} className="inline-block overflow-hidden mr-[0.28em] align-bottom">
-            <span
-              className="inline-block"
-              style={{
-                transition: `transform 0.75s cubic-bezier(0.16,1,0.3,1) ${i * wordDelay}ms, opacity 0.6s ease ${i * wordDelay}ms`,
-                opacity: visible ? 1 : 0,
-                transform: visible ? 'translateY(0%)' : 'translateY(115%)',
-              }}
-            >
-              {word}
-            </span>
-          </span>
-        ))}
-      </Tag>
-    </div>
-  )
+  const ref = useRef<HTMLHeadingElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.3 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  const content = text.split(' ').map((word, i) => (
+    <span key={i} className="inline-block overflow-hidden mr-[0.28em] align-bottom">
+      <span
+        className="inline-block"
+        style={{
+          transition: `transform 0.75s cubic-bezier(0.16,1,0.3,1) ${i * wordDelay}ms, opacity 0.6s ease ${i * wordDelay}ms`,
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0%)' : 'translateY(115%)',
+        }}
+      >
+        {word}
+      </span>
+    </span>
+  ))
+
+  if (as === 'h1') return <h1 ref={ref} className={className}>{content}</h1>
+  return <h2 ref={ref} className={className}>{content}</h2>
 }
 
 export default function Home() {
@@ -297,7 +307,6 @@ export default function Home() {
         .news-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .quick-link-img { transition: filter 0.4s ease; }
         .quick-link:hover .quick-link-img { filter: brightness(1.15); }
-        .ig-tile { transition: opacity 0.3s ease; }
       `}</style>
 
       {/* NAVBAR */}
@@ -362,7 +371,7 @@ export default function Home() {
 
         <div className="absolute bottom-24 left-0 right-0 text-center px-6 z-30 animate-fadeUp">
           <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">HOME TO EGYPT&apos;S MOST EXCLUSIVE HYPERCARS &amp; 1-OF-1s</p>
-          <RevealWords
+          <RevealHeading
             as="h1"
             text="EGYPT'S ULTIMATE EXOTICS HUB"
             className="font-display text-4xl md:text-5xl font-light tracking-wider mb-8 leading-tight text-white"
@@ -383,49 +392,41 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         </div>
         <div className="relative z-10 px-6 pb-20 -mt-32">
-          <Reveal>
-            <p className="text-xs tracking-[0.4em] text-zinc-400 mb-6">CAIRO&apos;S RAREST DESTINATION</p>
-          </Reveal>
-          <RevealWords
+          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-6">CAIRO&apos;S RAREST DESTINATION</p>
+          <RevealHeading
             as="h2"
             text="Where Exceptional Cars Belong."
             className="font-display text-4xl font-light text-white leading-tight mb-6"
           />
-          <Reveal delay={150}>
-            <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-sm">
-              Automotive Hub is home to Egypt&apos;s most exclusive hypercars and 1-of-1 vehicles.
-              What you find here, you won&apos;t find anywhere else in the country.
-            </p>
-          </Reveal>
-          <Reveal delay={250}>
-            <div className="grid grid-cols-3 gap-4 mb-10 border-t border-zinc-800 pt-8">
-              <div>
-                <p className="text-white text-2xl font-light font-display mb-1">1 of 1</p>
-                <p className="text-zinc-500 text-xs tracking-widest">EXCLUSIVES</p>
-              </div>
-              <div>
-                <p className="text-white text-2xl font-light font-display mb-1">2024</p>
-                <p className="text-zinc-500 text-xs tracking-widest">EST. CAIRO</p>
-              </div>
-              <div>
-                <p className="text-white text-2xl font-light font-display mb-1">100%</p>
-                <p className="text-zinc-500 text-xs tracking-widest">AUTHENTICATED</p>
-              </div>
+          <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-sm">
+            Automotive Hub is home to Egypt&apos;s most exclusive hypercars and 1-of-1 vehicles.
+            What you find here, you won&apos;t find anywhere else in the country.
+          </p>
+          <div className="grid grid-cols-3 gap-4 mb-10 border-t border-zinc-800 pt-8">
+            <div>
+              <p className="text-white text-2xl font-light font-display mb-1">1 of 1</p>
+              <p className="text-zinc-500 text-xs tracking-widest">EXCLUSIVES</p>
             </div>
-          </Reveal>
-          <Reveal delay={350}>
-            <a href="/about"
-              className="inline-flex items-center gap-3 border border-white/30 text-white px-6 py-3 text-xs tracking-[0.3em] hover:bg-white hover:text-black transition-all duration-300">
-              OUR STORY →
-            </a>
-          </Reveal>
+            <div>
+              <p className="text-white text-2xl font-light font-display mb-1">2024</p>
+              <p className="text-zinc-500 text-xs tracking-widest">EST. CAIRO</p>
+            </div>
+            <div>
+              <p className="text-white text-2xl font-light font-display mb-1">100%</p>
+              <p className="text-zinc-500 text-xs tracking-widest">AUTHENTICATED</p>
+            </div>
+          </div>
+          <a href="/about"
+            className="inline-flex items-center gap-3 border border-white/30 text-white px-6 py-3 text-xs tracking-[0.3em] hover:bg-white hover:text-black transition-all duration-300">
+            OUR STORY →
+          </a>
         </div>
       </section>
 
       {/* FEATURED CARS */}
       <section className="bg-black px-6 py-16">
-        <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p></Reveal>
-        <RevealWords as="h2" text="Featured Cars" className="font-display text-3xl font-light mb-10" />
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p>
+        <h2 className="font-display text-3xl font-light mb-10">Featured Cars</h2>
         {cars.length === 0 ? (
           <p className="text-zinc-600 text-sm">Loading...</p>
         ) : (
@@ -480,18 +481,16 @@ export default function Home() {
       {/* NEWS SECTION */}
       <section className="bg-zinc-950 py-16 border-t border-zinc-900">
         <div className="px-6 mb-8">
-          <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p></Reveal>
-          <RevealWords as="h2" text="News & Reviews" className="font-display text-3xl font-light mb-6" />
-          <Reveal delay={150}>
-            <div className="flex gap-3">
-              {['All', 'News', 'Reviews'].map(f => (
-                <button key={f} onClick={() => setNewsFilter(f)}
-                  className={`px-4 py-2 text-xs tracking-widest border rounded-full transition-all duration-200 ${newsFilter === f ? 'bg-white text-black border-white' : 'border-zinc-700 text-zinc-400 hover:border-white hover:text-white'}`}>
-                  {f}
-                </button>
-              ))}
-            </div>
-          </Reveal>
+          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p>
+          <h2 className="font-display text-3xl font-light mb-6">News &amp; Reviews</h2>
+          <div className="flex gap-3">
+            {['All', 'News', 'Reviews'].map(f => (
+              <button key={f} onClick={() => setNewsFilter(f)}
+                className={`px-4 py-2 text-xs tracking-widest border rounded-full transition-all duration-200 ${newsFilter === f ? 'bg-white text-black border-white' : 'border-zinc-700 text-zinc-400 hover:border-white hover:text-white'}`}>
+                {f}
+              </button>
+            ))}
+          </div>
         </div>
 
         {filteredNews.length === 0 ? (
@@ -532,14 +531,12 @@ export default function Home() {
       {/* INSTAGRAM */}
       <section className="bg-black py-16 px-6 border-t border-zinc-900">
         <div className="text-center mb-10">
-          <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY CONNECTED</p></Reveal>
-          <RevealWords as="h2" text="Automotive Hub on Instagram" className="font-display text-3xl font-light mb-4" />
-          <Reveal delay={150}>
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"
-              className="text-white text-sm tracking-widest hover:text-red-500 transition-colors duration-300">
-              @automotivehubegy
-            </a>
-          </Reveal>
+          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY CONNECTED</p>
+          <h2 className="font-display text-3xl font-light mb-4">Automotive Hub on Instagram</h2>
+          <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"
+            className="text-white text-sm tracking-widest hover:text-red-500 transition-colors duration-300">
+            @automotivehubegy
+          </a>
         </div>
 
         <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3">
@@ -547,7 +544,7 @@ export default function Home() {
             <Reveal key={i} delay={i * 60}>
               <button
                 onClick={() => setIgActiveIndex(i)}
-                className="ig-tile group relative aspect-square overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 w-full"
+                className="group relative aspect-square overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 w-full"
               >
                 <img src={post.images[0]} alt="" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100">
@@ -570,25 +567,23 @@ export default function Home() {
 
       {/* NEWSLETTER */}
       <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
-        <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p></Reveal>
-        <RevealWords as="h3" text="Subscribe to our Newsletter" className="font-display text-2xl font-light mb-6" />
-        <Reveal delay={150}>
-          <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
-            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email address"
-              className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600"
-            />
-            <button type="submit"
-              className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
-              SUBSCRIBE
-            </button>
-          </form>
-        </Reveal>
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
+        <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
+        <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
+          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Your email address"
+            className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600"
+          />
+          <button type="submit"
+            className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+            SUBSCRIBE
+          </button>
+        </form>
       </section>
 
       {/* FOOTER */}
