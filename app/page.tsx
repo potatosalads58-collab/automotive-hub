@@ -1,8 +1,26 @@
 'use client'
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, ReactNode } from 'react'
 import { client, Car } from '../sanity/lib/client'
 import { urlFor } from '../sanity/lib/imageUrl'
 const PHONE = '01010166333'
+
+const INSTAGRAM_URL = 'https://instagram.com/automotivehubegy'
+const THREADS_URL = 'https://www.threads.net/@automotivehubegy'
+const FACEBOOK_URL = 'https://www.facebook.com/share/14nBzBzMDiU/'
+
+const NAV_LINKS = [
+  { label: 'Inventory', href: '/inventory' },
+  { label: 'Sell Your Car', href: '/sell-your-car' },
+  { label: 'News', href: '/news' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+]
+
+const SOCIAL_LINKS = [
+  { label: 'Instagram', href: INSTAGRAM_URL },
+  { label: 'Threads', href: THREADS_URL },
+  { label: 'Facebook', href: FACEBOOK_URL },
+]
 
 const quickLinks = [
   { title: "Available Vehicles", img: "available-vehicles.jpg", href: "/inventory" },
@@ -96,61 +114,31 @@ function ChevronIcon({ direction = "left", size = 18 }: { direction?: "left" | "
 
 function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () => void }) {
   const [imgIndex, setImgIndex] = useState(0)
-
   const next = () => setImgIndex((i) => (i + 1) % post.images.length)
   const prev = () => setImgIndex((i) => (i - 1 + post.images.length) % post.images.length)
 
   return (
-    <div
-      className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4"
-      onClick={onClose}
-    >
-      <div
-        className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto bg-zinc-900 rounded-2xl border border-zinc-800"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button
-          onClick={onClose}
-          aria-label="Close"
-          className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white hover:bg-black transition-colors"
-        >
-          ✕
-        </button>
-
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4" onClick={onClose}>
+      <div className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto bg-zinc-900 rounded-2xl border border-zinc-800" onClick={(e) => e.stopPropagation()}>
+        <button onClick={onClose} aria-label="Close" className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white hover:bg-black transition-colors">✕</button>
         <div className="relative bg-black">
-          <img
-            src={post.images[imgIndex]}
-            alt="Automotive Hub"
-            className="w-full max-h-[55vh] object-cover"
-          />
+          <img src={post.images[imgIndex]} alt="Automotive Hub" className="w-full max-h-[55vh] object-cover" />
           {post.images.length > 1 && (
             <>
-              <button
-                onClick={prev}
-                aria-label="Previous"
-                className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white"
-              >
+              <button onClick={prev} aria-label="Previous" className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white">
                 <ChevronIcon direction="left" />
               </button>
-              <button
-                onClick={next}
-                aria-label="Next"
-                className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white"
-              >
+              <button onClick={next} aria-label="Next" className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white">
                 <ChevronIcon direction="right" />
               </button>
               <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
                 {post.images.map((_, i) => (
-                  <span
-                    key={i}
-                    className={`w-1.5 h-1.5 rounded-full ${i === imgIndex ? "bg-white" : "bg-white/30"}`}
-                  />
+                  <span key={i} className={`w-1.5 h-1.5 rounded-full ${i === imgIndex ? "bg-white" : "bg-white/30"}`} />
                 ))}
               </div>
             </>
           )}
         </div>
-
         <div className="flex items-center gap-3 px-5 pt-5">
           <img src="/logo-full-bg.png" alt="Automotive Hub" className="w-9 h-9 object-contain rounded-full" />
           <div className="leading-tight">
@@ -158,18 +146,10 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
             <p className="text-zinc-500 text-xs tracking-widest">PREMIUM CAR DEALERSHIP</p>
           </div>
         </div>
-
-        <p className="px-5 pt-4 text-zinc-400 text-sm leading-relaxed whitespace-pre-line">
-          {post.caption}
-        </p>
-
+        <p className="px-5 pt-4 text-zinc-400 text-sm leading-relaxed whitespace-pre-line">{post.caption}</p>
         <div className="flex items-center gap-5 px-5 py-5 mt-2 border-t border-zinc-800 text-zinc-400">
-          <span className="flex items-center gap-2 text-sm">
-            <HeartIcon /> {post.likes}
-          </span>
-          <span className="flex items-center gap-2 text-sm">
-            <CommentIcon /> {post.comments}
-          </span>
+          <span className="flex items-center gap-2 text-sm"><HeartIcon /> {post.likes}</span>
+          <span className="flex items-center gap-2 text-sm"><CommentIcon /> {post.comments}</span>
           {post.date && <span className="ml-auto text-xs text-zinc-600 tracking-widest">{post.date.toUpperCase()}</span>}
         </div>
       </div>
@@ -177,27 +157,78 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
   )
 }
 
-function AnimatedCard({ children, index }: { children: React.ReactNode, index: number }) {
-  const ref = useRef<HTMLDivElement>(null)
+/* ============ SHARED ANIMATION SYSTEM ============
+   One repeatable observer hook + two building blocks
+   (Reveal for blocks/cards, RevealWords for headlines)
+   used everywhere on the page for a consistent, premium feel. */
+
+function useInView<T extends HTMLElement>(threshold = 0.15): [React.RefObject<T | null>, boolean] {
+  const ref = useRef<T>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
-      { threshold: 0.15 }
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold }
     )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [threshold])
 
+  return [ref, visible]
+}
+
+function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
+  const [ref, visible] = useInView<HTMLDivElement>()
   return (
-    <div ref={ref} style={{
-      transition: `opacity 0.7s ease ${index * 80}ms, transform 0.7s ease ${index * 80}ms, filter 0.7s ease ${index * 80}ms`,
-      opacity: visible ? 1 : 0,
-      transform: visible ? 'translateY(0px)' : 'translateY(28px)',
-      filter: visible ? 'blur(0px)' : 'blur(6px)',
-    }}>
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms, filter 0.7s ease ${delay}ms`,
+        opacity: visible ? 1 : 0,
+        transform: visible ? 'translateY(0px)' : 'translateY(28px)',
+        filter: visible ? 'blur(0px)' : 'blur(6px)',
+      }}
+    >
       {children}
+    </div>
+  )
+}
+
+function RevealWords({
+  text,
+  as: Tag = 'h2',
+  className = '',
+  wordDelay = 70,
+}: {
+  text: string
+  as?: 'h1' | 'h2' | 'h3'
+  className?: string
+  wordDelay?: number
+}) {
+  const [ref, visible] = useInView<HTMLDivElement>()
+  const words = text.split(' ')
+  return (
+    <div ref={ref} style={{ display: 'contents' }}>
+      <Tag className={className}>
+        {words.map((word, i) => (
+          <span key={i} className="inline-block overflow-hidden mr-[0.28em] align-bottom">
+            <span
+              className="inline-block"
+              style={{
+                transition: `transform 0.75s cubic-bezier(0.16,1,0.3,1) ${i * wordDelay}ms, opacity 0.6s ease ${i * wordDelay}ms`,
+                opacity: visible ? 1 : 0,
+                transform: visible ? 'translateY(0%)' : 'translateY(115%)',
+              }}
+            >
+              {word}
+            </span>
+          </span>
+        ))}
+      </Tag>
     </div>
   )
 }
@@ -205,6 +236,7 @@ function AnimatedCard({ children, index }: { children: React.ReactNode, index: n
 export default function Home() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [socialOpen, setSocialOpen] = useState(false)
   const [videoReady, setVideoReady] = useState(false)
   const [cars, setCars] = useState<Car[]>([])
   const [newsFilter, setNewsFilter] = useState('All')
@@ -238,6 +270,11 @@ export default function Home() {
 
   const filteredNews = newsFilter === 'All' ? motorNews : motorNews.filter(n => n.category === newsFilter)
 
+  const closeMenu = () => {
+    setMenuOpen(false)
+    setSocialOpen(false)
+  }
+
   return (
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
 
@@ -258,8 +295,9 @@ export default function Home() {
         .bar-3-open { transform: translateY(-5px) rotate(-45deg); }
         .news-scroll::-webkit-scrollbar { display: none; }
         .news-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        .ig-tile { transition: transform 0.3s ease; }
-        .ig-tile:hover { transform: scale(1.03); }
+        .quick-link-img { transition: filter 0.4s ease; }
+        .quick-link:hover .quick-link-img { filter: brightness(1.15); }
+        .ig-tile { transition: opacity 0.3s ease; }
       `}</style>
 
       {/* NAVBAR */}
@@ -273,24 +311,35 @@ export default function Home() {
           <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
           <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
         </button>
-        <img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" />
+        <a href="/"><img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" /></a>
         <div className="w-6" />
       </nav>
 
       {/* MOBILE MENU */}
-      <div className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 transition-all duration-500 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        {['Inventory', 'Sell Your Car', 'Contact', 'About'].map((item, i) => (
-          <a key={i} href="#"
-            onClick={() => setMenuOpen(false)}
+      <div className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 overflow-y-auto transition-all duration-500 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        {NAV_LINKS.map((item, i) => (
+          <a key={i} href={item.href}
+            onClick={closeMenu}
             className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
-            {item}
+            {item.label}
           </a>
         ))}
-        <a href="https://instagram.com/automotivehubegy" target="_blank"
-          onClick={() => setMenuOpen(false)}
-          className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
-          Instagram
-        </a>
+
+        <button
+          onClick={() => setSocialOpen(!socialOpen)}
+          className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300 flex items-center justify-between w-full text-left"
+        >
+          Social
+          <span className="text-lg transition-transform duration-300" style={{ transform: socialOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>↓</span>
+        </button>
+        <div className="overflow-hidden transition-all duration-400" style={{ maxHeight: socialOpen ? `${SOCIAL_LINKS.length * 64}px` : '0px' }}>
+          {SOCIAL_LINKS.map((social, i) => (
+            <a key={i} href={social.href} target="_blank" rel="noopener noreferrer" onClick={closeMenu}
+              className="block font-display text-xl font-light tracking-widest py-4 pl-4 border-b border-zinc-900 text-zinc-400 hover:text-red-500 transition-colors duration-300">
+              {social.label}
+            </a>
+          ))}
+        </div>
       </div>
 
       {/* HERO */}
@@ -305,13 +354,7 @@ export default function Home() {
           alt=""
           className={`hidden md:block absolute inset-0 w-full h-full object-cover object-top z-10 transition-opacity duration-1000 ${videoReady ? 'opacity-0' : 'opacity-100'}`}
         />
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover object-top z-0"
-        >
+        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover object-top z-0">
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
 
@@ -319,9 +362,11 @@ export default function Home() {
 
         <div className="absolute bottom-24 left-0 right-0 text-center px-6 z-30 animate-fadeUp">
           <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">HOME TO EGYPT&apos;S MOST EXCLUSIVE HYPERCARS &amp; 1-OF-1s</p>
-          <h1 className="font-display text-4xl md:text-5xl font-light tracking-wider mb-8 leading-tight text-white">
-            EGYPT&apos;S ULTIMATE EXOTICS HUB
-          </h1>
+          <RevealWords
+            as="h1"
+            text="EGYPT'S ULTIMATE EXOTICS HUB"
+            className="font-display text-4xl md:text-5xl font-light tracking-wider mb-8 leading-tight text-white"
+          />
           <a href="/inventory"
             className="inline-block border border-white/70 text-white px-10 py-3.5 text-xs tracking-[0.3em] hover:bg-white hover:text-black transition-all duration-300">
             EXPLORE INVENTORY
@@ -336,71 +381,76 @@ export default function Home() {
           <img src="/cullinan.jpg" alt="Rolls Royce Cullinan Novitec"
             className="w-full h-[120%] object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-          <div className="absolute top-8 right-6 border border-white/20 px-3 py-1.5 backdrop-blur-sm">
-            
-          </div>
         </div>
         <div className="relative z-10 px-6 pb-20 -mt-32">
-          <div className="w-8 h-px bg-red-600 mb-6" />
-          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">CAIRO&apos;S RAREST DESTINATION</p>
-          <h2 className="font-display text-4xl font-light text-white leading-tight mb-6">
-            Not Every Car<br />Belongs Here.
-          </h2>
-          <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-sm">
-            Automotive Hub is home to Egypt&apos;s most exclusive hypercars and 1-of-1 vehicles.
-            What you find here, you won&apos;t find anywhere else in the country.
-          </p>
-          <div className="grid grid-cols-3 gap-4 mb-10 border-t border-zinc-800 pt-8">
-            <div>
-              <p className="text-white text-2xl font-light font-display mb-1">1 of 1</p>
-              <p className="text-zinc-500 text-xs tracking-widest">EXCLUSIVES</p>
+          <Reveal>
+            <p className="text-xs tracking-[0.4em] text-zinc-400 mb-6">CAIRO&apos;S RAREST DESTINATION</p>
+          </Reveal>
+          <RevealWords
+            as="h2"
+            text="Where Exceptional Cars Belong."
+            className="font-display text-4xl font-light text-white leading-tight mb-6"
+          />
+          <Reveal delay={150}>
+            <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-sm">
+              Automotive Hub is home to Egypt&apos;s most exclusive hypercars and 1-of-1 vehicles.
+              What you find here, you won&apos;t find anywhere else in the country.
+            </p>
+          </Reveal>
+          <Reveal delay={250}>
+            <div className="grid grid-cols-3 gap-4 mb-10 border-t border-zinc-800 pt-8">
+              <div>
+                <p className="text-white text-2xl font-light font-display mb-1">1 of 1</p>
+                <p className="text-zinc-500 text-xs tracking-widest">EXCLUSIVES</p>
+              </div>
+              <div>
+                <p className="text-white text-2xl font-light font-display mb-1">2024</p>
+                <p className="text-zinc-500 text-xs tracking-widest">EST. CAIRO</p>
+              </div>
+              <div>
+                <p className="text-white text-2xl font-light font-display mb-1">100%</p>
+                <p className="text-zinc-500 text-xs tracking-widest">AUTHENTICATED</p>
+              </div>
             </div>
-            <div>
-              <p className="text-white text-2xl font-light font-display mb-1">2024</p>
-              <p className="text-zinc-500 text-xs tracking-widest">EST. CAIRO</p>
-            </div>
-            <div>
-              <p className="text-white text-2xl font-light font-display mb-1">100%</p>
-              <p className="text-zinc-500 text-xs tracking-widest">AUTHENTICATED</p>
-            </div>
-          </div>
-          <a href="/about"
-            className="inline-flex items-center gap-3 border border-white/30 text-white px-6 py-3 text-xs tracking-[0.3em] hover:bg-white hover:text-black transition-all duration-300">
-            OUR STORY →
-          </a>
+          </Reveal>
+          <Reveal delay={350}>
+            <a href="/about"
+              className="inline-flex items-center gap-3 border border-white/30 text-white px-6 py-3 text-xs tracking-[0.3em] hover:bg-white hover:text-black transition-all duration-300">
+              OUR STORY →
+            </a>
+          </Reveal>
         </div>
       </section>
 
-      {/* FEATURED CARS - من Sanity */}
+      {/* FEATURED CARS */}
       <section className="bg-black px-6 py-16">
-        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p>
-        <h2 className="font-display text-3xl font-light mb-10">Featured Cars</h2>
+        <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p></Reveal>
+        <RevealWords as="h2" text="Featured Cars" className="font-display text-3xl font-light mb-10" />
         {cars.length === 0 ? (
           <p className="text-zinc-600 text-sm">Loading...</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {cars.map((car, i) => (
-  <AnimatedCard key={car._id} index={i}>
-    <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
-      <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }}>
-        {car.thumbnail && (
-          <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
-            className="w-full h-full object-cover" />
-        )}
-      </div>
-      <div className="p-4">
-        <p className="text-white text-xl font-light mb-3">{car.title}</p>
-        <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
-          <span>{car.mileage?.toLocaleString()} km</span>
-          <span>·</span>
-          <span>{car.year}</span>
-        </div>
-        <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
-      </div>
-    </a>
-  </AnimatedCard>
-))}
-            
+              <Reveal key={car._id} delay={i * 80}>
+                <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
+                  <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }}>
+                    {car.thumbnail && (
+                      <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
+                        className="w-full h-full object-cover" />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="text-white text-xl font-light mb-3">{car.title}</p>
+                    <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
+                      <span>{car.mileage?.toLocaleString()} km</span>
+                      <span>·</span>
+                      <span>{car.year}</span>
+                    </div>
+                    <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
+                  </div>
+                </a>
+              </Reveal>
+            ))}
           </div>
         )}
         <a href="/inventory"
@@ -413,31 +463,35 @@ export default function Home() {
       <section className="bg-black px-6 pb-16">
         <div className="grid grid-cols-1 gap-5">
           {quickLinks.map((link, i) => (
-            <a href={link.href} key={i} className="relative overflow-hidden rounded-2xl block h-80 group">
-              <img src={`/${link.img}`} alt={link.title}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-black/50" />
-              <div className="absolute bottom-5 left-5">
-                <p className="text-white text-xl font-light font-display">{link.title}</p>
-              </div>
-            </a>
+            <Reveal key={i} delay={i * 100}>
+              <a href={link.href} className="quick-link relative overflow-hidden rounded-2xl block h-80 group">
+                <img src={`/${link.img}`} alt={link.title}
+                  className="quick-link-img absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute bottom-5 left-5">
+                  <p className="text-white text-xl font-light font-display">{link.title}</p>
+                </div>
+              </a>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* NEWS SECTION - لايف من Motor1 */}
+      {/* NEWS SECTION */}
       <section className="bg-zinc-950 py-16 border-t border-zinc-900">
         <div className="px-6 mb-8">
-          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p>
-          <h2 className="font-display text-3xl font-light mb-6">News &amp; Reviews</h2>
-          <div className="flex gap-3">
-            {['All', 'News', 'Reviews'].map(f => (
-              <button key={f} onClick={() => setNewsFilter(f)}
-                className={`px-4 py-2 text-xs tracking-widest border rounded-full transition-all duration-200 ${newsFilter === f ? 'bg-white text-black border-white' : 'border-zinc-700 text-zinc-400 hover:border-white hover:text-white'}`}>
-                {f}
-              </button>
-            ))}
-          </div>
+          <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p></Reveal>
+          <RevealWords as="h2" text="News & Reviews" className="font-display text-3xl font-light mb-6" />
+          <Reveal delay={150}>
+            <div className="flex gap-3">
+              {['All', 'News', 'Reviews'].map(f => (
+                <button key={f} onClick={() => setNewsFilter(f)}
+                  className={`px-4 py-2 text-xs tracking-widest border rounded-full transition-all duration-200 ${newsFilter === f ? 'bg-white text-black border-white' : 'border-zinc-700 text-zinc-400 hover:border-white hover:text-white'}`}>
+                  {f}
+                </button>
+              ))}
+            </div>
+          </Reveal>
         </div>
 
         {filteredNews.length === 0 ? (
@@ -445,59 +499,67 @@ export default function Home() {
         ) : (
           <div className="news-scroll flex gap-5 overflow-x-auto px-6 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
             {filteredNews.map((news, i) => (
-              <a href={news.link} target="_blank" rel="noopener noreferrer" key={i}
-                className="flex-shrink-0 w-72 bg-zinc-900 rounded-2xl overflow-hidden block"
-                style={{ scrollSnapAlign: 'start' }}>
-                <div className="w-full h-44 bg-zinc-800 flex items-center justify-center text-zinc-600 text-xs overflow-hidden">
-                  {news.img ? (
-                    <img src={news.img} alt={news.title} className="w-full h-full object-cover" />
-                  ) : (
-                    <span>Automotive Hub</span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <p className="text-red-600 text-xs tracking-widest mb-2">{news.category.toUpperCase()}</p>
-                  <p className="text-white text-base font-light mb-2 leading-snug">{news.title}</p>
-                  <p className="text-zinc-500 text-xs">{news.date}</p>
-                </div>
-              </a>
+              <Reveal key={i} delay={i * 70} className="flex-shrink-0">
+                <a href={news.link} target="_blank" rel="noopener noreferrer"
+                  className="flex-shrink-0 w-72 bg-zinc-900 rounded-2xl overflow-hidden block"
+                  style={{ scrollSnapAlign: 'start' }}>
+                  <div className="w-full h-44 bg-zinc-800 flex items-center justify-center text-zinc-600 text-xs overflow-hidden">
+                    {news.img ? (
+                      <img src={news.img} alt={news.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>Automotive Hub</span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="text-red-600 text-xs tracking-widest mb-2">{news.category.toUpperCase()}</p>
+                    <p className="text-white text-base font-light mb-2 leading-snug">{news.title}</p>
+                    <p className="text-zinc-500 text-xs">{news.date}</p>
+                  </div>
+                </a>
+              </Reveal>
             ))}
           </div>
         )}
+
+        <div className="px-6">
+          <a href="/news"
+            className="block text-center border border-zinc-700 text-zinc-400 py-4 mt-6 text-xs tracking-[0.3em] hover:border-white hover:text-white transition-all duration-300">
+            SEE ALL NEWS
+          </a>
+        </div>
       </section>
 
       {/* INSTAGRAM */}
       <section className="bg-black py-16 px-6 border-t border-zinc-900">
         <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY CONNECTED</p>
-          <h2 className="font-display text-3xl font-light mb-4">Automotive Hub on Instagram</h2>
-          <a href="https://instagram.com/automotivehubegy" target="_blank" rel="noopener noreferrer"
-            className="text-white text-sm tracking-widest hover:text-red-500 transition-colors duration-300">
-            @automotivehubegy
-          </a>
+          <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY CONNECTED</p></Reveal>
+          <RevealWords as="h2" text="Automotive Hub on Instagram" className="font-display text-3xl font-light mb-4" />
+          <Reveal delay={150}>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"
+              className="text-white text-sm tracking-widest hover:text-red-500 transition-colors duration-300">
+              @automotivehubegy
+            </a>
+          </Reveal>
         </div>
 
         <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3">
           {instagramPosts.map((post, i) => (
-            <button
-              key={i}
-              onClick={() => setIgActiveIndex(i)}
-              className="ig-tile group relative aspect-square overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800"
-            >
-              <img
-                src={post.images[0]}
-                alt=""
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100">
-                <span className="flex items-center gap-1.5 text-white text-xs font-medium">
-                  <HeartIcon filled size={14} /> {post.likes}
-                </span>
-                <span className="flex items-center gap-1.5 text-white text-xs font-medium">
-                  <CommentIcon size={14} /> {post.comments}
-                </span>
-              </div>
-            </button>
+            <Reveal key={i} delay={i * 60}>
+              <button
+                onClick={() => setIgActiveIndex(i)}
+                className="ig-tile group relative aspect-square overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 w-full"
+              >
+                <img src={post.images[0]} alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100">
+                  <span className="flex items-center gap-1.5 text-white text-xs font-medium">
+                    <HeartIcon filled size={14} /> {post.likes}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-white text-xs font-medium">
+                    <CommentIcon size={14} /> {post.comments}
+                  </span>
+                </div>
+              </button>
+            </Reveal>
           ))}
         </div>
       </section>
@@ -508,26 +570,28 @@ export default function Home() {
 
       {/* NEWSLETTER */}
       <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
-        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
-        <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
-        <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
-          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Your email address"
-            className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600"
-          />
-          <button type="submit"
-            className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
-            SUBSCRIBE
-          </button>
-        </form>
+        <Reveal><p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p></Reveal>
+        <RevealWords as="h3" text="Subscribe to our Newsletter" className="font-display text-2xl font-light mb-6" />
+        <Reveal delay={150}>
+          <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
+            className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email address"
+              className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600"
+            />
+            <button type="submit"
+              className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+              SUBSCRIBE
+            </button>
+          </form>
+        </Reveal>
       </section>
 
-      {/* FOOTER - updated */}
+      {/* FOOTER */}
       <footer className="bg-zinc-950 border-t border-zinc-800 px-6 py-14">
         <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-xs">
           Egypt&apos;s trusted ultimate exotics marketplace. Quality vehicles, transparent pricing, exceptional service.
@@ -549,9 +613,9 @@ export default function Home() {
         <div className="mb-10">
           <p className="text-xs tracking-widest text-white font-semibold mb-4">FOLLOW US</p>
           <div className="flex gap-4">
-            <a href="https://instagram.com/automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Instagram</a>
-            <a href="https://www.threads.net/@automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Threads</a>
-            <a href="https://www.facebook.com/share/14nBzBzMDiU/" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Facebook</a>
+            <a href={INSTAGRAM_URL} target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Instagram</a>
+            <a href={THREADS_URL} target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Threads</a>
+            <a href={FACEBOOK_URL} target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Facebook</a>
           </div>
         </div>
         <div className="border-t border-zinc-800 pt-8 mb-8">
