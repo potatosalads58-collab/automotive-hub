@@ -3,29 +3,36 @@ import React from 'react';
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans selection:bg-zinc-800 selection:text-white">
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0a0a0a]/80 border-b border-zinc-800/50">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <a href="#" className="text-xl font-medium tracking-wider uppercase text-white">
-            Automotive <span className="text-zinc-400">Hub</span>
+     {/* NAVBAR */}
+      <nav className={`fixed top-0 left-0 right-0 z-[55] flex items-center justify-between px-6 py-5 transition-all duration-500 ${scrolled ? 'bg-black border-b border-zinc-800' : 'bg-transparent'}`}>
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="touch-manipulation cursor-pointer z-[60] relative flex flex-col gap-[5px]"
+          aria-label="Menu"
+        >
+          <span className={`bar ${menuOpen ? 'bar-1-open' : ''}`}></span>
+          <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
+          <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
+        </button>
+        <img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" />
+        <div className="w-6" />
+      </nav>
+
+      {/* MOBILE MENU */}
+      <div className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 transition-all duration-500 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
+        {['Inventory', 'Sell Your Car', 'Contact', 'About'].map((item, i) => (
+          <a key={i} href="#"
+            onClick={() => setMenuOpen(false)}
+            className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
+            {item}
           </a>
-          <nav className="hidden md:flex items-center space-x-8 text-sm text-zinc-400">
-            <a href="#" className="hover:text-white transition-colors">Home</a>
-            <a href="#" className="hover:text-white transition-colors">About Us</a>
-            <a href="#" className="hover:text-white transition-colors">Showroom</a>
-            <a href="#" className="hover:text-white transition-colors">Sell Your Car</a>
-            <a href="#" className="text-white font-medium">Privacy Policy</a>
-          </nav>
-          <div>
-            <a
-              href="#contact"
-              className="px-5 py-2 text-xs uppercase tracking-widest border border-zinc-700 hover:border-zinc-400 transition-all text-zinc-200"
-            >
-              Contact
-            </a>
-          </div>
-        </div>
-      </header>
+        ))}
+        <a href="https://instagram.com/automotivehubegy" target="_blank"
+          onClick={() => setMenuOpen(false)}
+          className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
+          Instagram
+        </a>
+      </div>
 
       {/* Main Content - Privacy Policy & Terms */}
       <main className="max-w-4xl mx-auto px-6 py-20">
@@ -92,37 +99,56 @@ export default function PrivacyPolicyPage() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-zinc-800/50 bg-[#070707] py-16 mt-20">
-        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10 text-sm text-zinc-400">
-          <div className="space-y-4 md:col-span-2">
-            <h3 className="text-lg font-medium text-white tracking-wider uppercase">Automotive Hub</h3>
-            <p className="text-zinc-500 max-w-sm">
-              The ultimate destination for luxury and exotic automobiles. Experience uncompromising performance and refined elegance.
+      {/* FOOTER - updated */}
+      <footer className="bg-zinc-950 border-t border-zinc-800 px-6 py-14">
+        <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-xs">
+          Egypt&apos;s trusted ultimate exotics marketplace. Quality vehicles, transparent pricing, exceptional service.
+        </p>
+        <div className="grid grid-cols-2 gap-6 mb-10">
+          <div>
+            <p className="text-xs tracking-widest text-white font-semibold mb-4">SHOWROOM</p>
+            <a href="/inventory" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Inventory</a>
+            <a href="/sell-your-car" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Sell Your Car</a>
+            <a href="/news" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">News</a>
+          </div>
+          <div>
+            <p className="text-xs tracking-widest text-white font-semibold mb-4">ABOUT US</p>
+            <a href="/about" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">About Us</a>
+            <a href="/contact" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Contact</a>
+            <a href="/privacy-policy" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Privacy Policy &amp; Terms</a>
+          </div>
+        </div>
+        <div className="mb-10">
+          <p className="text-xs tracking-widest text-white font-semibold mb-4">FOLLOW US</p>
+          <div className="flex gap-4">
+            <a href="https://instagram.com/automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Instagram</a>
+            <a href="https://www.threads.net/@automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Threads</a>
+            <a href="https://www.facebook.com/share/14nBzBzMDiU/" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Facebook</a>
+          </div>
+        </div>
+        <div className="border-t border-zinc-800 pt-8 mb-8">
+          <p className="text-xs tracking-widest text-white font-semibold mb-4">CONTACT</p>
+          <div className="flex flex-col gap-3">
+            <a href={`tel:${PHONE}`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              0101 016 6333
+            </a>
+            <a href="mailto:Info@automotivehub.com" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+              Info@automotivehub.com
+            </a>
+            <p className="flex items-center gap-3 text-sm text-zinc-400">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              6th of October, Cairo, Egypt
             </p>
           </div>
-          <div className="space-y-3">
-            <h4 className="text-xs uppercase tracking-widest text-white font-medium">Navigation</h4>
-            <ul className="space-y-2">
-              <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Showroom</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Sell Your Car</a></li>
-            </ul>
-          </div>
-          <div className="space-y-3">
-            <h4 className="text-xs uppercase tracking-widest text-white font-medium">Legal</h4>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-white">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-            </ul>
-          </div>
         </div>
-        <div className="max-w-7xl mx-auto px-6 pt-12 mt-12 border-t border-zinc-900 flex flex-col md:flex-row justify-between items-center text-xs text-zinc-600">
-          <p>&copy; 2026 Automotive Hub. All rights reserved.</p>
-          <p className="mt-2 md:mt-0">Showroom Management</p>
+        <div className="border-t border-zinc-900 pt-10 text-center flex flex-col items-center gap-6">
+          <p className="text-zinc-600 text-xs">© 2026 Automotive Hub. All rights reserved.</p>
+          <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
         </div>
       </footer>
-    </div>
-  );
+
+    </main>
+  )
 }
