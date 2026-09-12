@@ -1,106 +1,202 @@
-import React from 'react';
-const PHONE = "01010166333";
+'use client'
+import { useEffect, useState, useRef } from 'react'
+
+const PHONE = '01010166333'
+
+function RevealOnScroll({ children, index = 0 }: { children: React.ReactNode; index?: number }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(entry.isIntersecting),
+      { threshold: 0.1 }
+    )
+    if (ref.current) observer.observe(ref.current)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={ref} style={{
+      transition: `opacity 0.7s ease ${index * 60}ms, transform 0.7s ease ${index * 60}ms, filter 0.7s ease ${index * 60}ms`,
+      opacity: visible ? 1 : 0,
+      transform: visible ? 'translateY(0px)' : 'translateY(24px)',
+      filter: visible ? 'blur(0px)' : 'blur(6px)',
+    }}>
+      {children}
+    </div>
+  )
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-10">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-6 h-px bg-white" />
+        <p className="text-xs tracking-[0.35em] text-zinc-400">{title.toUpperCase()}</p>
+      </div>
+      <div className="text-zinc-400 text-sm leading-relaxed flex flex-col gap-3">{children}</div>
+    </div>
+  )
+}
 
 export default function PrivacyPolicyPage() {
+  const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [tab, setTab] = useState<'privacy' | 'terms'>('privacy')
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-zinc-100 font-sans selection:bg-zinc-800 selection:text-white">
-     {/* NAVBAR */}
+    <main className="min-h-screen bg-black text-white overflow-x-hidden">
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-display { font-family: 'Cormorant Garamond', serif; }
+        .bar { display: block; width: 24px; height: 1px; background: white; transition: transform 0.4s ease, opacity 0.3s ease; transform-origin: center; }
+        .bar-1-open { transform: translateY(5px) rotate(45deg); }
+        .bar-2-open { opacity: 0; transform: scaleX(0); }
+        .bar-3-open { transform: translateY(-5px) rotate(-45deg); }
+        @keyframes letterIn {
+          from { opacity: 0; transform: translateY(20px); filter: blur(4px); }
+          to { opacity: 1; transform: translateY(0); filter: blur(0px); }
+        }
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeUp { animation: fadeUp 1s ease forwards; }
+      `}</style>
+
+      {/* NAVBAR */}
       <nav className={`fixed top-0 left-0 right-0 z-[55] flex items-center justify-between px-6 py-5 transition-all duration-500 ${scrolled ? 'bg-black border-b border-zinc-800' : 'bg-transparent'}`}>
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="touch-manipulation cursor-pointer z-[60] relative flex flex-col gap-[5px]"
-          aria-label="Menu"
-        >
+        <button onClick={() => setMenuOpen(!menuOpen)} className="touch-manipulation cursor-pointer z-[60] relative flex flex-col gap-[5px]" aria-label="Menu">
           <span className={`bar ${menuOpen ? 'bar-1-open' : ''}`}></span>
           <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
           <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
         </button>
-        <img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" />
+        <a href="/"><img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" /></a>
         <div className="w-6" />
       </nav>
 
       {/* MOBILE MENU */}
       <div className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 transition-all duration-500 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        {['Inventory', 'Sell Your Car', 'Contact', 'About'].map((item, i) => (
-          <a key={i} href="#"
-            onClick={() => setMenuOpen(false)}
-            className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
-            {item}
+        {[
+          { label: 'Inventory', href: '/inventory' },
+          { label: 'Sell Your Car', href: '/sell-your-car' },
+          { label: 'Contact', href: '/contact' },
+          { label: 'About', href: '/about' },
+        ].map((item, i) => (
+          <a key={i} href={item.href} onClick={() => setMenuOpen(false)}
+            className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-zinc-400 transition-colors duration-300">
+            {item.label}
           </a>
         ))}
-        <a href="https://instagram.com/automotivehubegy" target="_blank"
-          onClick={() => setMenuOpen(false)}
-          className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
+        <a href="https://instagram.com/automotivehubegy" target="_blank" onClick={() => setMenuOpen(false)}
+          className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-zinc-400 transition-colors duration-300">
           Instagram
         </a>
       </div>
 
-      {/* Main Content - Privacy Policy & Terms */}
-      <main className="max-w-4xl mx-auto px-6 py-20">
-        <div className="space-y-4 mb-16">
-          <p className="text-xs uppercase tracking-widest text-zinc-500">Legal & Compliance</p>
-          <h1 className="text-4xl md:text-5xl font-light tracking-tight text-white">Privacy Policy & Terms</h1>
-          <p className="text-sm text-zinc-400">Last Updated: September 2026</p>
+      {/* PAGE HEADER */}
+      <section className="px-6 pt-32 pb-10 text-center">
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-4 animate-fadeUp">LEGAL</p>
+        <h1 className="font-display text-4xl md:text-5xl font-light tracking-wide text-white">
+          Privacy Policy &amp; Terms
+        </h1>
+        <p className="text-zinc-500 text-xs mt-4">Last updated: September 2026</p>
+      </section>
+
+      {/* TAB SWITCHER */}
+      <section className="px-6 pb-8 sticky top-[68px] z-40 bg-black/90 backdrop-blur-sm">
+        <div className="flex max-w-md mx-auto border border-zinc-800 rounded-full p-1">
+          <button onClick={() => setTab('privacy')}
+            className={`flex-1 py-3 rounded-full text-xs tracking-[0.2em] transition-all duration-300 ${tab === 'privacy' ? 'bg-white text-black' : 'text-zinc-500'}`}>
+            PRIVACY POLICY
+          </button>
+          <button onClick={() => setTab('terms')}
+            className={`flex-1 py-3 rounded-full text-xs tracking-[0.2em] transition-all duration-300 ${tab === 'terms' ? 'bg-white text-black' : 'text-zinc-500'}`}>
+            TERMS &amp; CONDITIONS
+          </button>
         </div>
+      </section>
 
-        <div className="space-y-16 text-zinc-300 leading-relaxed font-light">
-          {/* Privacy Policy Section */}
-          <section className="space-y-6">
-            <h2 className="text-2xl font-normal text-white border-b border-zinc-800 pb-4">1. Privacy Policy</h2>
-            
-            <div className="space-y-4 text-sm md:text-base text-zinc-400">
-              <p>
-                At <strong className="text-zinc-200">Automotive Hub</strong>, accessible from our website, the privacy of our visitors is of extreme importance to us. This Privacy Policy document outlines the types of information that is collected and recorded by Automotive Hub and how we use it.
-              </p>
+      {/* CONTENT */}
+      <section className="px-6 pb-20 max-w-2xl mx-auto">
+        {tab === 'privacy' ? (
+          <RevealOnScroll>
+            <Section title="Information We Collect">
+              <p>When you browse Automotive Hub, enquire about a vehicle, or submit a car for sale, we may collect personal details such as your name, phone number, email address, and any information you choose to share through our contact and enquiry forms — including vehicle documents and photos submitted through the Sell Your Car process.</p>
+            </Section>
+            <Section title="How We Use Your Information">
+              <p>We use the information you provide to respond to enquiries, process vehicle submissions, share relevant listings, and improve our services. We do not sell your personal information to third parties.</p>
+            </Section>
+            <Section title="Cookies">
+              <p>Our website may use cookies and similar technologies to understand how visitors use our site and to improve browsing experience. You can disable cookies through your browser settings at any time.</p>
+            </Section>
+            <Section title="Third-Party Sharing">
+              <p>We may share limited information with trusted service providers (such as messaging platforms like WhatsApp) solely to facilitate communication you have initiated with us. We do not share your data with advertisers or unrelated third parties.</p>
+            </Section>
+            <Section title="Data Security">
+              <p>We take reasonable measures to protect the information you share with us. However, no method of electronic transmission or storage is completely secure, and we cannot guarantee absolute security.</p>
+            </Section>
+            <Section title="Your Rights">
+              <p>You may request access to, correction of, or deletion of your personal data held by us at any time by contacting us using the details below.</p>
+            </Section>
+            <Section title="Contact Us">
+              <p>For any privacy-related questions, reach out to us at Info@automotivehub.com or {PHONE.replace(/(\d{4})(\d{3})(\d{4})/, '$1 $2 $3')}.</p>
+            </Section>
+          </RevealOnScroll>
+        ) : (
+          <RevealOnScroll>
+            <Section title="Acceptance of Terms">
+              <p>By accessing or using the Automotive Hub website, you agree to be bound by these Terms &amp; Conditions. If you do not agree with any part of these terms, please discontinue use of the site.</p>
+            </Section>
+            <Section title="Use of the Website">
+              <p>This website is provided for the purpose of browsing vehicle listings, submitting enquiries, and requesting to sell a vehicle through Automotive Hub. You agree not to misuse the site, attempt unauthorized access, or submit false information.</p>
+            </Section>
+            <Section title="Vehicle Listings & Accuracy">
+              <p>While we make every effort to ensure vehicle listings are accurate and up to date, specifications, pricing, and availability are subject to change without prior notice. We recommend confirming all details directly with our team before making a purchasing decision.</p>
+            </Section>
+            <Section title="Sell Your Car Submissions">
+              <p>Information and photos submitted through our Sell Your Car form are used solely to evaluate and list your vehicle. Submitting a vehicle does not guarantee acceptance, listing, or a specific offer price.</p>
+            </Section>
+            <Section title="Pricing">
+              <p>All prices displayed are in Egyptian Pounds (EGP) unless otherwise stated, and are subject to change. Final pricing is confirmed directly with our sales team.</p>
+            </Section>
+            <Section title="Intellectual Property">
+              <p>All content on this website, including images, logos, and text, is the property of Automotive Hub and may not be reproduced or used without written permission.</p>
+            </Section>
+            <Section title="Limitation of Liability">
+              <p>Automotive Hub is not liable for any indirect or consequential loss arising from the use of this website or reliance on the information provided herein.</p>
+            </Section>
+            <Section title="Governing Law">
+              <p>These Terms &amp; Conditions are governed by the laws of the Arab Republic of Egypt.</p>
+            </Section>
+          </RevealOnScroll>
+        )}
+      </section>
 
-              <h3 className="text-lg font-medium text-white pt-4">Information We Collect</h3>
-              <p>
-                We only collect information that you voluntarily provide to us when you submit an inquiry about a vehicle, use our &quot;Sell Your Car&quot; service, or contact us directly via phone, email, or digital channels. This may include your name, phone number, email address, and vehicle details.
-              </p>
+      {/* NEWSLETTER */}
+      <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
+        <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
+        <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
+          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input type="email" required placeholder="Your email address"
+            className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600" />
+          <button type="submit" className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+            SUBSCRIBE
+          </button>
+        </form>
+      </section>
 
-              <h3 className="text-lg font-medium text-white pt-4">How We Use Your Information</h3>
-              <p>
-                We use the information we collect to respond to your inquiries, facilitate vehicle purchase or trade-in requests, and improve our digital services and website user experience.
-              </p>
-
-              <h3 className="text-lg font-medium text-white pt-4">Data Security & Confidentiality</h3>
-              <p>
-                We value your trust in providing us your personal information. We implement strict administrative and technical measures to protect your data. <strong className="text-zinc-200">We do not sell, trade, or rent your personal information to third parties.</strong>
-              </p>
-            </div>
-          </section>
-
-          {/* Terms & Conditions Section */}
-          <section className="space-y-6 pt-8">
-            <h2 className="text-2xl font-normal text-white border-b border-zinc-800 pb-4">2. Terms & Conditions</h2>
-            
-            <div className="space-y-6 text-sm md:text-base text-zinc-400">
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-white">Intellectual Property</h3>
-                <p>
-                  All content, design elements, graphics, logos, images, typography, and software code displayed on this website are the exclusive property of <strong className="text-zinc-200">Automotive Hub</strong> and are protected by copyright laws. Unauthorized use or redistribution is strictly prohibited.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-white">Vehicle Availability & Specifications</h3>
-                <p>
-                  Vehicle listings, specifications, mileages, model years, and availability shown on the website are subject to change without prior notice due to the high-end and fast-moving nature of our inventory. We advise confirming availability directly with our showroom team.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h3 className="text-lg font-medium text-white">Limitation of Liability</h3>
-                <p>
-                  Automotive Hub acts as a premier showcase for luxury and exotic automobiles. Final transactions, inspections, and legal agreements are officially processed and concluded on-site at our physical showroom location.
-                </p>
-              </div>
-            </div>
-          </section>
-        </div>
-      </main>
-
-      {/* FOOTER - updated */}
+      {/* FOOTER */}
       <footer className="bg-zinc-950 border-t border-zinc-800 px-6 py-14">
         <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-xs">
           Egypt&apos;s trusted ultimate exotics marketplace. Quality vehicles, transparent pricing, exceptional service.
@@ -110,6 +206,59 @@ export default function PrivacyPolicyPage() {
             <p className="text-xs tracking-widest text-white font-semibold mb-4">SHOWROOM</p>
             <a href="/inventory" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Inventory</a>
             <a href="/sell-your-car" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Sell Your Car</a>
+            <a href="/news" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">News</a>
+          </div>
+          <div>
+            <p className="text-xs tracking-widest text-white font-semibold mb-4">ABOUT US</p>
+            <a href="/about" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">About Us</a>
+            <a href="/contact" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Contact</a>
+            <a href="/privacy-policy" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Privacy Policy &amp; Terms</a>
+          </div>
+        </div>
+        <div className="mb-10">
+          <p className="text-xs tracking-widest text-white font-semibold mb-4">FOLLOW US</p>
+          <div className="flex gap-4">
+            <a href="https://instagram.com/automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Instagram</a>
+            <a href="https://www.threads.net/@automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Threads</a>
+            <a href="https://www.facebook.com/share/14nBzBzMDiU/" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Facebook</a>
+          </div>
+        </div>
+        <div className="border-t border-zinc-800 pt-8 mb-8">
+          <p className="text-xs tracking-widest text-white font-semibold mb-4">CONTACT</p>
+          <div className="flex flex-col gap-3">
+            <a href={`tel:${PHONE}`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              0101 016 6333
+            </a>
+            <a href="mailto:Info@automotivehub.com" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
+              Info@automotivehub.com
+            </a>
+            <p className="flex items-center gap-3 text-sm text-zinc-400">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              6th of October, Cairo, Egypt
+            </p>
+          </div>
+        </div>
+        <div className="border-t border-zinc-900 pt-10 text-center flex flex-col items-center gap-6">
+          <p className="text-zinc-600 text-xs">© 2026 Automotive Hub. All rights reserved.</p>
+          <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
+        </div>
+      </footer>
+
+    </main>
+  )
+}          </div>
+        </div>
+        <div className="border-t border-zinc-900 pt-10 text-center flex flex-col items-center gap-6">
+          <p className="text-zinc-600 text-xs">© 2026 Automotive Hub. All rights reserved.</p>
+          <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
+        </div>
+      </footer>
+
+    </main>
+  )
+}            <a href="/sell-your-car" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Sell Your Car</a>
             <a href="/news" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">News</a>
           </div>
           <div>
