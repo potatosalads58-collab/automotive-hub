@@ -41,8 +41,8 @@ const SOCIAL_LINKS = [
   ============================================================
 */
 
-function useReveal(threshold = 0.2): [React.RefObject<HTMLDivElement | null>, boolean] {
-  const ref = useRef<HTMLDivElement>(null)
+function useInView<T extends HTMLElement>(threshold = 0.2): [React.RefObject<T | null>, boolean] {
+  const ref = useRef<T>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -64,6 +64,7 @@ function useReveal(threshold = 0.2): [React.RefObject<HTMLDivElement | null>, bo
   return [ref, visible]
 }
 
+// Text / block reveal — fade + rise
 function Reveal({
   children,
   className = '',
@@ -73,7 +74,7 @@ function Reveal({
   className?: string
   delay?: number
 }) {
-  const [ref, visible] = useReveal()
+  const [ref, visible] = useInView<HTMLDivElement>()
   return (
     <div
       ref={ref}
@@ -82,6 +83,35 @@ function Reveal({
     >
       {children}
     </div>
+  )
+}
+
+// Image reveal — fade + slow zoom-out on entry, then an optional
+// gentle continuous drift (kenburns) once it's actually on screen.
+function RevealImage({
+  src,
+  alt,
+  className = '',
+  delay = 0,
+  drift = false,
+}: {
+  src: string
+  alt: string
+  className?: string
+  delay?: number
+  drift?: boolean
+}) {
+  const [ref, visible] = useInView<HTMLImageElement>()
+  return (
+    <img
+      ref={ref}
+      src={src}
+      alt={alt}
+      className={`img-reveal ${visible ? 'img-reveal-visible' : ''} ${
+        drift && visible ? 'kenburns' : ''
+      } ${className}`}
+      style={{ transitionDelay: visible ? `${delay}ms` : '0ms' }}
+    />
   )
 }
 
@@ -141,7 +171,6 @@ export default function AboutPage() {
           </a>
         ))}
 
-        {/* Social dropdown */}
         <button
           onClick={() => setSocialOpen(!socialOpen)}
           className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-zinc-400 transition-colors duration-300 flex items-center justify-between w-full text-left"
@@ -175,10 +204,11 @@ export default function AboutPage() {
 
       {/* ========== 01 — HERO ========== */}
       <section className="relative h-screen min-h-[640px] w-full overflow-hidden">
-        <img
+        <RevealImage
           src="/wraith-hero.jpg"
           alt="Rolls-Royce Wraith at Automotive Hub"
-          className="kenburns absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
+          drift
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
 
@@ -247,10 +277,11 @@ export default function AboutPage() {
       {/* ========== 04 — DETAIL SPREAD ========== */}
       <section className="bg-black">
         <div className="w-full aspect-[4/5] overflow-hidden">
-          <img
+          <RevealImage
             src="/wraith-detail-main.jpg"
             alt="Rolls-Royce Wraith sill plate detail"
             className="h-full w-full object-cover"
+            drift
           />
         </div>
 
@@ -273,13 +304,28 @@ export default function AboutPage() {
 
         <div className="grid grid-cols-[1.2fr_1fr] gap-[2px] px-6 pb-24">
           <div className="row-span-2 aspect-[3/4] overflow-hidden">
-            <img src="/wraith-detail-1.jpg" alt="control dial detail" className="h-full w-full object-cover" />
+            <RevealImage
+              src="/wraith-detail-1.jpg"
+              alt="control dial detail"
+              className="h-full w-full object-cover"
+              delay={0}
+            />
           </div>
           <div className="aspect-[3/2.1] overflow-hidden">
-            <img src="/wraith-detail-2.jpg" alt="dashboard screen detail" className="h-full w-full object-cover" />
+            <RevealImage
+              src="/wraith-detail-2.jpg"
+              alt="dashboard screen detail"
+              className="h-full w-full object-cover"
+              delay={120}
+            />
           </div>
           <div className="aspect-[3/2.1] overflow-hidden">
-            <img src="/wraith-detail-3.jpg" alt="headrest detail" className="h-full w-full object-cover" />
+            <RevealImage
+              src="/wraith-detail-3.jpg"
+              alt="headrest detail"
+              className="h-full w-full object-cover"
+              delay={240}
+            />
           </div>
         </div>
       </section>
@@ -331,10 +377,11 @@ export default function AboutPage() {
 
       {/* ========== 06 — CINEMATIC VISUAL BREAK ========== */}
       <section className="relative h-[70vh] min-h-[460px] w-full overflow-hidden flex items-center justify-center">
-        <img
+        <RevealImage
           src="/wraith-cinematic.jpg"
           alt="Rolls-Royce Wraith door handle detail"
-          className="kenburns absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover"
+          drift
         />
         <div className="absolute inset-0 bg-black/55" />
         <Reveal className="relative text-center px-6">
@@ -363,20 +410,22 @@ export default function AboutPage() {
           </p>
         </Reveal>
         <div className="ml-10 w-[calc(100%-2.5rem)] aspect-[4/3] overflow-hidden">
-          <img
+          <RevealImage
             src="/showroom.jpg"
             alt="Automotive Hub showroom"
             className="h-full w-full object-cover"
+            drift
           />
         </div>
       </section>
 
       {/* ========== 08 — CLOSING ========== */}
       <section className="relative px-6 py-28 min-h-[380px] flex items-end overflow-hidden">
-        <img
+        <RevealImage
           src="/wraith-closing.jpg"
           alt=""
-          className="kenburns absolute inset-0 h-full w-full object-cover opacity-25"
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
+          drift
         />
         <div className="absolute inset-0 bg-black/65" />
         <Reveal className="relative">
@@ -481,15 +530,26 @@ export default function AboutPage() {
           opacity: 1;
           transform: translateY(0);
         }
+        .img-reveal {
+          opacity: 0;
+          transform: scale(1.12);
+          transition: opacity 1.3s cubic-bezier(0.16, 1, 0.3, 1),
+            transform 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .img-reveal-visible {
+          opacity: 1;
+          transform: scale(1);
+        }
         .kenburns {
-          animation: kenburns 18s ease-out forwards;
+          animation: kenburns 16s ease-out forwards;
+          animation-delay: 0.3s;
         }
         @keyframes kenburns {
           0% {
             transform: scale(1);
           }
           100% {
-            transform: scale(1.08);
+            transform: scale(1.09);
           }
         }
         .bar {
@@ -511,7 +571,8 @@ export default function AboutPage() {
           transform: translateY(-5px) rotate(-45deg);
         }
         @media (prefers-reduced-motion: reduce) {
-          .reveal {
+          .reveal,
+          .img-reveal {
             transition: none;
             opacity: 1;
             transform: none;
@@ -524,3 +585,5 @@ export default function AboutPage() {
     </main>
   )
 }
+
+      
