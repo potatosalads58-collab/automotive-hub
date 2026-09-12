@@ -1,7 +1,45 @@
 'use client'
 
 import { useEffect, useRef, useState, ReactNode } from 'react'
-const PHONE = '+2010000000'
+
+const PHONE = '01010166333'
+const EMAIL = 'Info@automotivehub.com'
+const INSTAGRAM_URL = 'https://instagram.com/automotivehubegy'
+const THREADS_URL = 'https://www.threads.net/@automotivehubegy'
+const FACEBOOK_URL = 'https://www.facebook.com/share/14nBzBzMDiU/'
+
+const NAV_LINKS = [
+  { label: 'Inventory', href: '/inventory' },
+  { label: 'Sell Your Car', href: '/sell-your-car' },
+  { label: 'News', href: '/news' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
+]
+
+const SOCIAL_LINKS = [
+  { label: 'Instagram', href: INSTAGRAM_URL },
+  { label: 'Threads', href: THREADS_URL },
+  { label: 'Facebook', href: FACEBOOK_URL },
+]
+
+/*
+  ============================================================
+  IMAGES — drop these into your /public folder with these
+  exact filenames:
+
+  /logo-nav.png            — existing navbar logo
+  /logo-full.png           — existing footer logo
+  /wraith-hero.jpg         — blue Wraith outside showroom (HERO)
+  /wraith-detail-main.jpg  — "WRAITH" sill plate (DETAIL — main)
+  /wraith-detail-1.jpg     — silver control dial (DETAIL — mosaic)
+  /wraith-detail-2.jpg     — dashboard screen (DETAIL — mosaic)
+  /wraith-detail-3.jpg     — headrest / starlight (DETAIL — mosaic)
+  /wraith-cinematic.jpg    — door handle + RR badge, dusk (CINEMATIC BREAK)
+  /showroom.jpg            — black Wraith front end (SHOWROOM)
+  /wraith-closing.jpg      — steering wheel wide shot (CLOSING bg)
+  ============================================================
+*/
 
 function useReveal(threshold = 0.2): [React.RefObject<HTMLDivElement | null>, boolean] {
   const ref = useRef<HTMLDivElement>(null)
@@ -50,6 +88,7 @@ function Reveal({
 export default function AboutPage() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [socialOpen, setSocialOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -57,10 +96,19 @@ export default function AboutPage() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const closeMenu = () => {
+    setMenuOpen(false)
+    setSocialOpen(false)
+  }
+
   return (
     <main className="bg-black text-white overflow-x-hidden">
-      {/* NAVBAR */}
-      <nav className={`fixed top-0 left-0 right-0 z-[55] flex items-center justify-between px-6 py-5 transition-all duration-500 ${scrolled ? 'bg-black border-b border-zinc-800' : 'bg-transparent'}`}>
+      {/* ========== NAVBAR ========== */}
+      <nav
+        className={`fixed top-0 left-0 right-0 z-[55] flex items-center justify-between px-6 py-5 transition-all duration-500 ${
+          scrolled ? 'bg-black border-b border-zinc-800' : 'bg-transparent'
+        }`}
+      >
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="touch-manipulation cursor-pointer z-[60] relative flex flex-col gap-[5px]"
@@ -70,24 +118,59 @@ export default function AboutPage() {
           <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
           <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
         </button>
-        <img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" />
+        <a href="/">
+          <img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" />
+        </a>
         <div className="w-6" />
       </nav>
 
-      {/* MOBILE MENU */}
-      <div className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 transition-all duration-500 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        {['Inventory', 'Sell Your Car', 'Contact', 'About'].map((item, i) => (
-          <a key={i} href="#"
-            onClick={() => setMenuOpen(false)}
-            className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
-            {item}
+      {/* ========== MOBILE MENU ========== */}
+      <div
+        className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 overflow-y-auto transition-all duration-500 ${
+          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {NAV_LINKS.map((item, i) => (
+          <a
+            key={i}
+            href={item.href}
+            onClick={closeMenu}
+            className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-zinc-400 transition-colors duration-300"
+          >
+            {item.label}
           </a>
         ))}
-        <a href="https://instagram.com/automotivehubegy" target="_blank"
-          onClick={() => setMenuOpen(false)}
-          className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
-          Instagram
-        </a>
+
+        {/* Social dropdown */}
+        <button
+          onClick={() => setSocialOpen(!socialOpen)}
+          className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-zinc-400 transition-colors duration-300 flex items-center justify-between w-full text-left"
+        >
+          Social
+          <span
+            className="text-lg transition-transform duration-300"
+            style={{ transform: socialOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          >
+            ↓
+          </span>
+        </button>
+        <div
+          className="overflow-hidden transition-all duration-400"
+          style={{ maxHeight: socialOpen ? `${SOCIAL_LINKS.length * 64}px` : '0px' }}
+        >
+          {SOCIAL_LINKS.map((social, i) => (
+            <a
+              key={i}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={closeMenu}
+              className="block font-display text-xl font-light tracking-widest py-4 pl-4 border-b border-zinc-900 text-zinc-400 hover:text-white transition-colors duration-300"
+            >
+              {social.label}
+            </a>
+          ))}
+        </div>
       </div>
 
       {/* ========== 01 — HERO ========== */}
@@ -279,8 +362,6 @@ export default function AboutPage() {
             focused entirely on the experience of the car.
           </p>
         </Reveal>
-        {/* FIX: was ml-10 + w-full, which pushed the image past the right
-            edge and forced the browser to zoom the whole page out. */}
         <div className="ml-10 w-[calc(100%-2.5rem)] aspect-[4/3] overflow-hidden">
           <img
             src="/showroom.jpg"
@@ -313,7 +394,7 @@ export default function AboutPage() {
         </Reveal>
       </section>
 
-      {/* ========== NEWSLETTER (existing, shared) ========== */}
+      {/* ========== NEWSLETTER ========== */}
       <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
         <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
         <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
@@ -339,7 +420,7 @@ export default function AboutPage() {
         </form>
       </section>
 
-      {/* FOOTER - updated */}
+      {/* ========== FOOTER ========== */}
       <footer className="bg-zinc-950 border-t border-zinc-800 px-6 py-14">
         <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-xs">
           Egypt&apos;s trusted ultimate exotics marketplace. Quality vehicles, transparent pricing, exceptional service.
@@ -355,15 +436,15 @@ export default function AboutPage() {
             <p className="text-xs tracking-widest text-white font-semibold mb-4">ABOUT US</p>
             <a href="/about" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">About Us</a>
             <a href="/contact" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Contact</a>
-            <a href="/privacy-policy" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Privacy Policy &amp; Terms</a>
+            <a href="/privacy" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Privacy Policy &amp; Terms</a>
           </div>
         </div>
         <div className="mb-10">
           <p className="text-xs tracking-widest text-white font-semibold mb-4">FOLLOW US</p>
           <div className="flex gap-4">
-            <a href="https://instagram.com/automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Instagram</a>
-            <a href="https://www.threads.net/@automotivehubegy" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Threads</a>
-            <a href="https://www.facebook.com/share/14nBzBzMDiU/" target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Facebook</a>
+            <a href={INSTAGRAM_URL} target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Instagram</a>
+            <a href={THREADS_URL} target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Threads</a>
+            <a href={FACEBOOK_URL} target="_blank" className="text-sm text-zinc-400 hover:text-white transition-colors">Facebook</a>
           </div>
         </div>
         <div className="border-t border-zinc-800 pt-8 mb-8">
@@ -373,9 +454,9 @@ export default function AboutPage() {
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
               0101 016 6333
             </a>
-            <a href="mailto:Info@automotivehub.com" className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors">
+            <a href={`mailto:${EMAIL}`} className="flex items-center gap-3 text-sm text-zinc-400 hover:text-white transition-colors">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 6-10 7L2 6"/></svg>
-              Info@automotivehub.com
+              {EMAIL}
             </a>
             <p className="flex items-center gap-3 text-sm text-zinc-400">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -385,10 +466,4 @@ export default function AboutPage() {
         </div>
         <div className="border-t border-zinc-900 pt-10 text-center flex flex-col items-center gap-6">
           <p className="text-zinc-600 text-xs">© 2026 Automotive Hub. All rights reserved.</p>
-          <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
-        </div>
-      </footer>
-
-    </main>
-  )
-}
+         
