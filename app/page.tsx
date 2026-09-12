@@ -543,7 +543,7 @@ export default function Home() {
             <p className="text-xs tracking-widest text-white font-semibold mb-4">ABOUT US</p>
             <a href="/about" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">About Us</a>
             <a href="/contact" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Contact</a>
-            <a href="/privacy-policy" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Privacy Policy &amp; Terms</a>
+            <a href="/privacy" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Privacy Policy &amp; Terms</a>
           </div>
         </div>
         <div className="mb-10">
