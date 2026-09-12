@@ -423,7 +423,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FEATURED CARS */}
+      {/* FEATURED CARS - من Sanity */}
       <section className="bg-black px-6 py-16">
         <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p>
         <h2 className="font-display text-3xl font-light mb-10">Featured Cars</h2>
@@ -432,26 +432,27 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {cars.map((car, i) => (
-              <Reveal key={car._id} delay={i * 80}>
-                <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
-                  <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }}>
-                    {car.thumbnail && (
-                      <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
-                        className="w-full h-full object-cover" />
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <p className="text-white text-xl font-light mb-3">{car.title}</p>
-                    <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
-                      <span>{car.mileage?.toLocaleString()} km</span>
-                      <span>·</span>
-                      <span>{car.year}</span>
-                    </div>
-                    <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
-                  </div>
-                </a>
-              </Reveal>
-            ))}
+  <AnimatedCard key={car._id} index={i}>
+    <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
+      <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }}>
+        {car.thumbnail && (
+          <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
+            className="w-full h-full object-cover" />
+        )}
+      </div>
+      <div className="p-4">
+        <p className="text-white text-xl font-light mb-3">{car.title}</p>
+        <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
+          <span>{car.mileage?.toLocaleString()} km</span>
+          <span>·</span>
+          <span>{car.year}</span>
+        </div>
+        <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
+      </div>
+    </a>
+  </AnimatedCard>
+))}
+            
           </div>
         )}
         <a href="/inventory"
