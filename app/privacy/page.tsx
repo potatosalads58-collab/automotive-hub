@@ -253,7 +253,5 @@ export default function PrivacyPolicyPage() {
           <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
         </div>
       </footer>
-
-    </main>
   )
               }
