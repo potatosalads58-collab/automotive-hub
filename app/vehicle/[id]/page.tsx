@@ -263,6 +263,8 @@ const shareLinks = {
             className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
             {item}
           </a>
+        ))}
+      </div>
 
       {loading ? (
         <div className="h-screen flex items-center justify-center text-zinc-600 text-sm">Loading...</div>
