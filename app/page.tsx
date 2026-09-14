@@ -328,8 +328,7 @@ export default function Home() {
       `}</style>
 
       <Navbar />
-      </div>
-
+    
       {/* HERO */}
       <section className="relative h-screen w-full overflow-hidden bg-black">
         <img
