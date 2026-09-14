@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
+import Navbar from '@/components/Navbar'
 import { useParams } from 'next/navigation'
 import { client, Car } from '../../../sanity/lib/client'
 import { urlFor } from '../../../sanity/lib/imageUrl'
@@ -239,32 +240,8 @@ const shareLinks = {
         .field-input { transition: border-color 0.25s ease, background 0.25s ease; }
         .field-input:focus { background: rgba(255,255,255,0.02); }
       `}</style>
-
-      {/* NAVBAR */}
-      <nav className={`fixed top-0 left-0 right-0 z-[55] flex items-center justify-between px-6 py-5 transition-all duration-500 ${scrolled ? 'bg-black border-b border-zinc-800' : 'bg-transparent'}`}>
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="touch-manipulation cursor-pointer z-[60] relative flex flex-col gap-[5px]"
-          aria-label="Menu"
-        >
-          <span className={`bar ${menuOpen ? 'bar-1-open' : ''}`}></span>
-          <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
-          <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
-        </button>
-        <img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" />
-        <div className="w-6" />
-      </nav>
-
-      {/* MOBILE MENU */}
-      <div className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 transition-all duration-500 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        {['Inventory', 'Sell Your Car', 'Contact', 'About'].map((item, i) => (
-          <a key={i} href="#"
-            onClick={() => setMenuOpen(false)}
-            className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
-            {item}
-          </a>
-        ))}
-      </div>
+  
+<Navbar />
 
       {loading ? (
         <div className="h-screen flex items-center justify-center text-zinc-600 text-sm">Loading...</div>
