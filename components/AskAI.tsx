@@ -13,11 +13,9 @@ export default function AskAI() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
-  
-  // States للتحكم في السحب
-  const [dragOffset, setDragOffset] = useState(0)
-  const [isDragging, setIsDragging] = useState(false)
-  const startXRef = useRef(0)
+
+  // بنحفظ نقطة بداية اللمس أو السحب
+  const touchStartX = useRef(0)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
@@ -34,31 +32,18 @@ export default function AskAI() {
     }
   }, [open, maximized])
 
-  // منطق بدء السحب
-  const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
-    setIsDragging(true)
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
-    startXRef.current = clientX
+  // أول ما يحط إيده أو يدوس بالماوس
+  const handleStart = (clientX: number) => {
+    touchStartX.current = clientX
   }
 
-  // منطق أثناء السحب
-  const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
-    if (!isDragging) return
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
-    const diff = startXRef.current - clientX // لأن الزرار في اليمين، السحب للشمال يكون موجب
-    if (diff > 0) {
-      setDragOffset(Math.min(diff, 120)) // أقصى مسافة للسحب
+  // أول ما يشيل إيده بنحسب اتجاه السحب
+  const handleEnd = (clientX: number) => {
+    const distance = touchStartX.current - clientX
+    // لو اتسحب ناحية الشمال بمسافة أكبر من 40 بكسل، افتح الشات فوراً
+    if (distance > 40) {
+      setOpen(true)
     }
-  }
-
-  // منطق نهاية السحب
-  const handleTouchEnd = () => {
-    if (!isDragging) return
-    setIsDragging(false)
-    if (dragOffset > 50) {
-      setOpen(true) // لو سحب أكتر من 50 بكسل، افتح الشات
-    }
-    setDragOffset(0) // رجع مكان الزرار طبيعي
   }
 
   const sendMessage = async () => {
@@ -88,7 +73,6 @@ export default function AskAI() {
   const closePanel = () => {
     setOpen(false)
     setMaximized(false)
-    setDragOffset(0)
   }
 
   return (
@@ -103,23 +87,16 @@ export default function AskAI() {
         }
       `}</style>
 
-      {/* Side tab with pull/drag support + click fallback */}
+      {/* Side tab — تدعم الكليك والسحب السريع للشمال */}
       {!open && (
         <button
-          onClick={() => setOpen(true)} // يقدر يدوس عليه برضه عادي
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-          onMouseDown={handleTouchStart}
-          onMouseMove={handleTouchMove}
-          onMouseUp={handleTouchEnd}
-          onMouseLeave={handleTouchEnd}
+          onClick={() => setOpen(true)}
+          onTouchStart={(e) => handleStart(e.touches[0].clientX)}
+          onTouchEnd={(e) => handleEnd(e.changedTouches[0].clientX)}
+          onMouseDown={(e) => handleStart(e.clientX)}
+          onMouseUp={(e) => handleEnd(e.clientX)}
           aria-label="Ask AI"
-          className="ask-ai-tab fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex flex-col items-center gap-3 bg-zinc-800/70 backdrop-blur-sm border border-zinc-700/50 border-r-0 rounded-l-2xl py-5 px-2.5 cursor-grab active:cursor-grabbing select-none"
-          style={{
-            transform: `translateY(-50%) translateX(-${dragOffset}px)`,
-            transition: isDragging ? 'none' : 'transform 0.2s ease',
-          }}
+          className="ask-ai-tab fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex flex-col items-center gap-3 bg-zinc-800/70 backdrop-blur-sm border border-zinc-700/50 border-r-0 rounded-l-2xl py-5 px-2.5 cursor-pointer select-none"
         >
           <span
             className="text-[10px] tracking-[0.25em] text-zinc-300 whitespace-nowrap pointer-events-none"
