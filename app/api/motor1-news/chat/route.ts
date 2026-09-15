@@ -56,6 +56,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ reply: result.text });
   } catch (error) {
     console.error('Chat API Error:', error);
-    return NextResponse.json({ reply: `DEBUG ERROR: ${message}` }, { status: 500 });
+    return NextResponse.json({ reply: `DEBUG ERROR: ${error}` }, { status: 500 });
   }
 }
