@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import { createClient } from 'next-sanity';
 
+// Allow enough time for retries on Vercel (needs a paid plan for >10s on Hobby)
+export const maxDuration = 60;
+
 const sanityClient = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
   dataset: process.env.NEXT_PUBLIC_SANITY_DATASET || 'production',
@@ -13,6 +16,28 @@ const apiKey = process.env.GEMINI_API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
 
 type IncomingMessage = { role: 'user' | 'assistant'; content: string };
+
+async function generateWithRetry(
+  params: Parameters<typeof ai.models.generateContent>[0],
+  maxRetries = 5
+) {
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await ai.models.generateContent(params);
+    } catch (err) {
+      lastError = err;
+      const message = err instanceof Error ? err.message : String(err);
+      const isOverloaded = message.includes('UNAVAILABLE') || message.includes('503');
+      if (isOverloaded && attempt < maxRetries) {
+        await new Promise((r) => setTimeout(r, 1000 * (attempt + 1))); // 1s, 2s, 3s...
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,36 +51,42 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ reply: 'No message provided.' }, { status: 400 });
     }
 
-    // Pull live inventory data from Sanity
     const sanityData = await sanityClient.fetch(`
       *[_type == "car"]{ title, price, year, status }[0...10]
     `);
 
     const systemInstruction = `
-      أنت مساعد ذكي فاخر لموقع سيارات (Automotive Hub).
-      استخدم البيانات المتاحة التالية فقط من الـ CMS للإجابة على استفسارات المستخدمين:
+      You are a refined, luxury assistant for Automotive Hub, a premium car
+      dealership. Use only the following live inventory data from the CMS to
+      answer questions:
       ${JSON.stringify(sanityData)}
 
-      إذا لم تجد الإجابة في البيانات، أجب بأسلوب راقي وقصير جداً.
+      Language rule: always reply in the same language as the user's most
+      recent message. If they write in English, reply in English. If they
+      write in Arabic, reply in Arabic. If the language is unclear or mixed,
+      default to Arabic.
+
+      If the answer isn't in the data provided, respond briefly and elegantly
+      without inventing information.
     `;
 
-    // Map the full conversation into Gemini's format so it remembers context
     const contents = messages.map((m) => ({
       role: m.role === 'assistant' ? 'model' : 'user',
       parts: [{ text: m.content }],
     }));
 
-    const result = await ai.models.generateContent({
+    const result = await generateWithRetry({
       model: 'gemini-3.5-flash',
       contents,
-      config: {
-        systemInstruction,
-      },
+      config: { systemInstruction },
     });
 
     return NextResponse.json({ reply: result.text });
   } catch (error) {
     console.error('Chat API Error:', error);
-    return NextResponse.json({ reply: `DEBUG ERROR: ${error}` }, { status: 500 });
+    return NextResponse.json(
+      { reply: 'Sorry, something went wrong. / عذراً، حدث خطأ أثناء الاتصال بالخادم.' },
+      { status: 500 }
+    );
   }
 }
