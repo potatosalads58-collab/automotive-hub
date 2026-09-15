@@ -13,12 +13,16 @@ export default function AskAI() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  
+  // States للتحكم في السحب
+  const [dragOffset, setDragOffset] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
+  const startXRef = useRef(0)
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, loading])
 
-  // Lock page scroll only while the panel is open AND maximized (fullscreen)
   useEffect(() => {
     if (open && maximized) {
       document.body.style.overflow = 'hidden'
@@ -29,6 +33,33 @@ export default function AskAI() {
       document.body.style.overflow = ''
     }
   }, [open, maximized])
+
+  // منطق بدء السحب
+  const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+    setIsDragging(true)
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    startXRef.current = clientX
+  }
+
+  // منطق أثناء السحب
+  const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!isDragging) return
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const diff = startXRef.current - clientX // لأن الزرار في اليمين، السحب للشمال يكون موجب
+    if (diff > 0) {
+      setDragOffset(Math.min(diff, 120)) // أقصى مسافة للسحب
+    }
+  }
+
+  // منطق نهاية السحب
+  const handleTouchEnd = () => {
+    if (!isDragging) return
+    setIsDragging(false)
+    if (dragOffset > 50) {
+      setOpen(true) // لو سحب أكتر من 50 بكسل، افتح الشات
+    }
+    setDragOffset(0) // رجع مكان الزرار طبيعي
+  }
 
   const sendMessage = async () => {
     const text = input.trim()
@@ -57,6 +88,7 @@ export default function AskAI() {
   const closePanel = () => {
     setOpen(false)
     setMaximized(false)
+    setDragOffset(0)
   }
 
   return (
@@ -71,15 +103,26 @@ export default function AskAI() {
         }
       `}</style>
 
-      {/* Side tab — unchanged, still says "PULL TO ASK AI" */}
+      {/* Side tab with pull/drag support + click fallback */}
       {!open && (
         <button
-          onClick={() => setOpen(true)}
+          onClick={() => setOpen(true)} // يقدر يدوس عليه برضه عادي
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleTouchStart}
+          onMouseMove={handleTouchMove}
+          onMouseUp={handleTouchEnd}
+          onMouseLeave={handleTouchEnd}
           aria-label="Ask AI"
-          className="ask-ai-tab fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex flex-col items-center gap-3 bg-zinc-800/70 backdrop-blur-sm border border-zinc-700/50 border-r-0 rounded-l-2xl py-5 px-2.5"
+          className="ask-ai-tab fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex flex-col items-center gap-3 bg-zinc-800/70 backdrop-blur-sm border border-zinc-700/50 border-r-0 rounded-l-2xl py-5 px-2.5 cursor-grab active:cursor-grabbing select-none"
+          style={{
+            transform: `translateY(-50%) translateX(-${dragOffset}px)`,
+            transition: isDragging ? 'none' : 'transform 0.2s ease',
+          }}
         >
           <span
-            className="text-[10px] tracking-[0.25em] text-zinc-300 whitespace-nowrap"
+            className="text-[10px] tracking-[0.25em] text-zinc-300 whitespace-nowrap pointer-events-none"
             style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
           >
             PULL TO ASK AI
@@ -87,7 +130,7 @@ export default function AskAI() {
         </button>
       )}
 
-      {/* Backdrop — only when fullscreen, so the compact widget never blocks the page */}
+      {/* Backdrop */}
       {open && maximized && (
         <div className="fixed inset-0 bg-black/60 z-[85]" onClick={closePanel} />
       )}
@@ -116,12 +159,10 @@ export default function AskAI() {
                 className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
               >
                 {maximized ? (
-                  // Minimize icon
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
                   </svg>
                 ) : (
-                  // Maximize icon
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
                   </svg>
