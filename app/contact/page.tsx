@@ -302,7 +302,7 @@ export default function ContactPage() {
       </section>
 
       {/* LOCATION - dark themed map */}
-      <section className="px-6 pb-16">
+      <section id="location" className="px-6 pb-16">
         <RevealOnScroll index={3}>
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-px bg-white" />
