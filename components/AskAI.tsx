@@ -6,10 +6,6 @@ type Message = {
   content: string
 }
 
-const PANEL_MAX_WIDTH = 380
-const PANEL_MAX_HEIGHT = 560
-const OPEN_THRESHOLD_RATIO = 0.3 // drag past 30% of panel width to snap open
-
 export default function AskAI() {
   const [open, setOpen] = useState(false)
   const [maximized, setMaximized] = useState(false)
@@ -17,20 +13,6 @@ export default function AskAI() {
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
-
-  // --- drag-to-reveal state ---
-  const [panelWidth, setPanelWidth] = useState(320)
-  const [dragging, setDragging] = useState(false)
-  const [dragX, setDragX] = useState(0) // 0 = hidden, panelWidth = fully revealed
-  const startXRef = useRef(0)
-  const hasDraggedRef = useRef(false)
-
-  useEffect(() => {
-    const updateWidth = () => setPanelWidth(Math.min(window.innerWidth * 0.92, PANEL_MAX_WIDTH))
-    updateWidth()
-    window.addEventListener('resize', updateWidth)
-    return () => window.removeEventListener('resize', updateWidth)
-  }, [])
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
@@ -46,39 +28,6 @@ export default function AskAI() {
       document.body.style.overflow = ''
     }
   }, [open, maximized])
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    if (open) return // already open, tab is hidden anyway
-    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
-    startXRef.current = e.clientX
-    hasDraggedRef.current = false
-    setDragging(true)
-  }
-
-  const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragging) return
-    const delta = startXRef.current - e.clientX // dragging left = positive
-    if (Math.abs(delta) > 4) hasDraggedRef.current = true
-    setDragX(Math.min(Math.max(delta, 0), panelWidth))
-  }
-
-  const handlePointerUp = () => {
-    if (!dragging) return
-    setDragging(false)
-    const shouldOpen = dragX > panelWidth * OPEN_THRESHOLD_RATIO
-    setOpen(shouldOpen)
-    setDragX(0)
-  }
-
-  // Keyboard accessibility fallback — ignores the synthetic click
-  // that fires after a real drag, only reacts to genuine keyboard activation
-  const handleTabClick = () => {
-    if (hasDraggedRef.current) {
-      hasDraggedRef.current = false
-      return
-    }
-    setOpen(true)
-  }
 
   const sendMessage = async () => {
     const text = input.trim()
@@ -109,38 +58,33 @@ export default function AskAI() {
     setMaximized(false)
   }
 
-  const isPanelVisible = open || dragging
-
   return (
     <>
       <style>{`
-        @keyframes ask-ai-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.0); }
-          50% { box-shadow: 0 0 18px 4px rgba(255,255,255,0.18); }
+        @keyframes hint-bar-pulse {
+          0%, 82%, 100% { opacity: 0.3; box-shadow: none; transform: scaleY(1); }
+          90% { opacity: 1; box-shadow: 0 0 14px 3px rgba(255,255,255,0.55); transform: scaleY(1.15); }
         }
-        .ask-ai-tab {
-          animation: ask-ai-pulse 4.5s ease-in-out infinite;
-          touch-action: none;
+        @keyframes hint-label-pulse {
+          0%, 80%, 100% { opacity: 0; transform: translateX(4px); }
+          88% { opacity: 1; transform: translateX(0px); }
+          95% { opacity: 0; transform: translateX(4px); }
         }
+        .hint-bar { animation: hint-bar-pulse 6.5s ease-in-out infinite; }
+        .hint-label { animation: hint-label-pulse 6.5s ease-in-out infinite; }
       `}</style>
 
-      {/* Side tab — swipe/drag it left to reveal the panel */}
+      {/* Quiet hint — a thin line that glows briefly every ~6.5s */}
       {!open && (
         <button
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          onClick={handleTabClick}
-          aria-label="Ask AI — swipe to open"
-          className="ask-ai-tab fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex flex-col items-center gap-3 bg-zinc-800/70 backdrop-blur-sm border border-zinc-700/50 border-r-0 rounded-l-2xl py-5 px-2.5 cursor-grab active:cursor-grabbing"
+          onClick={() => setOpen(true)}
+          aria-label="Ask AI"
+          className="fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex items-center gap-2 py-6 pl-3 pr-1.5"
         >
-          <span
-            className="text-[10px] tracking-[0.25em] text-zinc-300 whitespace-nowrap"
-            style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
-          >
-            PULL TO ASK AI
+          <span className="hint-label text-[9px] tracking-[0.2em] text-zinc-400 whitespace-nowrap">
+            pull to ask ai
           </span>
+          <span className="hint-bar block w-[3px] h-16 rounded-full bg-white" />
         </button>
       )}
 
@@ -149,27 +93,18 @@ export default function AskAI() {
         <div className="fixed inset-0 bg-black/60 z-[85]" onClick={closePanel} />
       )}
 
-      {/* Chat panel */}
-      {isPanelVisible && (
+      {/* Chat panel — opens with a soft scale/fade, not a drag */}
+      {open && (
         <div
-          className={`fixed z-[90] bg-zinc-950 border border-zinc-800 flex flex-col ${
-            maximized ? 'inset-0 rounded-none' : 'bottom-5 right-5 rounded-2xl shadow-2xl'
+          className={`fixed z-[90] bg-zinc-950 border border-zinc-800 flex flex-col transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            maximized
+              ? 'inset-0 rounded-none opacity-100 scale-100'
+              : 'bottom-5 right-5 rounded-2xl shadow-2xl opacity-100 scale-100'
           }`}
           style={
             maximized
-              ? { transition: dragging ? 'none' : 'all 300ms cubic-bezier(0.34, 1.2, 0.64, 1)' }
-              : {
-                  width: panelWidth,
-                  height: Math.min(window.innerHeight * 0.75, PANEL_MAX_HEIGHT),
-                  transform: dragging
-                    ? `translateX(${panelWidth - dragX}px)`
-                    : open
-                    ? 'translateX(0px)'
-                    : `translateX(${panelWidth + 24}px)`,
-                  transition: dragging
-                    ? 'none'
-                    : 'transform 380ms cubic-bezier(0.34, 1.35, 0.64, 1)',
-                }
+              ? undefined
+              : { width: 'min(90vw, 340px)', height: 'min(70vh, 500px)' }
           }
         >
           {/* Header */}

@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState, useRef } from 'react'
 import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 type MotorNewsItem = {
   category: string
@@ -167,45 +168,7 @@ export default function NewsPage() {
         )}
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-zinc-950 border-t border-zinc-800 px-6 py-14">
-        <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-xs">
-          Egypt&apos;s trusted ultimate exotics marketplace. Quality vehicles, transparent pricing, exceptional service.
-        </p>
-        <div className="grid grid-cols-3 gap-6 mb-10">
-          <div>
-            <p className="text-xs tracking-widest text-white font-semibold mb-4">SHOWROOM</p>
-            {['Inventory', 'Sell Your Car', 'Compare', 'News & Blogs'].map((item, i) => (
-              <a key={i} href="#" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">{item}</a>
-            ))}
-          </div>
-          <div>
-            <p className="text-xs tracking-widest text-white font-semibold mb-4">ABOUT US</p>
-            {['About Us', 'Services', 'Terms & Conditions', 'Privacy Policy'].map((item, i) => (
-              <a key={i} href="#" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">{item}</a>
-            ))}
-          </div>
-          <div>
-            <p className="text-xs tracking-widest text-white font-semibold mb-4">FOLLOW US</p>
-            <a href="https://instagram.com/automotivehubegy" target="_blank" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">Instagram</a>
-            {['TikTok', 'Facebook'].map((item, i) => (
-              <a key={i} href="#" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">{item}</a>
-            ))}
-          </div>
-        </div>
-        <div className="border-t border-zinc-800 pt-8 mb-8">
-          <p className="text-xs tracking-widest text-white font-semibold mb-4">CONTACT</p>
-          <div className="flex flex-col gap-2">
-            <a href="tel:01006666802" className="text-sm text-zinc-400 hover:text-white transition-colors">📞 01006666802</a>
-            <a href="mailto:automotivehub@gmail.com" className="text-sm text-zinc-400 hover:text-white transition-colors">✉️ automotivehub@gmail.com</a>
-            <p className="text-sm text-zinc-400">📍 Cairo, Egypt</p>
-          </div>
-        </div>
-        <div className="border-t border-zinc-900 pt-10 text-center flex flex-col items-center gap-6">
-          <p className="text-zinc-600 text-xs">© 2026 Automotive Hub. All rights reserved.</p>
-          <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
-        </div>
-      </footer>
+      <Footer />
 
     </main>
   )

@@ -1,6 +1,8 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import Navbar from '@/components/Navbar'
+import Footer from '@/components/Footer'
 
 const allCars = [
   { make: "Cadillac", model: "Escalade", km: "2,700", price: 14950000, type: "SUV", fuel: "Petrol", slug: "cadillac-escalade", year: 2023 },
@@ -96,29 +98,7 @@ export default function Inventory() {
         .filter-btn.active { background: white; color: black; }
       `}</style>
 
-      {/* NAVBAR */}
-      <nav className={`fixed top-0 left-0 right-0 z-[55] flex items-center justify-between px-6 py-5 transition-all duration-500 ${scrolled ? 'bg-black border-b border-zinc-800' : 'bg-black'}`}>
-        <button onClick={() => setMenuOpen(!menuOpen)}
-          className="touch-manipulation cursor-pointer z-[60] relative flex flex-col gap-[5px]" aria-label="Menu">
-          <span className={`bar ${menuOpen ? 'bar-1-open' : ''}`}></span>
-          <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
-          <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
-        </button>
-        <Link href="/">
-          <img src="/logo-nav.png" alt="Logo" className="h-6 w-auto md:h-8" />
-        </Link>
-        <div className="w-6" />
-      </nav>
-
-      {/* MOBILE MENU */}
-      <div className={`fixed inset-0 bg-black z-[50] flex flex-col justify-start pt-28 px-8 transition-all duration-500 ${menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-        {['Home', 'Inventory', 'Sell Your Car', 'Contact', 'About'].map((item, i) => (
-          <a key={i} href={item === 'Home' ? '/' : '#'} onClick={() => setMenuOpen(false)}
-            className="font-display text-3xl font-light tracking-widest py-5 border-b border-zinc-800 text-white hover:text-red-500 transition-colors duration-300">
-            {item}
-          </a>
-        ))}
-      </div>
+      <Navbar />
 
       {/* HERO IMAGE */}
       <div className="relative w-full pt-[72px]" style={{ height: '35vh' }}>
@@ -204,44 +184,7 @@ export default function Inventory() {
         )}
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-zinc-950 border-t border-zinc-800 px-6 py-14">
-        <p className="text-zinc-400 text-sm leading-relaxed mb-10 max-w-xs">
-          Egypt&apos;s trusted ultimate exotics marketplace. Quality vehicles, transparent pricing, exceptional service.
-        </p>
-        <div className="grid grid-cols-3 gap-6 mb-10">
-          <div>
-            <p className="text-xs tracking-widest text-white font-semibold mb-4">SHOWROOM</p>
-            {['Inventory', 'Sell Your Car', 'Compare', 'News & Blogs'].map((item, i) => (
-              <a key={i} href="#" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">{item}</a>
-            ))}
-          </div>
-          <div>
-            <p className="text-xs tracking-widest text-white font-semibold mb-4">ABOUT US</p>
-            {['About Us', 'Services', 'Terms & Conditions', 'Privacy Policy'].map((item, i) => (
-              <a key={i} href="#" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">{item}</a>
-            ))}
-          </div>
-          <div>
-            <p className="text-xs tracking-widest text-white font-semibold mb-4">FOLLOW US</p>
-            {['Instagram', 'TikTok', 'Facebook'].map((item, i) => (
-              <a key={i} href="#" className="block text-sm text-zinc-400 hover:text-white mb-2.5 transition-colors">{item}</a>
-            ))}
-          </div>
-        </div>
-        <div className="border-t border-zinc-800 pt-8 mb-8">
-          <p className="text-xs tracking-widest text-white font-semibold mb-4">CONTACT</p>
-          <div className="flex flex-col gap-2">
-            <a href="tel:01006666802" className="text-sm text-zinc-400 hover:text-white transition-colors">📞 01006666802</a>
-            <a href="mailto:automotivehub@gmail.com" className="text-sm text-zinc-400 hover:text-white transition-colors">✉️ automotivehub@gmail.com</a>
-            <p className="text-sm text-zinc-400">📍 Cairo, Egypt</p>
-          </div>
-        </div>
-        <div className="border-t border-zinc-900 pt-10 text-center flex flex-col items-center gap-6">
-          <p className="text-zinc-600 text-xs">© 2026 Automotive Hub. All rights reserved.</p>
-          <img src="/logo-full.png" alt="Automotive Hub" className="h-10 w-auto opacity-80" />
-        </div>
-      </footer>
+      <Footer />
 
     </main>
   )
