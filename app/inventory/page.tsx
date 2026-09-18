@@ -32,9 +32,6 @@ const sortOptions = [
 ]
 
 const CARS_PER_PAGE = 12
-
-// Derives a "make" from the title's first word (e.g. "Cadillac Escalade" -> "Cadillac").
-// Relies on titles always starting with the brand name.
 const deriveMake = (title: string) => title?.trim().split(' ')[0] ?? ''
 
 function useInView<T extends HTMLElement>(threshold = 0.15): [React.RefObject<T | null>, boolean] {
@@ -66,6 +63,49 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
       {children}
     </div>
   )
+}
+
+// Word-by-word reveal — reserved for the two big brand statements
+// on this page (hero + sourcing band), same idea as About/Home.
+function RevealHeading({
+  text,
+  as = 'h2',
+  className = '',
+  wordDelay = 70,
+}: {
+  text: string
+  as?: 'h1' | 'h2'
+  className?: string
+  wordDelay?: number
+}) {
+  const ref = useRef<HTMLHeadingElement>(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const obs = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: 0.3 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  const content = text.split(' ').map((word, i) => (
+    <span key={i} className="inline-block overflow-hidden mr-[0.28em] align-bottom">
+      <span
+        className="inline-block"
+        style={{
+          transition: `transform 0.75s cubic-bezier(0.16,1,0.3,1) ${i * wordDelay}ms, opacity 0.6s ease ${i * wordDelay}ms`,
+          opacity: visible ? 1 : 0,
+          transform: visible ? 'translateY(0%)' : 'translateY(115%)',
+        }}
+      >
+        {word}
+      </span>
+    </span>
+  ))
+
+  if (as === 'h1') return <h1 ref={ref} className={className}>{content}</h1>
+  return <h2 ref={ref} className={className}>{content}</h2>
 }
 
 function ChevronDown() {
@@ -152,22 +192,52 @@ export default function Inventory() {
         .filter-chip { transition: all 0.2s ease; }
         .filter-chip.active { background: white; color: black; border-color: white; }
         .sort-select { appearance: none; -webkit-appearance: none; }
-        .sheet-enter-active { transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
+
+        @keyframes ticker-scroll {
+          0% { transform: translateX(0%); }
+          100% { transform: translateX(-50%); }
+        }
+        .ticker-track {
+          animation: ticker-scroll 35s linear infinite;
+          width: max-content;
+        }
       `}</style>
 
       <Navbar />
 
-      {/* HERO — video on mobile, freezes on its last frame (no loop attribute) */}
-      <div className="relative w-full pt-[72px]" style={{ height: '35vh' }}>
-        <video autoPlay muted playsInline poster="/inventory-hero.jpg" className="w-full h-full object-cover object-center">
+      {/* HERO — full-screen video on mobile, freezes on its last frame (no loop) */}
+      <div className="relative w-full h-screen">
+        <video autoPlay muted playsInline poster="/inventory-hero.jpg" className="absolute inset-0 w-full h-full object-cover object-center">
           <source src="/inventory-hero.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="absolute inset-0 flex flex-col justify-end pb-8 px-6">
-          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-2">BROWSE</p>
-          <h1 className="font-display text-4xl font-light text-white">Available Cars</h1>
+        <div
+          className="absolute inset-0"
+          style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.55) 70%, rgba(0,0,0,0.95) 100%)' }}
+        />
+        <div className="absolute bottom-16 left-0 right-0 px-6">
+          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">THE COLLECTION</p>
+          <RevealHeading
+            as="h1"
+            text="Every Car Here Has Already Been Chosen."
+            className="font-display text-4xl font-light leading-tight text-white max-w-sm"
+          />
         </div>
       </div>
+
+      {/* NEWS TICKER */}
+      {motorNews.length > 0 && (
+        <div className="bg-zinc-950 border-b border-zinc-900 py-3 overflow-hidden whitespace-nowrap">
+          <div className="flex ticker-track">
+            {[...motorNews, ...motorNews].map((n, i) => (
+              <span key={i} className="flex items-center text-xs text-zinc-400 tracking-wide mx-6">
+                <span className="text-red-600 mr-2 tracking-widest">{n.category.toUpperCase()}</span>
+                {n.title}
+                <span className="mx-6 text-zinc-700">•</span>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* FILTER BAR */}
       <section className="bg-zinc-950 px-6 py-5 border-b border-zinc-800 sticky top-[72px] z-40">
@@ -237,7 +307,7 @@ export default function Inventory() {
       {filterOpen && (
         <>
           <div className="fixed inset-0 bg-black/70 z-[95]" onClick={() => setFilterOpen(false)} />
-          <div className="fixed bottom-0 left-0 right-0 z-[96] bg-zinc-950 border-t border-zinc-800 rounded-t-3xl max-h-[80vh] overflow-y-auto sheet-enter-active">
+          <div className="fixed bottom-0 left-0 right-0 z-[96] bg-zinc-950 border-t border-zinc-800 rounded-t-3xl max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-5 border-b border-zinc-800">
               <p className="font-display text-xl font-light">Filters</p>
               <button onClick={() => setFilterOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-900">✕</button>
@@ -350,9 +420,11 @@ export default function Inventory() {
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 h-full flex flex-col justify-center px-6">
           <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">NOT WHAT YOU'RE LOOKING FOR?</p>
-          <h2 className="font-display text-3xl font-light leading-snug mb-5 max-w-xs">
-            We Can Source It For You.
-          </h2>
+          <RevealHeading
+            as="h2"
+            text="We Can Source It For You."
+            className="font-display text-3xl font-light leading-snug mb-5 max-w-xs text-white"
+          />
           <p className="text-zinc-300 text-sm leading-relaxed max-w-sm mb-8">
             Our network extends well beyond what's listed here. Tell us what you're after, and we'll find it.
           </p>
@@ -363,7 +435,7 @@ export default function Inventory() {
         </div>
       </section>
 
-      {/* NEWS — vertical list */}
+      {/* NEWS — same card style as the homepage, stacked one under another */}
       <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900">
         <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p>
         <h2 className="font-display text-3xl font-light mb-6">News &amp; Reviews</h2>
@@ -380,18 +452,19 @@ export default function Inventory() {
         {filteredNews.length === 0 ? (
           <p className="text-zinc-600 text-sm">Loading...</p>
         ) : (
-          <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 gap-8">
             {filteredNews.map((news, i) => (
               <Reveal key={i} delay={i * 70}>
-                <a href={news.link} target="_blank" rel="noopener noreferrer" className="flex gap-4 bg-zinc-900 rounded-2xl overflow-hidden">
-                  <div className="w-32 h-32 flex-shrink-0 bg-zinc-800 overflow-hidden">
+                <a href={news.link} target="_blank" rel="noopener noreferrer"
+                  className="bg-zinc-900 rounded-2xl overflow-hidden block">
+                  <div className="w-full aspect-[16/9] bg-zinc-800 flex items-center justify-center text-zinc-600 text-xs overflow-hidden">
                     {news.img ? (
                       <img src={news.img} alt={news.title} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-zinc-600 text-xs">Automotive Hub</div>
+                      <span>Automotive Hub</span>
                     )}
                   </div>
-                  <div className="p-4 flex flex-col justify-center">
+                  <div className="p-4">
                     <p className="text-red-600 text-xs tracking-widest mb-2">{news.category.toUpperCase()}</p>
                     <p className="text-white text-base font-light mb-2 leading-snug">{news.title}</p>
                     <p className="text-zinc-500 text-xs">{news.date}</p>
