@@ -34,6 +34,18 @@ const sortOptions = [
 const CARS_PER_PAGE = 12
 const deriveMake = (title: string) => title?.trim().split(' ')[0] ?? ''
 
+// Place each logo file (transparent-background PNG or SVG) under /public/brands/
+const brands = [
+  { name: 'Rolls-Royce', file: 'rolls-royce.png' },
+  { name: 'Bentley', file: 'bentley.png' },
+  { name: 'Ferrari', file: 'ferrari.png' },
+  { name: 'Lamborghini', file: 'lamborghini.png' },
+  { name: 'Porsche', file: 'porsche.png' },
+  { name: 'Mercedes-Benz', file: 'mercedes.png' },
+  { name: 'BMW', file: 'bmw.png' },
+  { name: 'McLaren', file: 'mclaren.png' },
+]
+
 function useInView<T extends HTMLElement>(threshold = 0.15): [React.RefObject<T | null>, boolean] {
   const ref = useRef<T>(null)
   const [visible, setVisible] = useState(false)
@@ -65,8 +77,6 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
   )
 }
 
-// Word-by-word reveal — reserved for the two big brand statements
-// on this page (hero + sourcing band), same idea as About/Home.
 function RevealHeading({
   text,
   as = 'h2',
@@ -116,6 +126,79 @@ function ChevronDown() {
   )
 }
 
+// Auto-drifts extremely slowly via scrollLeft; a real touch/mouse drag
+// takes over instantly and moves at normal native speed. Content is
+// duplicated once so the loop resets invisibly.
+function BrandSlider() {
+  const trackRef = useRef<HTMLDivElement>(null)
+  const interactingRef = useRef(false)
+  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    const el = trackRef.current
+    if (!el) return
+    let frame: number
+
+    const step = () => {
+      if (!interactingRef.current) {
+        el.scrollLeft += 0.15 // extremely slow drift
+        const half = el.scrollWidth / 2
+        if (el.scrollLeft >= half) {
+          el.scrollLeft -= half
+        }
+      }
+      frame = requestAnimationFrame(step)
+    }
+    frame = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(frame)
+  }, [])
+
+  const pause = () => {
+    interactingRef.current = true
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
+  }
+  const scheduleResume = () => {
+    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
+    resumeTimeoutRef.current = setTimeout(() => { interactingRef.current = false }, 800)
+  }
+
+  return (
+    <section className="bg-black py-14 border-t border-b border-zinc-900 overflow-hidden">
+      <p className="text-center text-[11px] tracking-[0.35em] text-zinc-500 mb-10">THE MARQUES WE DEAL IN</p>
+      <div
+        ref={trackRef}
+        onPointerDown={pause}
+        onPointerUp={scheduleResume}
+        onPointerCancel={scheduleResume}
+        onTouchStart={pause}
+        onTouchEnd={scheduleResume}
+        onMouseLeave={scheduleResume}
+        className="flex gap-16 overflow-x-auto px-10"
+        style={{
+          scrollbarWidth: 'none',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 6%, black 94%, transparent)',
+          maskImage: 'linear-gradient(to right, transparent, black 6%, black 94%, transparent)',
+        }}
+      >
+        {[...brands, ...brands].map((b, i) => (
+          <div key={i} className="flex flex-col items-center gap-3 flex-shrink-0 select-none">
+            <img
+              src={`/brands/${b.file}`}
+              alt={b.name}
+              draggable={false}
+              className="h-10 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-500"
+            />
+            <span className="text-[9px] tracking-[0.25em] text-zinc-500 whitespace-nowrap">{b.name.toUpperCase()}</span>
+          </div>
+        ))}
+      </div>
+      <style>{`
+        section div::-webkit-scrollbar { display: none; }
+      `}</style>
+    </section>
+  )
+}
+
 export default function Inventory() {
   const [cars, setCars] = useState<CarListItem[]>([])
   const [carsLoading, setCarsLoading] = useState(true)
@@ -129,6 +212,7 @@ export default function Inventory() {
 
   const [motorNews, setMotorNews] = useState<MotorNewsItem[]>([])
   const [newsFilter, setNewsFilter] = useState('All')
+  const [email, setEmail] = useState('')
 
   useEffect(() => {
     client
@@ -192,22 +276,13 @@ export default function Inventory() {
         .filter-chip { transition: all 0.2s ease; }
         .filter-chip.active { background: white; color: black; border-color: white; }
         .sort-select { appearance: none; -webkit-appearance: none; }
-
-        @keyframes ticker-scroll {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        .ticker-track {
-          animation: ticker-scroll 35s linear infinite;
-          width: max-content;
-        }
       `}</style>
 
       <Navbar />
 
-      {/* HERO — full-screen video on mobile, freezes on its last frame (no loop) */}
+      {/* HERO — full-screen video on mobile, no poster, freezes on last frame (no loop) */}
       <div className="relative w-full h-screen">
-        <video autoPlay muted playsInline poster="/inventory-hero.jpg" className="absolute inset-0 w-full h-full object-cover object-center">
+        <video autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover object-center">
           <source src="/inventory-hero.mp4" type="video/mp4" />
         </video>
         <div
@@ -223,21 +298,6 @@ export default function Inventory() {
           />
         </div>
       </div>
-
-      {/* NEWS TICKER */}
-      {motorNews.length > 0 && (
-        <div className="bg-zinc-950 border-b border-zinc-900 py-3 overflow-hidden whitespace-nowrap">
-          <div className="flex ticker-track">
-            {[...motorNews, ...motorNews].map((n, i) => (
-              <span key={i} className="flex items-center text-xs text-zinc-400 tracking-wide mx-6">
-                <span className="text-red-600 mr-2 tracking-widest">{n.category.toUpperCase()}</span>
-                {n.title}
-                <span className="mx-6 text-zinc-700">•</span>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* FILTER BAR */}
       <section className="bg-zinc-950 px-6 py-5 border-b border-zinc-800 sticky top-[72px] z-40">
@@ -414,6 +474,9 @@ export default function Inventory() {
         )}
       </section>
 
+      {/* BRAND SLIDER — cars grid → here → sourcing band */}
+      <BrandSlider />
+
       {/* SOURCING BAND */}
       <section className="relative h-[55vh] min-h-[380px] w-full overflow-hidden">
         <img src="/inventory-hero.jpg" alt="" className="absolute inset-0 w-full h-full object-cover" />
@@ -474,6 +537,27 @@ export default function Inventory() {
             ))}
           </div>
         )}
+      </section>
+
+      {/* NEWSLETTER */}
+      <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
+        <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
+        <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
+          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Your email address"
+            className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600"
+          />
+          <button type="submit"
+            className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+            SUBSCRIBE
+          </button>
+        </form>
       </section>
 
       <Footer />
