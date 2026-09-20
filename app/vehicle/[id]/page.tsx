@@ -51,7 +51,7 @@ function LinkIcon() {
   )
 }
 
-const PHONE = '01096822131'
+const PHONE = '01010166333'
 const WA_NUMBER = '20' + PHONE.slice(1)
 
 function AnimatedTitle({ text }: { text: string }) {
@@ -261,8 +261,6 @@ const shareLinks = {
                 style={{ animation: 'fadeUp 0.6s ease' }}
               />
             )}
-            <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 30%, rgba(0,0,0,0.9) 100%)' }} />
-
             {images.length > 1 && (
               <>
                 <button onClick={prevImg} aria-label="Previous"
