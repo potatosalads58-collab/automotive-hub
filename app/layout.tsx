@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MENA CAR",
+  title: "Automotive Hub",
   description: "Automotive Showroom Platform",
 };
 
