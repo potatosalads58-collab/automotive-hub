@@ -136,21 +136,26 @@ export default function AskAI() {
       `}</style>
 
       {!open && (
-        <button
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerUp}
-          onClick={handleTabClick}
-          aria-label="Ask AI — swipe to open"
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex items-center gap-2 py-6 pl-3 pr-1.5 touch-none cursor-grab active:cursor-grabbing"
-        >
-          <span className="hint-label text-[9px] tracking-[0.2em] text-zinc-400 whitespace-nowrap">
-            pull to ask ai
-          </span>
-          <span className="hint-bar block w-[3px] h-16 rounded-full bg-white" />
-        </button>
-      )}
+  <div className="fixed right-0 top-1/2 -translate-y-1/2 z-[80] flex items-center">
+    {/* Purely visual — never intercepts touches, doesn't widen the hit area */}
+    <span className="hint-label text-[9px] tracking-[0.2em] text-zinc-400 whitespace-nowrap mr-2 pointer-events-none">
+      pull to ask ai
+    </span>
+
+    {/* The only real touch/drag target — tight to the edge */}
+    <button
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+      onClick={handleTabClick}
+      aria-label="Ask AI — swipe to open"
+      className="flex items-center justify-center py-6 pl-2 pr-1.5 touch-none cursor-grab active:cursor-grabbing"
+    >
+      <span className="hint-bar block w-[3px] h-16 rounded-full bg-white" />
+    </button>
+  </div>
+)}
 
       {open && maximized && (
         <div className="fixed inset-0 bg-black/60 z-[85]" onClick={closePanel} />
