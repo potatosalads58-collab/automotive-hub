@@ -16,9 +16,23 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Automotive Hub",
-  description: "Automotive Showroom Platform",
+  description: "Egypt's destination for exceptional automobiles.",
+  openGraph: {
+    title: "Automotive Hub",
+    description: "Egypt's destination for exceptional automobiles.",
+    url: "https://automotive-hub-phi.vercel.app",
+    siteName: "Automotive Hub",
+    type: "website",
+    images: [
+      {
+        url: "https://automotive-hub-phi.vercel.app/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Automotive Hub",
+      },
+    ],
+  },
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
