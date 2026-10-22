@@ -487,4 +487,192 @@ export default function Home() {
             </div>
             <div>
               <p className="text-2xl font-display font-light mb-1">
-                <CountNumber from={currentYear} to={1
+                <CountNumber from={currentYear} to={1984} duration={1800} />
+              </p>
+              <p className="text-zinc-500 text-[10px] tracking-widest">FOUNDED</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative -mt-16 pt-24 pb-4 heritage-diag-bottom bg-black" />
+      </section>
+
+      {/* FEATURED CARS */}
+      <section className="bg-black px-6 py-16">
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p>
+        <h2 className="font-display text-3xl font-light mb-10">Featured Cars</h2>
+        {cars.length === 0 ? (
+          <p className="text-zinc-600 text-sm">Loading...</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {cars.map((car, i) => (
+              <Reveal key={car._id} delay={i * 80}>
+                <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
+                  <div className="w-full bg-zinc-800 overflow-hidden" style={{ aspectRatio: '2000/1670' }}>
+                    {car.thumbnail && (
+                      <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
+                        className="w-full h-full object-cover" />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="text-white text-xl font-light mb-3">{car.title}</p>
+                    <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
+                      <span>{car.mileage?.toLocaleString()} km</span>
+                      <span>·</span>
+                      <span>{car.year}</span>
+                    </div>
+                    <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
+                  </div>
+                </a>
+              </Reveal>
+            ))}
+          </div>
+        )}
+        <a href="/inventory"
+          className="block text-center border border-zinc-700 text-zinc-400 py-4 mt-10 text-xs tracking-[0.3em] hover:border-white hover:text-white transition-all duration-300">
+          SEE ALL CARS
+        </a>
+      </section>
+
+      {/* QUICK LINKS */}
+      <section className="bg-black px-6 pb-16">
+        <div className="grid grid-cols-1 gap-5">
+          {quickLinks.map((link, i) => (
+            <Reveal key={i} delay={i * 100}>
+              <a href={link.href} className="quick-link relative overflow-hidden rounded-2xl block h-80 group">
+                <img src={`/${link.img}`} alt={link.title}
+                  className="quick-link-img absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/50" />
+                <div className="absolute bottom-5 left-5">
+                  <p className="text-white text-xl font-light font-display">{link.title}</p>
+                </div>
+              </a>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* NEWS SECTION */}
+      <section className="bg-zinc-950 py-16 border-t border-zinc-900">
+        <div className="px-6 mb-8">
+          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p>
+          <h2 className="font-display text-3xl font-light mb-6">News &amp; Reviews</h2>
+          <div className="flex gap-3">
+            {['All', 'News', 'Reviews'].map(f => (
+              <button key={f} onClick={() => setNewsFilter(f)}
+                className={`px-4 py-2 text-xs tracking-widest border rounded-full transition-all duration-200 ${newsFilter === f ? 'bg-white text-black border-white' : 'border-zinc-700 text-zinc-400 hover:border-white hover:text-white'}`}>
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {filteredNews.length === 0 ? (
+          <p className="px-6 text-zinc-600 text-sm">Loading...</p>
+        ) : (
+          <div className="news-scroll flex gap-5 overflow-x-auto px-6 pb-4" style={{ scrollSnapType: 'x mandatory' }}>
+            {filteredNews.map((news, i) => (
+              <NofadeReveal key={i} delay={i * 70} className="flex-shrink-0">
+                <a href={news.link} target="_blank" rel="noopener noreferrer"
+                  className="flex-shrink-0 w-72 bg-zinc-900 rounded-2xl overflow-hidden block"
+                  style={{ scrollSnapAlign: 'start' }}>
+                  <div className="w-full h-44 bg-zinc-800 flex items-center justify-center text-zinc-600 text-xs overflow-hidden">
+                    {news.img ? (
+                      <img src={news.img} alt={news.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <span>Golden N</span>
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="text-zinc-400 text-xs tracking-widest mb-2">{news.category.toUpperCase()}</p>
+                    <p className="text-white text-base font-light mb-2 leading-snug">{news.title}</p>
+                    <p className="text-zinc-500 text-xs">{news.date}</p>
+                  </div>
+                </a>
+              </NofadeReveal>
+            ))}
+          </div>
+        )}
+
+        <div className="px-6">
+          <a href="/news"
+            className="block text-center border border-zinc-700 text-zinc-400 py-4 mt-6 text-xs tracking-[0.3em] hover:border-white hover:text-white transition-all duration-300">
+            SEE ALL NEWS
+          </a>
+        </div>
+      </section>
+
+      {/* INSTAGRAM */}
+      <section className="bg-black py-16 px-6 border-t border-zinc-900">
+        <div className="text-center mb-10">
+          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY CONNECTED</p>
+          <h2 className="font-display text-3xl font-light mb-4">Golden N on Instagram</h2>
+          <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"
+            className="text-white text-sm tracking-widest hover:text-zinc-400 transition-colors duration-300">
+            @goldenn_eg
+          </a>
+        </div>
+
+        <div className="max-w-2xl mx-auto grid grid-cols-3 gap-3">
+          {instagramPosts.map((post, i) => (
+            <NofadeReveal key={i} delay={i * 60}>
+              <button
+                onClick={() => setIgActiveIndex(i)}
+                className="group relative aspect-square overflow-hidden rounded-xl bg-zinc-900 border border-zinc-800 w-full"
+              >
+                <img src={post.images[0]} alt="" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100">
+                  <span className="flex items-center gap-1.5 text-white text-xs font-medium">
+                    <HeartIcon filled size={14} /> {post.likes}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-white text-xs font-medium">
+                    <CommentIcon size={14} /> {post.comments}
+                  </span>
+                </div>
+              </button>
+            </NofadeReveal>
+          ))}
+        </div>
+      </section>
+
+      {igActiveIndex !== null && (
+        <InstagramModal post={instagramPosts[igActiveIndex]} onClose={() => setIgActiveIndex(null)} />
+      )}
+
+      {/* NEWSLETTER */}
+      <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
+        <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
+        <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
+          className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input
+            type="email"
+            required
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Your email address"
+            className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600"
+          />
+          <button type="submit"
+            className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+            SUBSCRIBE
+          </button>
+        </form>
+      </section>
+
+      <Footer />
+
+    </main>
+  )
+}
+
+function DividerGrow() {
+  const [ref, visible] = useInView<HTMLDivElement>(0.6)
+  return (
+    <div
+      ref={ref}
+      className="divider-grow h-px bg-zinc-300"
+      style={{ width: visible ? '140px' : '0px' }}
+    />
+  )
+}
