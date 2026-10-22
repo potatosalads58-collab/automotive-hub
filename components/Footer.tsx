@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 
-const PHONE = '01010166333'
-const EMAIL = 'Info@automotivehub.com'
-const INSTAGRAM_URL = 'https://instagram.com/automotivehubegy'
-const THREADS_URL = 'https://www.threads.net/@automotivehubegy'
-const FACEBOOK_URL = 'https://www.facebook.com/share/14nBzBzMDiU/'
+const PHONE = '01200072666'
+const EMAIL = 'goldenn.eg@gmail.com'
+const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
+const THREADS_URL = 'https://www.threads.net/@goldenneg'
+const FACEBOOK_URL = 'https://www.facebook.com/Golden.N.Automotive'
 
 function InstagramIcon() {
   return (
@@ -82,7 +82,7 @@ export default function Footer() {
 
           <div>
             <p className="text-[11px] tracking-[0.3em] text-zinc-500 mb-5">
-              AUTOMOTIVE HUB
+              GOLDEN N
             </p>
 
             <div className="flex flex-col gap-3.5">
@@ -172,7 +172,7 @@ export default function Footer() {
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
             </svg>
 
-            0101 016 6333
+            0120 007 2666
           </a>
 
           {/* Email */}
@@ -223,10 +223,10 @@ export default function Footer() {
 
         <Link
           href="/"
-          aria-label="Automotive Hub Home"
+          aria-label="Golden N Home"
           className="text-zinc-600 text-xs tracking-[0.2em] hover:text-zinc-400 transition-colors"
         >
-          © 2026 AUTOMOTIVE HUB
+          © 2026 GOLDEN N
         </Link>
 
       </div>
@@ -251,12 +251,12 @@ export default function Footer() {
 
         <Link
           href="/"
-          aria-label="Automotive Hub Home"
+          aria-label="Golden N Home"
           className="inline-flex"
         >
           <img
-            src="/logo-full.png"
-            alt="Automotive Hub"
+            src="/golden-n-logo.svg"
+            alt="Golden N"
             className="h-10 w-auto opacity-60 hover:opacity-85 transition-opacity"
           />
         </Link>
