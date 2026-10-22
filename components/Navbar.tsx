@@ -54,7 +54,7 @@ export default function Navbar() {
           <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
           <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
         </button>
-        <a href="/"><img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" /></a>
+        <a href="/"><img src="/golden-n-logo.svg" alt="Automotive Hub" className="h-6 w-auto md:h-8" /></a>
         <div className="w-6" />
       </nav>
 
