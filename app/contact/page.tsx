@@ -287,7 +287,7 @@ export default function ContactPage() {
           </div>
           <div className="rounded-2xl overflow-hidden border border-zinc-800" style={{ aspectRatio: '4/3' }}>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d142899.67804039433!2d31.490878!3d30.0434943!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458239873da2ddb%3A0x9826433a3cd0fc60!2sGolden%20N%20-%20New%20Cairo!5e1!3m2!1sen!2seg!4v1793116618754!5m2!1sen!2seg"
+              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d142899.67804039433!2d31.490878!3d30.0434943!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458239873da2ddb%3A0x9826433a3cd0fc60!2sGolden%20N%20-%20New%20Cairo!5e0!3m2!1sen!2seg!4v1793116618754!5m2!1sen!2seg"
               width="100%"
               height="100%"
               style={{ border: 0 }}
