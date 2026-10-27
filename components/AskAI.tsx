@@ -182,7 +182,7 @@ export default function AskAI() {
           }
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-zinc-800">
-            <p className="font-display text-lg font-light text-white">Automotive Hub Assistant</p>
+            <p className="font-display text-lg font-light text-white">Golden N Assistant</p>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setMaximized(!maximized)}
@@ -212,7 +212,7 @@ export default function AskAI() {
           <div ref={scrollRef} className="flex-1 overflow-y-auto px-5 py-6 flex flex-col gap-4">
             {messages.length === 0 && (
               <p className="text-zinc-500 text-sm leading-relaxed">
-                Ask me anything about our inventory, pricing, or Automotive Hub.
+                Ask me anything about our inventory, pricing, or Golden N.
               </p>
             )}
             {messages.map((m, i) => (
