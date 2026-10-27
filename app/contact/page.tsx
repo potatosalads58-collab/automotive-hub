@@ -2,12 +2,12 @@
 import { useEffect, useState, useRef } from 'react'
 import Footer from '@/components/Footer'
 
-const PHONE = '01010166333'
-const PHONE_DISPLAY = '0101 016 6333'
-const EMAIL = 'Info@automotivehub.com'
-const INSTAGRAM_URL = 'https://instagram.com/automotivehubegy'
-const THREADS_URL = 'https://www.threads.net/@automotivehubegy'
-const FACEBOOK_URL = 'https://www.facebook.com/share/14nBzBzMDiU/'
+const PHONE = '01200072666'
+const PHONE_DISPLAY = '0120 007 2666'
+const EMAIL = 'goldenn.eg@gmail.com'
+const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
+const THREADS_URL = 'https://www.threads.net/'
+const FACEBOOK_URL = 'https://www.facebook.com/Golden.N.Automotive'
 
 function AnimatedTitle({ text }: { text: string }) {
   return (
@@ -233,7 +233,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <p className="text-zinc-500 text-[10px] tracking-widest mb-1">SHOWROOM HOURS</p>
-                <p className="text-white text-base">11:00 AM — 1:00 AM, Everyday</p>
+                <p className="text-white text-base">11:00 AM — 8:00 PM, Everyday</p>
               </div>
             </div>
           </div>
@@ -310,7 +310,7 @@ export default function ContactPage() {
           </div>
           <div className="rounded-2xl overflow-hidden border border-zinc-800" style={{ aspectRatio: '4/3' }}>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3454.826286700698!2d31.0024664!3d30.013144!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14585b005ec6139d%3A0x87ebde9178995179!2sAutomotive%20HUB!5e0!3m2!1sar!2seg!4v1789204878926!5m2!1sar!2seg"
+              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d142899.67804039433!2d31.490878!3d30.0434943!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458239873da2ddb%3A0x9826433a3cd0fc60!2sGolden%20N%20-%20New%20Cairo!5e1!3m2!1sen!2seg!4v1793116618754!5m2!1sen!2seg"
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -322,7 +322,7 @@ export default function ContactPage() {
           </div>
         </RevealOnScroll>
       </section>
-
+      
       <Footer />
 
     </main>
