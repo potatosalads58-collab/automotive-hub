@@ -9,7 +9,7 @@ const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
 
 const quickLinks = [
   { title: "Available Vehicles", img: "available-vehicles.jpg", href: "/inventory" },
-  { title: "Sell Your Car", img: "sell-your-car.jpg", href: "/sell-your-car" },
+  { title: "Sell Your Car", img: "Sell-your-car.jpg", href: "/sell-your-car" },
 ]
 
 type MotorNewsItem = {
