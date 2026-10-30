@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-const INSTAGRAM_URL = 'https://instagram.com/automotivehubegy'
-const THREADS_URL = 'https://www.threads.net/@automotivehubegy'
-const FACEBOOK_URL = 'https://www.facebook.com/share/14nBzBzMDiU/'
+const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
+const THREADS_URL = 'https://www.threads.net/@'
+const FACEBOOK_URL = 'https://www.facebook.com/Golden.N.Automotive'
 
 const NAV_LINKS = [
   { label: 'Inventory', href: '/inventory' },
