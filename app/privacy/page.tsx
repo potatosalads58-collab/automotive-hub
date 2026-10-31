@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Footer from '@/components/Footer'
 
-const PHONE = '01010166333'
+const PHONE = '01200072666'
 
 function RevealOnScroll({ children, index = 0 }: { children: React.ReactNode; index?: number }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -81,7 +81,7 @@ export default function PrivacyPolicyPage() {
           <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
           <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
         </button>
-        <a href="/"><img src="/logo-nav.png" alt="Automotive Hub" className="h-6 w-auto md:h-8" /></a>
+        <a href="/"><img src="/logo-nav.png" alt="Golden N" className="h-6 w-auto md:h-8" /></a>
         <div className="w-6" />
       </nav>
 
@@ -132,7 +132,7 @@ export default function PrivacyPolicyPage() {
         {tab === 'privacy' ? (
           <RevealOnScroll>
             <Section title="Information We Collect">
-              <p>When you browse Automotive Hub, enquire about a vehicle, or submit a car for sale, we may collect personal details such as your name, phone number, email address, and any information you choose to share through our contact and enquiry forms — including vehicle documents and photos submitted through the Sell Your Car process.</p>
+              <p>When you browse Golden N, enquire about a vehicle, or submit a car for sale, we may collect personal details such as your name, phone number, email address, and any information you choose to share through our contact and enquiry forms — including vehicle documents and photos submitted through the Sell Your Car process.</p>
             </Section>
             <Section title="How We Use Your Information">
               <p>We use the information you provide to respond to enquiries, process vehicle submissions, share relevant listings, and improve our services. We do not sell your personal information to third parties.</p>
@@ -150,16 +150,16 @@ export default function PrivacyPolicyPage() {
               <p>You may request access to, correction of, or deletion of your personal data held by us at any time by contacting us using the details below.</p>
             </Section>
             <Section title="Contact Us">
-              <p>For any privacy-related questions, reach out to us at Info@automotivehub.com or {PHONE.replace(/(\d{4})(\d{3})(\d{4})/, '$1 $2 $3')}.</p>
+              <p>For any privacy-related questions, reach out to us at goldenn.eg@gmail.com or {PHONE.replace(/(\d{4})(\d{3})(\d{4})/, '$1 $2 $3')}.</p>
             </Section>
           </RevealOnScroll>
         ) : (
           <RevealOnScroll>
             <Section title="Acceptance of Terms">
-              <p>By accessing or using the Automotive Hub website, you agree to be bound by these Terms &amp; Conditions. If you do not agree with any part of these terms, please discontinue use of the site.</p>
+              <p>By accessing or using the Golden N website, you agree to be bound by these Terms &amp; Conditions. If you do not agree with any part of these terms, please discontinue use of the site.</p>
             </Section>
             <Section title="Use of the Website">
-              <p>This website is provided for the purpose of browsing vehicle listings, submitting enquiries, and requesting to sell a vehicle through Automotive Hub. You agree not to misuse the site, attempt unauthorized access, or submit false information.</p>
+              <p>This website is provided for the purpose of browsing vehicle listings, submitting enquiries, and requesting to sell a vehicle through Golden N. You agree not to misuse the site, attempt unauthorized access, or submit false information.</p>
             </Section>
             <Section title="Vehicle Listings & Accuracy">
               <p>While we make every effort to ensure vehicle listings are accurate and up to date, specifications, pricing, and availability are subject to change without prior notice. We recommend confirming all details directly with our team before making a purchasing decision.</p>
@@ -171,10 +171,10 @@ export default function PrivacyPolicyPage() {
               <p>All prices displayed are in Egyptian Pounds (EGP) unless otherwise stated, and are subject to change. Final pricing is confirmed directly with our sales team.</p>
             </Section>
             <Section title="Intellectual Property">
-              <p>All content on this website, including images, logos, and text, is the property of Automotive Hub and may not be reproduced or used without written permission.</p>
+              <p>All content on this website, including images, logos, and text, is the property of Golden N and may not be reproduced or used without written permission.</p>
             </Section>
             <Section title="Limitation of Liability">
-              <p>Automotive Hub is not liable for any indirect or consequential loss arising from the use of this website or reliance on the information provided herein.</p>
+              <p>Golden N is not liable for any indirect or consequential loss arising from the use of this website or reliance on the information provided herein.</p>
             </Section>
             <Section title="Governing Law">
               <p>These Terms &amp; Conditions are governed by the laws of the Arab Republic of Egypt.</p>
