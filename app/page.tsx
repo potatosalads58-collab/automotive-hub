@@ -456,7 +456,7 @@ export default function Home() {
               <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
                 <img src="/goldenn-classic.jpg" alt="Golden N heritage" className="heritage-img w-full h-full object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-                  <p className="text-white text-xs tracking-[0.3em]">WHERE IT BEGAN</p>
+                  <p className="text-white text-xs tracking-[0.3em]">The Legacy</p>
                 </div>
               </div>
             </Reveal>
@@ -464,7 +464,7 @@ export default function Home() {
               <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
                 <img src="/goldenn-modern.jpg" alt="Golden N today" className="heritage-img w-full h-full object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-                  <p className="text-white text-xs tracking-[0.3em]">WHERE WE STAND TODAY</p>
+                  <p className="text-white text-xs tracking-[0.3em]">The Evolution</p>
                 </div>
               </div>
             </Reveal>
