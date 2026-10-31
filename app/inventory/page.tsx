@@ -327,9 +327,11 @@ export default function Inventory() {
 
       {/* HERO — shorter than before */}
       <div className="relative w-full h-[70vh] min-h-[460px]">
-        <video autoPlay muted playsInline className="absolute inset-0 w-full h-full object-cover object-center">
-          <source src="/inventory-hero.mp4" type="video/mp4" />
-        </video>
+        <img
+          src="/inventory-hero.jpg"
+          alt="Inventory"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.55) 70%, rgba(0,0,0,0.95) 100%)' }} />
         <div className="absolute bottom-14 left-0 right-0 px-6">
           <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">THE COLLECTION</p>
