@@ -437,7 +437,7 @@ export default function Home() {
       <section className="relative bg-black overflow-hidden">
         <div className="relative bg-white text-black -mt-16 pt-24 pb-24 heritage-diag-top">
           <div className="text-center mb-14 px-6">
-            <LetterReveal text="SINCE 1984" className="text-xs tracking-[0.5em] text-zinc-500 mb-4" />
+
             <RevealHeading
               as="h2"
               text="Every Class. Every Era. One Address."
@@ -446,29 +446,39 @@ export default function Home() {
             <Reveal delay={150}>
               <p className="text-zinc-600 text-sm max-w-md mx-auto mt-5 leading-relaxed">
                 From the icons that built our name over four decades ago to the newest arrivals
-                on the floor today — Golden N has never stopped at one category. It never will.
+                on the floor today — X motors has never stopped at one category. It never will.
               </p>
             </Reveal>
+          </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 max-w-5xl mx-auto">
             <Reveal delay={100}>
               <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/goldenn-classic.jpg" alt="Golden N heritage" className="heritage-img w-full h-full object-cover" />
+                <img src="/Xmotors-classic.jpg" alt="Golden N heritage" className="heritage-img w-full h-full object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-                  <p className="text-white text-xs tracking-[0.3em]">The Legacy</p>
+                  <p className="text-white text-xs tracking-[0.3em]">Classic Supercars</p>
                 </div>
               </div>
             </Reveal>
             <Reveal delay={220}>
               <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/goldenn-modern.jpg" alt="Golden N today" className="heritage-img w-full h-full object-cover" />
+                <img src="/Xmotors-modern.jpg" alt="Golden N today" className="heritage-img w-full h-full object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-                  <p className="text-white text-xs tracking-[0.3em]">The Evolution</p>
+                  <p className="text-white text-xs tracking-[0.3em]">Hypercars</p>
                 </div>
               </div>
             </Reveal>
           </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 max-w-5xl mx-auto">
+            <Reveal delay={340}>
+              <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
+                <img src="/Xmotors-Luxury.jpg" alt="X motors Luxury" className="heritage-img w-full h-full object-cover" />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
+                  <p className="text-white text-xs tracking-[0.3em]">Luxury</p>
+                </div>
+              </div>
+            </Reveal>
 
           <Reveal delay={300} className="flex justify-center mt-16 mb-10">
             <DividerGrow />
