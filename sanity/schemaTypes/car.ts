@@ -20,7 +20,7 @@ export default defineType({
     defineField({
       name: 'price',
       title: 'Price (EGP)',
-      type: 'number',
+      type: 'string',
     }),
     defineField({
       name: 'mileage',
