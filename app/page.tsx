@@ -385,8 +385,8 @@ export default function Home() {
           ref={videoRef}
           autoPlay
           muted
+          loop
           playsInline
-          onEnded={() => setVideoEnded(true)}
           className={`hero-video-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-700 ${videoEnded ? 'blur-md' : ''}`}
         >
           <source src="/hero-video.mp4" type="video/mp4" />
@@ -394,33 +394,8 @@ export default function Home() {
 
         <div className="absolute inset-0 z-10" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,1) 100%)' }} />
 
-        {/* sound toggle */}
-        <button
-          onClick={toggleSound}
-          aria-label="Toggle sound"
-          className={`absolute top-24 right-6 z-30 w-12 h-12 rounded-full border border-white/70 bg-black/40 flex items-center justify-center text-white transition-colors duration-300 ${!soundOn ? 'sound-pulse' : ''}`}
-        >
-          {soundOn ? <SoundOnIcon /> : <SoundOffIcon />}
-        </button>
-        <p className="absolute top-[7.7rem] right-6 z-30 text-[9px] tracking-[0.25em] text-zinc-300">
-          {soundOn ? 'SOUND ON' : 'TAP FOR SOUND'}
-        </p>
-
-        {/* replay, shown when video ends */}
-        {videoEnded && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center animate-fadeUp">
-            <button
-              onClick={replay}
-              className="w-16 h-16 rounded-full border border-white/80 bg-black/50 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors duration-300"
-              aria-label="Replay video"
-            >
-              <ReplayIcon />
-            </button>
-          </div>
-        )}
-
         <div className="absolute bottom-24 left-0 right-0 text-center px-6 z-20 animate-fadeUp">
-          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">CAIRO&apos;S MOST COMPLETE SHOWROOM</p>
+          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">Dubai's&apos;S MOST COMPLETE SHOWROOM</p>
           <RevealHeading
             as="h1"
             text="EVERY CAR. EVERY ERA."
@@ -450,7 +425,7 @@ export default function Home() {
               </p>
             </Reveal>
           </div>
-          </div>
+        
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 max-w-5xl mx-auto">
             <Reveal delay={100}>
@@ -473,7 +448,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 max-w-5xl mx-auto">
             <Reveal delay={340}>
               <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/Xmotors-Luxury.jpg" alt="X motors Luxury" className="heritage-img w-full h-full object-cover" />
+                <img src="/Xmotors-luxury.jpg" alt="X motors Luxury" className="heritage-img w-full h-full object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
                   <p className="text-white text-xs tracking-[0.3em]">Luxury</p>
                 </div>
@@ -503,7 +478,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-
+        </div>
         <div className="relative -mt-16 pt-24 pb-4 heritage-diag-bottom bg-black" />
       </section>
 
