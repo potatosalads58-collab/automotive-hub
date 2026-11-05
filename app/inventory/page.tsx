@@ -343,14 +343,22 @@ export default function Inventory() {
 
       <Navbar />
 
-         {/* HERO — shorter than before */}
-    <div className="relative h-screen w-full overflow-hidden">
+      {/* HERO — shorter than before */}
+<div className="relative h-screen w-full overflow-hidden">
   <video
     ref={videoRef}
     autoPlay
     muted
     playsInline
-    onEnded={() => setVideoEnded(true)}
+    onTimeUpdate={() => {
+      if (videoRef.current && !videoEnded) {
+        // لو الفضل أقل من 0.3 ثانية على النهاية، وقفه وثبت البلور على آخر فريم محتوى
+        if (videoRef.current.duration - videoRef.current.currentTime < 0.3) {
+          videoRef.current.pause();
+          setVideoEnded(true);
+        }
+      }
+    }}
     className={`hero-video-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-700 ${
       videoEnded ? 'blur-sm' : ''
     }`}
@@ -377,7 +385,7 @@ export default function Inventory() {
       </button>
     </div>
   )}
-    </div>
+</div>
 
       {/* CONTROL BAR — results count, Filters trigger, custom Sort dropdown */}
       <section className="bg-zinc-950 px-6 py-5 border-b border-zinc-800 sticky top-[72px] z-40">
