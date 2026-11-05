@@ -16,16 +16,16 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "X Motors",
-  description: "Egypt's destination for exceptional automobiles.",
+  description: "Dubai's destination for exceptional automobiles.",
   openGraph: {
     title: "X Motors",
-    description: "Egypt's destination for exceptional automobiles.",
-    url: "https://goldenn-eg.vercel.app",
+    description: "Dubai's destination for exceptional automobiles.",
+    url: "https://xmotors-ae.vercel.app/",
     siteName: "X Motors",
     type: "website",
     images: [
       {
-        url: "https://goldenn-eg.vercel.app/og-image.jpg",
+        url: "https://xmotors-ae.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "X Motors",

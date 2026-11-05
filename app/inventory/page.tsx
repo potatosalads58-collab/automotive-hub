@@ -499,24 +499,23 @@ export default function Inventory() {
           <div className="text-center py-20 text-zinc-500 text-sm tracking-widest">NO CARS FOUND</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {paginated.map((car, i) => (
+            {cars.map((car, i) => (
               <Reveal key={car._id} delay={i * 80}>
                 <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
-                  <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }}>
+                  <div className="w-full bg-zinc-800 overflow-hidden" style={{ aspectRatio: '2000/1670' }}>
                     {car.thumbnail && (
-                      <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title} className="w-full h-full object-cover" />
+                      <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
+                        className="w-full h-full object-cover" />
                     )}
                   </div>
                   <div className="p-4">
-                    <p className="text-zinc-500 text-xs tracking-widest mb-1">{deriveMake(car.title).toUpperCase()}</p>
-                    <p className="text-white text-xl font-light mb-1">{car.title}</p>
-                    <p className="text-zinc-600 text-xs mb-3">{car.year}</p>
+                    <p className="text-white text-xl font-light mb-3">{car.title}</p>
                     <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
                       <span>{car.mileage?.toLocaleString()} km</span>
-                      {car.bodyType && <><span>·</span><span>{car.bodyType}</span></>}
-                      {car.specs && <><span>·</span><span>{car.specs}</span></>}
+                      <span>·</span>
+                      <span>{car.year}</span>
                     </div>
-                    <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
+                    <p className="text-white font-medium text-lg"> {car.price?.toLocaleString()}</p>
                   </div>
                 </a>
               </Reveal>
