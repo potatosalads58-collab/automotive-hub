@@ -343,36 +343,41 @@ export default function Inventory() {
 
       <Navbar />
 
-      {/* HERO — shorter than before */}
-      <div className="relative h-screen w-full overflow-hidden bg-black">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          onEnded={() => setVideoEnded(true)}
-          className={`hero-video-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-700 ${videoEnded ? 'blur-md' : ''}`}
-        >
-          <source src="/inventory-hero.mp4" type="video/mp4" />
-        </video>
+         {/* HERO — shorter than before */}
+    <div className="relative h-screen w-full overflow-hidden">
+  <video
+    ref={videoRef}
+    autoPlay
+    muted
+    playsInline
+    onEnded={() => setVideoEnded(true)}
+    className={`hero-video-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-700 ${
+      videoEnded ? 'blur-sm' : ''
+    }`}
+  >
+    <source src="/inventory-hero.mp4" type="video/mp4" />
+  </video>
 
-        <div className="absolute inset-0 z-10" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,1) 100%)' }} />
+  <div 
+    className="absolute inset-0 z-10 pointer-events-none" 
+    style={{ 
+      backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(0,0,0,0.4) 70%, rgba(0,0,0,0.7) 100%)' 
+    }} 
+  />
 
-  
-
-        {/* replay, shown when video ends */}
-        {videoEnded && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center animate-fadeUp">
-            <button
-              onClick={replay}
-              className="w-16 h-16 rounded-full border border-white/80 bg-black/50 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors duration-300"
-              aria-label="Replay video"
-            >
-              <ReplayIcon />
-            </button>
-          </div>
-        )}
-        </div>
+  {/* replay, shown when video ends */}
+  {videoEnded && (
+    <div className="absolute inset-0 z-30 flex items-center justify-center animate-fadeUp">
+      <button
+        onClick={replay}
+        className="w-16 h-16 rounded-full border border-white/80 bg-black/50 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors duration-300 backdrop-blur-xs"
+        aria-label="Replay video"
+      >
+        <ReplayIcon />
+      </button>
+    </div>
+  )}
+    </div>
 
       {/* CONTROL BAR — results count, Filters trigger, custom Sort dropdown */}
       <section className="bg-zinc-950 px-6 py-5 border-b border-zinc-800 sticky top-[72px] z-40">
