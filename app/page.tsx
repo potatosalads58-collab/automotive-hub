@@ -315,7 +315,7 @@ export default function Home() {
   const [videoEnded, setVideoEnded] = useState(false)
 
   const currentYear = new Date().getFullYear()
-  const yearsOfTrust = currentYear - 1984
+  const yearsOfTrust = currentYear - 2011
 
   useEffect(() => {
     client.fetch(`*[_type == "car"] | order(_createdAt desc)[0...6]`)
@@ -472,7 +472,7 @@ export default function Home() {
             </div>
             <div>
               <p className="text-2xl font-display font-light mb-1">
-                <CountNumber from={currentYear} to={1984} duration={1800} />
+                <CountNumber from={2035} to={2024} duration={1800} />
               </p>
               <p className="text-zinc-500 text-[10px] tracking-widest">FOUNDED</p>
             </div>

@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState } from 'react'
 
-const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
-const THREADS_URL = 'https://www.threads.net/@'
-const FACEBOOK_URL = 'https://www.facebook.com/Golden.N.Automotive'
+const INSTAGRAM_URL = 'https://instagram.com/xmotors.me'
+const THREADS_URL = 'https://www.threads.net/@xmotors.me'
+const FACEBOOK_URL = 'https://www.facebook.com/xmotors.me'
 
 const NAV_LINKS = [
   { label: 'Inventory', href: '/inventory' },
@@ -54,7 +54,7 @@ export default function Navbar() {
           <span className={`bar ${menuOpen ? 'bar-2-open' : ''}`}></span>
           <span className={`bar ${menuOpen ? 'bar-3-open' : ''}`}></span>
         </button>
-        <a href="/"><img src="/golden-n-logo.svg" alt="Automotive Hub" className="h-10 w-auto md:h-14" /></a>
+        <a href="/"><img src="/X-Motors-Logo.png" alt="Automotive Hub" className="h-10 w-auto md:h-14" /></a>
         <div className="w-6" />
       </nav>
 

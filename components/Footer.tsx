@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 
-const PHONE = '01200072666'
-const EMAIL = 'goldenn.eg@gmail.com'
-const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
-const THREADS_URL = 'https://www.threads.net/@goldenneg'
-const FACEBOOK_URL = 'https://www.facebook.com/Golden.N.Automotive'
+const PHONE = '+971567411888'
+const EMAIL = 'info@xmotors.me'
+const INSTAGRAM_URL = 'https://instagram.com/xmotors.me'
+const THREADS_URL = 'https://www.threads.net/@xmotors.me'
+const FACEBOOK_URL = 'https://www.facebook.com/xmotors.me'
 
 function InstagramIcon() {
   return (
@@ -172,7 +172,7 @@ export default function Footer() {
               <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
             </svg>
 
-            0120 007 2666
+            +971567411888
           </a>
 
           {/* Email */}
@@ -212,7 +212,7 @@ export default function Footer() {
               <circle cx="12" cy="10" r="3" />
             </svg>
 
-            Industrial Area, New Cairo, Cairo, Egypt
+            X Motors - Abu Dhabi Media Building - 15A St - Al Qouz Ind.first - Al Quoz - Dubai - United Arab Emirates
           </Link>
 
         </div>
@@ -223,10 +223,10 @@ export default function Footer() {
 
         <Link
           href="/"
-          aria-label="Golden N Home"
+          aria-label="X Motors Home"
           className="text-zinc-600 text-xs tracking-[0.2em] hover:text-zinc-400 transition-colors"
         >
-          © 2026 GOLDEN N
+          © 2026 X MOTORS
         </Link>
 
       </div>
@@ -255,7 +255,7 @@ export default function Footer() {
           className="inline-flex"
         >
           <img
-            src="/golden-n-logo.svg"
+            src="/X-Motors-Logo.png"
             alt="Golden N"
             className="h-10 w-auto opacity-60 hover:opacity-85 transition-opacity"
           />
