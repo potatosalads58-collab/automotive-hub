@@ -353,7 +353,7 @@ export default function Inventory() {
           onEnded={() => setVideoEnded(true)}
           className={`hero-video-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-700 ${videoEnded ? 'blur-md' : ''}`}
         >
-          <source src="/hero-video.mp4" type="video/mp4" />
+          <source src="/inventory-hero.mp4" type="video/mp4" />
         </video>
 
         <div className="absolute inset-0 z-10" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,1) 100%)' }} />
