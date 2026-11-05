@@ -185,7 +185,7 @@ const shareLinks = {
 
   const waLink = (extra = '') => {
     const text = encodeURIComponent(
-      `Hi, I'm interested in the ${car?.title || 'car'}${car?.price ? ` (EGP ${car.price.toLocaleString()})` : ''}.${extra}`
+      `Hi, I'm interested in the ${car?.title || 'car'}${car?.price ? ` ( ${car.price.toLocaleString()})` : ''}.${extra}`
     )
     return `https://wa.me/${WA_NUMBER}?text=${text}`
   }
@@ -289,7 +289,7 @@ const shareLinks = {
               </p>
               <AnimatedTitle text={car.title} />
               {car.price && (
-                <p className="text-white text-2xl font-light mt-4">EGP {car.price.toLocaleString()}</p>
+                <p className="text-white text-2xl font-light mt-4"> {car.price.toLocaleString()}</p>
               )}
             </section>
           </RevealOnScroll>
@@ -422,7 +422,7 @@ const shareLinks = {
                   <div>
                     <p className="text-zinc-500 text-[10px] tracking-[0.3em]">{car.specs?.toUpperCase() || 'AUTOMOTIVE HUB'}</p>
                     <p className="text-white text-lg font-display font-light mt-0.5">{car.title}</p>
-                    {car.price && <p className="text-zinc-400 text-xs mt-1">EGP {car.price.toLocaleString()}</p>}
+                    {car.price && <p className="text-zinc-400 text-xs mt-1"> {car.price.toLocaleString()}</p>}
                   </div>
                 </div>
 
