@@ -506,7 +506,7 @@ export default function Home() {
                       <span>·</span>
                       <span>{car.year}</span>
                     </div>
-                    <p className="text-white font-medium text-lg">EGP {car.price?.toLocaleString()}</p>
+                    <p className="text-white font-medium text-lg">AED {car.price?.toLocaleString()}</p>
                   </div>
                 </a>
               </Reveal>
