@@ -15,20 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Golden N",
+  title: "X Motors",
   description: "Egypt's destination for exceptional automobiles.",
   openGraph: {
-    title: "Golden N",
+    title: "X Motors",
     description: "Egypt's destination for exceptional automobiles.",
     url: "https://goldenn-eg.vercel.app",
-    siteName: "Golden N",
+    siteName: "X Motors",
     type: "website",
     images: [
       {
         url: "https://goldenn-eg.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Golden N",
+        alt: "X Motors",
       },
     ],
   },
