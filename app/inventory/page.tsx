@@ -110,6 +110,7 @@ function RevealHeading({ text, as = 'h2', className = '', wordDelay = 70 }: { te
   ))
   if (as === 'h1') return <h1 ref={ref} className={className}>{content}</h1>
   return <h2 ref={ref} className={className}>{content}</h2>
+  
 }
 
 function ChevronDown({ open = false }: { open?: boolean }) {
@@ -117,6 +118,14 @@ function ChevronDown({ open = false }: { open?: boolean }) {
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
       style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.25s ease' }}>
       <path d="M6 9l6 6 6-6" />
+    </svg>
+  )
+}
+function ReplayIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M1 4v6h6" />
+      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
     </svg>
   )
 }
@@ -257,6 +266,15 @@ export default function Inventory() {
   const [newsFilter, setNewsFilter] = useState('All')
   const [email, setEmail] = useState('')
 
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [videoEnded, setVideoEnded] = useState(false)
+  const replay = () => {
+    if (!videoRef.current) return
+    videoRef.current.currentTime = 0
+    videoRef.current.play()
+    setVideoEnded(false)
+  }
+
   useEffect(() => {
     client
       .fetch(`*[_type == "car" && isAvailable == true] | order(_createdAt desc){
@@ -326,19 +344,35 @@ export default function Inventory() {
       <Navbar />
 
       {/* HERO — shorter than before */}
-      <div className="relative w-full h-[70vh] min-h-[460px]">
-        <img
-          src="/inventory-hero.jpg"
-          alt="Inventory"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 35%, rgba(0,0,0,0.55) 70%, rgba(0,0,0,0.95) 100%)' }} />
-        <div className="absolute bottom-14 left-0 right-0 px-6">
-          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">THE COLLECTION</p>
-          <RevealHeading as="h1" text="Every Car Here Has Already Been Chosen."
-            className="font-display text-4xl font-light leading-tight text-white max-w-sm" />
+      <div className="relative h-screen w-full overflow-hidden bg-black">
+        <video
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          onEnded={() => setVideoEnded(true)}
+          className={`hero-video-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-700 ${videoEnded ? 'blur-md' : ''}`}
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+        </video>
+
+        <div className="absolute inset-0 z-10" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,1) 100%)' }} />
+
+  
+
+        {/* replay, shown when video ends */}
+        {videoEnded && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center animate-fadeUp">
+            <button
+              onClick={replay}
+              className="w-16 h-16 rounded-full border border-white/80 bg-black/50 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors duration-300"
+              aria-label="Replay video"
+            >
+              <ReplayIcon />
+            </button>
+          </div>
+        )}
         </div>
-      </div>
 
       {/* CONTROL BAR — results count, Filters trigger, custom Sort dropdown */}
       <section className="bg-zinc-950 px-6 py-5 border-b border-zinc-800 sticky top-[72px] z-40">
