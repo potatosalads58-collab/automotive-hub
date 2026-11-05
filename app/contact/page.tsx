@@ -3,12 +3,12 @@ import { useEffect, useState, useRef } from 'react'
 import Footer from '@/components/Footer'
 import Navbar from '@/components/Navbar'
 
-const PHONE = '01200072666'
-const PHONE_DISPLAY = '0120 007 2666'
-const EMAIL = 'goldenn.eg@gmail.com'
-const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
-const THREADS_URL = 'https://www.threads.net/'
-const FACEBOOK_URL = 'https://www.facebook.com/Golden.N.Automotive'
+const PHONE = '+971567411888'
+const PHONE_DISPLAY = '+971567411888'
+const EMAIL = 'info@xmotors.me'
+const INSTAGRAM_URL = 'https://instagram.com/xmotors.me'
+const THREADS_URL = 'https://www.threads.net/@xmotors.me'
+const FACEBOOK_URL = 'https://www.facebook.com/'
 
 function AnimatedTitle({ text }: { text: string }) {
   return (
@@ -263,7 +263,7 @@ export default function ContactPage() {
             <div>
               <label className="text-[10px] tracking-[0.3em] text-zinc-500 mb-2 block">PHONE NUMBER*</label>
               <input required value={form.phone} onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                className="field-input w-full bg-transparent border-b border-zinc-700 text-white text-sm py-2.5 focus:outline-none focus:border-white placeholder:text-zinc-600" placeholder="+20 100 123 4567" />
+                className="field-input w-full bg-transparent border-b border-zinc-700 text-white text-sm py-2.5 focus:outline-none focus:border-white placeholder:text-zinc-600" placeholder="+971234567899" />
             </div>
             <div>
               <label className="text-[10px] tracking-[0.3em] text-zinc-500 mb-2 block">MESSAGE</label>
@@ -287,7 +287,7 @@ export default function ContactPage() {
           </div>
           <div className="rounded-2xl overflow-hidden border border-zinc-800" style={{ aspectRatio: '4/3' }}>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d27620.25!2d31.490878!3d30.0434943!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1458239873da2ddb%3A0x9826433a3cd0fc60!2sGolden%20N%20-%20New%20Cairo!5e0!3m2!1sen!2seg!4v1793116618754!5m2!1sen!2seg"
+              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d225.73135425939418!2d55.224530741488074!3d25.14577503263389!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f6b8b1a0189d1%3A0x1423911debf6795a!2sX%20MOTORS!5e0!3m2!1sen!2seg!4v1793909059999!5m2!1sen!2seg"
               width="100%"
               height="100%"
               style={{ border: 0 }}

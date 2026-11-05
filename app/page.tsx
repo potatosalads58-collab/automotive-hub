@@ -34,42 +34,42 @@ const instagramPosts: InstagramPost[] = [
     likes: 327,
     comments: 7,
     date: "January 16",
-    caption: "Replace with your own Golden N posts.",
+    caption: "Replace with your own X Motors posts.",
   },
   {
     images: ["/instagram/post-2.jpg"],
     likes: 230,
     comments: 6,
     date: "",
-    caption: "Replace with your own Golden N posts.",
+    caption: "Replace with your own X Motors posts.",
   },
   {
     images: ["/instagram/post-3.jpg"],
     likes: 615,
     comments: 2,
     date: "",
-    caption: "Replace with your own Golden N posts.",
+    caption: "Replace with your own X Motors posts.",
   },
   {
     images: ["/instagram/post-4.jpg"],
     likes: 158,
     comments: 5,
     date: "",
-    caption: "Replace with your own Golden N posts.",
+    caption: "Replace with your own X Motors posts.",
   },
   {
     images: ["/instagram/post-5.jpg"],
     likes: 890,
     comments: 5,
     date: "",
-    caption: "Replace with your own Golden N posts.",
+    caption: "Replace with your own X Motors posts.",
   },
   {
     images: ["/instagram/post-6.jpg"],
     likes: 689,
     comments: 5,
     date: "",
-    caption: "Replace with your own Golden N posts.",
+    caption: "Replace with your own X Motors posts.",
   },
 ]
 
@@ -268,7 +268,7 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
       <div className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto bg-zinc-900 rounded-2xl border border-zinc-800" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} aria-label="Close" className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white hover:bg-black transition-colors">✕</button>
         <div className="relative bg-black">
-          <img src={post.images[imgIndex]} alt="Golden N" className="w-full max-h-[55vh] object-cover" />
+          <img src={post.images[imgIndex]} alt="X Motors" className="w-full max-h-[55vh] object-cover" />
           {post.images.length > 1 && (
             <>
               <button onClick={prev} aria-label="Previous" className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white">
@@ -286,7 +286,7 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
           )}
         </div>
         <div className="flex items-center gap-3 px-5 pt-5">
-          <img src="/logo-full-bg.png" alt="Golden N" className="w-9 h-9 object-contain rounded-full" />
+          <img src="/logo-full-bg.png" alt="X Motors" className="w-9 h-9 object-contain rounded-full" />
           <div className="leading-tight">
             <p className="text-white text-sm font-medium">goldenn_eg</p>
             <p className="text-zinc-500 text-xs tracking-widest">SHOWROOM SINCE 1984</p>
@@ -430,7 +430,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 max-w-5xl mx-auto">
             <Reveal delay={100}>
               <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/Xmotors-classic.jpg" alt="Golden N heritage" className="heritage-img w-full h-full object-cover" />
+                <img src="/Xmotors-classic.jpg" alt="X Motors heritage" className="heritage-img w-full h-full object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
                   <p className="text-white text-xs tracking-[0.3em]">Classic Supercars</p>
                 </div>
@@ -438,7 +438,7 @@ export default function Home() {
             </Reveal>
             <Reveal delay={220}>
               <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/Xmotors-modern.jpg" alt="Golden N today" className="heritage-img w-full h-full object-cover" />
+                <img src="/Xmotors-modern.jpg" alt="X Motors today" className="heritage-img w-full h-full object-cover" />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
                   <p className="text-white text-xs tracking-[0.3em]">Hypercars</p>
                 </div>
@@ -565,7 +565,7 @@ export default function Home() {
                     {news.img ? (
                       <img src={news.img} alt={news.title} className="w-full h-full object-cover" />
                     ) : (
-                      <span>Golden N</span>
+                      <span>X Motors</span>
                     )}
                   </div>
                   <div className="p-4">
@@ -591,7 +591,7 @@ export default function Home() {
       <section className="bg-black py-16 px-6 border-t border-zinc-900">
         <div className="text-center mb-10">
           <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY CONNECTED</p>
-          <h2 className="font-display text-3xl font-light mb-4">Golden N on Instagram</h2>
+          <h2 className="font-display text-3xl font-light mb-4">X Motors on Instagram</h2>
           <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"
             className="text-white text-sm tracking-widest hover:text-zinc-400 transition-colors duration-300">
             @goldenn_eg
