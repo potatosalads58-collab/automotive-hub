@@ -362,7 +362,8 @@ function ParallaxImage({
 }
 
 function WipeFrame({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
-  const [ref, visible] = useInView<HTMLDivElement>(0.15, true)
+  // قللنا التريشولد لـ 0.05 عشان يشتغل فوراً وما يختفيش أبضاً
+  const [ref, visible] = useInView<HTMLDivElement>(0.05, true)
   return (
     <div
       ref={ref}
@@ -389,7 +390,7 @@ function Wedge({ from, to, dir = 'right' }: { from: string; to: string; dir?: 'r
 }
 
 function ShowcaseCard({ item, index }: { item: (typeof showcase)[number]; index: number }) {
-  const [ref, visible] = useInView<HTMLDivElement>(0.3)
+  const [ref, visible] = useInView<HTMLDivElement>(0.1)
   return (
     <div
       ref={ref}
@@ -407,6 +408,8 @@ function ShowcaseCard({ item, index }: { item: (typeof showcase)[number]; index:
         {item.n}
       </p>
       
+      {/* رجعنا الـ WipeFrame القديم الفخم */}
+      <WipeFrame delay={index * 120}>
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200">
           <ParallaxImage src={item.img} alt={item.title} className="h-full w-full" strength={0.8} scale={1.08} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
@@ -415,7 +418,7 @@ function ShowcaseCard({ item, index }: { item: (typeof showcase)[number]; index:
             <p className="text-xs text-zinc-300">{item.line}</p>
           </div>
         </div>
-      
+      </WipeFrame>
     </div>
   )
 }
