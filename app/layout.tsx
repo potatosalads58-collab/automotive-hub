@@ -17,6 +17,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "X Motors",
   description: "Dubai's destination for exceptional automobiles.",
+  icons: {
+    icon: "X-Motors-Logo.png", // أو المسار بتاع الأيقونة عندك جوه public
+  },
   openGraph: {
     title: "X Motors",
     description: "Dubai's destination for exceptional automobiles.",
