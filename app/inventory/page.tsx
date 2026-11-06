@@ -66,10 +66,16 @@ const parsePriceNumber = (price?: number | string): number => {
   return isNaN(parsed) ? 0 : parsed
 }
 
-const formatPrice = (price?: number | string): { amount: string; currency: string } => {
+// Numbers get thousands separators; text prices (e.g. "POD") are shown as written
+const displayPrice = (price?: number | string): string => {
   const n = parsePriceNumber(price)
-  if (!n) return { amount: 'Price on request', currency: '' }
-  return { amount: n.toLocaleString('en-US'), currency: 'EGP' }
+  if (n > 0) return n.toLocaleString('en-US')
+  return typeof price === 'string' ? price : ''
+}
+
+// Fades an image in once it has loaded (also handles already-cached images)
+const fadeInImage = (el: HTMLImageElement | null) => {
+  if (el && el.complete) el.classList.add('loaded')
 }
 
 function useInView<T extends HTMLElement>(threshold = 0.15, once = true): [React.RefObject<T | null>, boolean] {
@@ -92,7 +98,6 @@ function useInView<T extends HTMLElement>(threshold = 0.15, once = true): [React
   return [ref, visible]
 }
 
-// Quiet entrance: fades in once, short travel, no blur.
 function Reveal({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) {
   const [ref, visible] = useInView<HTMLDivElement>(0.1)
   return (
@@ -100,9 +105,10 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
       ref={ref}
       className={`reveal ${className}`}
       style={{
-        transition: `opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+        transition: `opacity 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 0.9s cubic-bezier(0.22,1,0.36,1) ${delay}ms, filter 0.9s ease ${delay}ms`,
         opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0px)' : 'translateY(18px)',
+        transform: visible ? 'translateY(0px) scale(1)' : 'translateY(36px) scale(0.98)',
+        filter: visible ? 'blur(0px)' : 'blur(4px)',
       }}
     >
       {children}
@@ -110,7 +116,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: React.React
   )
 }
 
-// Word-by-word masked headline. Used for the hero and the sourcing band only.
+// Word-by-word masked headline
 function RevealHeading({ text, as = 'h2', className = '', wordDelay = 80, startDelay = 0 }: {
   text: string; as?: 'h1' | 'h2'; className?: string; wordDelay?: number; startDelay?: number
 }) {
@@ -133,6 +139,18 @@ function RevealHeading({ text, as = 'h2', className = '', wordDelay = 80, startD
   return <h2 ref={ref} className={className}>{content}</h2>
 }
 
+// Thin brass rule that draws itself when scrolled into view
+function DrawLine({ className = '' }: { className?: string }) {
+  const [ref, visible] = useInView<HTMLSpanElement>(0.5)
+  return (
+    <span
+      ref={ref}
+      className={`draw-line block h-px bg-brass ${className}`}
+      style={{ width: visible ? '72px' : '0px', transition: 'width 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s' }}
+    />
+  )
+}
+
 function ChevronDown({ open = false }: { open?: boolean }) {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6"
@@ -149,73 +167,27 @@ function ReplayIcon() {
     </svg>
   )
 }
-function ArrowUpRight() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M7 17L17 7M8 7h9v9" />
-    </svg>
-  )
-}
 
+// Auto-scrolling marquee driven by CSS (reliable on every browser, pauses on hover)
 function BrandSlider() {
-  const trackRef = useRef<HTMLDivElement>(null)
-  const interactingRef = useRef(false)
-  const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => {
-    const el = trackRef.current
-    if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    let frame: number
-    const step = () => {
-      if (!interactingRef.current) {
-        el.scrollLeft += 0.4
-        const third = el.scrollWidth / 3
-        if (el.scrollLeft >= third * 2) el.scrollLeft -= third
-      }
-      frame = requestAnimationFrame(step)
-    }
-    frame = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(frame)
-  }, [])
-
-  const pause = () => {
-    interactingRef.current = true
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
-  }
-  const scheduleResume = () => {
-    if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
-    resumeTimeoutRef.current = setTimeout(() => { interactingRef.current = false }, 800)
-  }
-
+  const loop = [...brands, ...brands, ...brands, ...brands]
   return (
-    <section className="bg-black py-20 border-t border-b border-white/10 overflow-hidden">
-      <p className="text-center font-display text-2xl font-light text-zinc-400 mb-12">The marques we deal in</p>
-      <div
-        ref={trackRef}
-        onPointerDown={pause}
-        onPointerUp={scheduleResume}
-        onPointerCancel={scheduleResume}
-        onTouchStart={pause}
-        onTouchEnd={scheduleResume}
-        onMouseLeave={scheduleResume}
-        className="no-scrollbar flex gap-20 overflow-x-auto px-10"
-        style={{
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-        }}
-      >
-        {[...brands, ...brands, ...brands].map((b, i) => (
-          <div key={i} className="flex flex-col items-center gap-4 flex-shrink-0 select-none">
-            <img
-              src={logoUrl(b.domain)}
-              alt={b.name}
-              draggable={false}
-              className="h-11 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-700"
-            />
-            <span className="text-[10px] tracking-[0.2em] text-zinc-600 whitespace-nowrap">{b.name.toUpperCase()}</span>
-          </div>
-        ))}
+    <section className="bg-black py-16 border-t border-b border-zinc-900 overflow-hidden">
+      <p className="text-center text-[11px] tracking-[0.35em] text-zinc-500 mb-10">THE MARQUES WE DEAL IN</p>
+      <div className="marquee-mask overflow-hidden">
+        <div className="marquee-track flex w-max">
+          {loop.map((b, i) => (
+            <div key={i} className="flex flex-col items-center gap-3 flex-shrink-0 select-none px-8 md:px-10">
+              <img
+                src={logoUrl(b.domain)}
+                alt={b.name}
+                draggable={false}
+                className="h-10 w-auto object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 hover:scale-110 transition-all duration-500"
+              />
+              <span className="text-[9px] tracking-[0.25em] text-zinc-500 whitespace-nowrap">{b.name.toUpperCase()}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -249,11 +221,16 @@ function FilterSection({
       </button>
       <div className="overflow-hidden transition-all duration-500" style={{ maxHeight: isOpen ? '320px' : '0px' }}>
         <div className="flex gap-2 flex-wrap pt-5 pb-1">
-          {options.map((opt) => (
+          {options.map((opt, i) => (
             <button
               key={opt}
               onClick={() => onSelect(opt)}
-              className={`px-4 py-2 text-xs tracking-wide border rounded-full transition-colors ${
+              style={{
+                opacity: isOpen ? 1 : 0,
+                transform: isOpen ? 'translateY(0px)' : 'translateY(10px)',
+                transition: `opacity 0.4s ease ${isOpen ? i * 35 : 0}ms, transform 0.4s ease ${isOpen ? i * 35 : 0}ms, background-color 0.3s, border-color 0.3s, color 0.3s`,
+              }}
+              className={`px-4 py-2 text-xs tracking-wide border rounded-full ${
                 value === opt
                   ? 'bg-brass text-black border-brass'
                   : 'border-white/15 text-zinc-300 hover:border-brass hover:text-white'
@@ -289,6 +266,9 @@ export default function Inventory() {
   const [email, setEmail] = useState('')
 
   const videoRef = useRef<HTMLVideoElement>(null)
+  const videoWrapRef = useRef<HTMLDivElement>(null)
+  const heroContentRef = useRef<HTMLDivElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLElement>(null)
   const [videoEnded, setVideoEnded] = useState(false)
   const replay = () => {
@@ -312,6 +292,37 @@ export default function Inventory() {
       .then((res) => res.json())
       .then((data) => setMotorNews(data))
       .catch((err) => console.error(err))
+  }, [])
+
+  // Scroll effects: progress bar, hero parallax, hero content fade-out
+  useEffect(() => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    let ticking = false
+    const update = () => {
+      const y = window.scrollY
+      const vh = window.innerHeight
+      if (progressRef.current) {
+        const max = document.documentElement.scrollHeight - vh
+        progressRef.current.style.transform = `scaleX(${max > 0 ? Math.min(1, y / max) : 0})`
+      }
+      if (!reduce && y < vh * 1.2) {
+        if (videoWrapRef.current) videoWrapRef.current.style.transform = `translate3d(0, ${y * 0.25}px, 0)`
+        if (heroContentRef.current) {
+          heroContentRef.current.style.opacity = String(Math.max(0, 1 - y / (vh * 0.6)))
+          heroContentRef.current.style.transform = `translate3d(0, ${y * -0.12}px, 0)`
+        }
+      }
+      ticking = false
+    }
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true
+        requestAnimationFrame(update)
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    update()
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   // Lock page scroll + Escape to close while the filter drawer is open
@@ -342,7 +353,7 @@ export default function Inventory() {
     .filter((c) => selectedYear === 'All Years' || String(c.year) === selectedYear)
     .filter((c) => {
       const numPrice = parsePriceNumber(c.price)
-      // When a price filter is active, "price on request" cars (0) are hidden
+      // When a price filter is active, "price on demand" cars (0) are hidden
       if (selectedPriceLabel !== 'All Prices' && numPrice === 0) return false
       return numPrice >= activePriceBand.min && numPrice < (activePriceBand.max === Infinity ? Infinity : activePriceBand.max + 1)
     })
@@ -387,54 +398,103 @@ export default function Inventory() {
         .border-brass { border-color: var(--brass); }
         ::selection { background: var(--brass); color: #000; }
         button:focus-visible, a:focus-visible, input:focus-visible { outline: 1px solid var(--brass); outline-offset: 3px; }
+
+        @keyframes heroZoom { from { transform: scale(1.1); } to { transform: scale(1); } }
+        .hero-zoom { animation: heroZoom 16s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade-in { animation: fadeIn 0.8s ease forwards; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-up { opacity: 0; animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) forwards; }
+        @keyframes scrollCue { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+        .scroll-cue { animation: scrollCue 2s cubic-bezier(0.65,0,0.35,1) infinite; }
+
+        /* Hero buttons — identical size, never wrap, fill slides in on hover */
+        .hero-btn {
+          position: relative; overflow: hidden; isolation: isolate;
+          display: inline-flex; align-items: center; justify-content: center;
+          height: 56px; padding: 0 40px; border-radius: 9999px;
+          font-size: 14px; font-weight: 400; letter-spacing: 0.04em; white-space: nowrap;
+          transition: color 0.5s ease, border-color 0.5s ease;
+        }
+        .hero-btn::before {
+          content: ''; position: absolute; inset: 0; z-index: -1;
+          transform: translateY(101%); transition: transform 0.55s cubic-bezier(0.16,1,0.3,1);
+        }
+        .hero-btn:hover::before { transform: translateY(0); }
+        .hero-btn-solid { background: #fff; color: #000; }
+        .hero-btn-solid::before { background: var(--brass); }
+        .hero-btn-line { border: 1px solid rgba(255,255,255,0.4); color: #fff; }
+        .hero-btn-line::before { background: #fff; }
+        .hero-btn-line:hover { color: #000; border-color: #fff; }
+
+        /* Brand marquee */
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        .marquee-track { animation: marquee 45s linear infinite; will-change: transform; }
+        .marquee-track:hover { animation-play-state: paused; }
+        .marquee-mask {
+          -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+          mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+        }
+
+        /* Car card (original look) with lift, brass glow and image fade-in */
+        .car-card { transition: box-shadow 0.4s ease, transform 0.5s cubic-bezier(0.16,1,0.3,1); }
+        .car-card:hover { transform: translateY(-6px); box-shadow: 0 0 0 1px rgba(184,155,106,0.5), 0 18px 50px rgba(184,155,106,0.12); }
+        .car-photo { transition: transform 1.4s cubic-bezier(0.16,1,0.3,1), opacity 0.9s ease; }
+        .img-fade { opacity: 0; transform: scale(1.08); }
+        .img-fade.loaded { opacity: 1; transform: scale(1); }
+        .car-card:hover .img-fade.loaded { transform: scale(1.06); }
+
+        /* News card */
+        .news-card:hover .car-photo { transform: scale(1.045); }
+        .news-card .news-rule { transition: background-color 0.5s ease; }
+        .news-card:hover .news-rule { background-color: var(--brass); }
+
         .no-scrollbar { scrollbar-width: none; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
-        @keyframes heroZoom { from { transform: scale(1.08); } to { transform: scale(1); } }
-        .hero-zoom { animation: heroZoom 14s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .fade-in { animation: fadeIn 0.8s ease forwards; }
-        @keyframes scrollCue { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
-
-        /* Car card: one hover behaviour only — the photograph slowly leans in */
-        .car-photo { transition: transform 1.6s cubic-bezier(0.16,1,0.3,1); }
-        .car-card:hover .car-photo { transform: scale(1.045); }
-        .car-card .car-rule { transition: background-color 0.5s ease; }
-        .car-card:hover .car-rule { background-color: var(--brass); }
-        .car-card .car-arrow { opacity: 0; transform: translate(-6px, 6px); transition: opacity 0.5s ease, transform 0.5s ease; }
-        .car-card:hover .car-arrow { opacity: 1; transform: translate(0,0); }
-
         @media (prefers-reduced-motion: reduce) {
-          .hero-zoom, .fade-in { animation: none; }
-          .reveal, .reveal-word > span { transition: none !important; opacity: 1 !important; transform: none !important; }
-          .car-photo, .car-arrow { transition: none; }
+          .hero-zoom, .fade-in, .fade-up, .scroll-cue, .marquee-track { animation: none !important; }
+          .fade-up { opacity: 1; }
+          .reveal, .reveal-word > span { transition: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+          .draw-line { width: 72px !important; transition: none !important; }
+          .car-card, .car-photo, .img-fade { transition: none; }
+          .img-fade { opacity: 1; transform: none; }
         }
       `}</style>
 
+      {/* Scroll progress */}
+      <div
+        ref={progressRef}
+        className="fixed top-0 left-0 right-0 h-[2px] bg-brass origin-left z-[120] pointer-events-none"
+        style={{ transform: 'scaleX(0)' }}
+      />
+
       <Navbar />
 
-      {/* HERO — full-bleed film with the headline set directly on it */}
+      {/* HERO */}
       <div className="relative h-screen min-h-[600px] w-full overflow-hidden">
-        <video
-          ref={videoRef}
-          autoPlay
-          muted
-          playsInline
-          onTimeUpdate={() => {
-            if (videoRef.current && !videoEnded) {
-              // Stop 0.3s before the end and hold the last frame under a soft blur
-              if (videoRef.current.duration - videoRef.current.currentTime < 0.3) {
-                videoRef.current.pause()
-                setVideoEnded(true)
+        <div ref={videoWrapRef} className="absolute left-0 right-0 top-[-20%] h-[120%] will-change-transform">
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            onTimeUpdate={() => {
+              if (videoRef.current && !videoEnded) {
+                // Stop 0.3s before the end and hold the last frame under a soft blur
+                if (videoRef.current.duration - videoRef.current.currentTime < 0.3) {
+                  videoRef.current.pause()
+                  setVideoEnded(true)
+                }
               }
-            }
-          }}
-          className={`hero-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-1000 ${
-            videoEnded ? 'blur-sm' : ''
-          }`}
-        >
-          <source src="/inventory-hero.mp4" type="video/mp4" />
-        </video>
+            }}
+            className={`hero-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-1000 ${
+              videoEnded ? 'blur-sm' : ''
+            }`}
+          >
+            <source src="/inventory-hero.mp4" type="video/mp4" />
+          </video>
+        </div>
 
         <div
           className="absolute inset-0 z-10 pointer-events-none"
@@ -444,34 +504,32 @@ export default function Inventory() {
           }}
         />
 
-        <div className="absolute inset-x-0 bottom-0 z-20 px-6 md:px-16 pb-16 md:pb-24">
+        <div ref={heroContentRef} className="absolute inset-x-0 bottom-0 z-20 px-6 md:px-16 pb-20 md:pb-28 will-change-transform">
           <RevealHeading
             as="h1"
             text="Exceptional cars, carefully chosen."
             startDelay={300}
             wordDelay={110}
-            className="font-display font-light text-[clamp(3rem,9vw,8.5rem)] leading-[0.95] max-w-5xl"
+            className="font-display font-light text-[clamp(2.8rem,9vw,8.5rem)] leading-[0.95] max-w-5xl"
           />
-          <div className="fade-in mt-8 flex flex-col md:flex-row md:items-end md:justify-between gap-8" style={{ animationDelay: '1.4s', opacity: 0 }}>
-            <p className="text-zinc-300 text-sm md:text-base font-light leading-relaxed max-w-md">
-              Every car in our showroom is inspected and presented in person.
+          <div className="mt-8 flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+            <p className="fade-up text-zinc-300 text-sm md:text-base font-light leading-relaxed max-w-md" style={{ animationDelay: '1.3s' }}>
               Browse what is available today, or tell us what to find.
             </p>
-            <div className="flex items-center gap-4">
-              <button
-                onClick={scrollToGrid}
-                className="bg-white text-black text-sm px-8 py-4 rounded-full hover:bg-brass transition-colors duration-500"
-              >
-                Browse the collection
+            <div className="fade-up flex flex-col sm:flex-row gap-3 w-full md:w-auto md:flex-shrink-0" style={{ animationDelay: '1.6s' }}>
+              <button onClick={scrollToGrid} className="hero-btn hero-btn-solid w-full sm:w-auto">
+                View collection
               </button>
-              <a
-                href="/contact"
-                className="text-sm px-8 py-4 rounded-full border border-white/30 text-white hover:border-white transition-colors duration-500"
-              >
+              <a href="/contact" className="hero-btn hero-btn-line w-full sm:w-auto">
                 Request a car
               </a>
             </div>
           </div>
+        </div>
+
+        {/* scroll cue */}
+        <div className="fade-in hidden md:block absolute left-1/2 bottom-6 z-20 w-px h-12 overflow-hidden bg-white/10" style={{ animationDelay: '2.2s', opacity: 0 }}>
+          <div className="scroll-cue w-full h-full bg-white/70" />
         </div>
 
         {/* replay, shown when video ends */}
@@ -492,8 +550,11 @@ export default function Inventory() {
       <section ref={gridRef} className="bg-black px-6 md:px-16 pt-24 pb-16 scroll-mt-24">
         <Reveal>
           <h2 className="font-display font-light text-5xl md:text-7xl leading-none">Available now</h2>
-          <p className="text-zinc-500 text-sm md:text-base font-light mt-6 max-w-md leading-relaxed">
-            Each listing is a car we hold, in Cairo, ready to be seen.
+        </Reveal>
+        <DrawLine className="mt-8 mb-6" />
+        <Reveal delay={150}>
+          <p className="text-zinc-500 text-sm md:text-base font-light max-w-md leading-relaxed">
+            Each listing is a car we hold, ready to be seen.
           </p>
         </Reveal>
       </section>
@@ -529,7 +590,7 @@ export default function Inventory() {
               {sortMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-[70]" onClick={() => setSortMenuOpen(false)} />
-                  <div className="fade-in absolute right-0 top-[calc(100%+10px)] z-[71] bg-zinc-950 border border-white/10 rounded-2xl overflow-hidden w-56 shadow-2xl">
+                  <div className="fade-up absolute right-0 top-[calc(100%+10px)] z-[71] bg-zinc-950 border border-white/10 rounded-2xl overflow-hidden w-56 shadow-2xl" style={{ animationDuration: '0.4s' }}>
                     {sortOptions.map((o) => (
                       <button
                         key={o.value}
@@ -553,7 +614,7 @@ export default function Inventory() {
             {[selectedMake, selectedYear, selectedPriceLabel, selectedType, selectedSpecs]
               .filter((v) => !v.startsWith('All'))
               .map((v) => (
-                <span key={v} className="border border-white/15 text-zinc-300 text-xs px-3 py-1.5 rounded-full">{v}</span>
+                <span key={v} className="fade-in border border-white/15 text-zinc-300 text-xs px-3 py-1.5 rounded-full">{v}</span>
               ))}
             <button onClick={clearFilters} className="text-zinc-500 text-xs underline underline-offset-4 hover:text-white transition-colors">
               Clear all
@@ -582,7 +643,7 @@ export default function Inventory() {
               <button
                 onClick={() => setFilterOpen(false)}
                 aria-label="Close filters"
-                className="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 flex-shrink-0 transition-colors"
+                className="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/5 hover:rotate-90 flex-shrink-0 transition-all duration-300"
               >
                 ✕
               </button>
@@ -629,9 +690,20 @@ export default function Inventory() {
       {/* CARS GRID */}
       <section className="bg-black px-6 md:px-16 py-16 md:py-24">
         {carsLoading ? (
-          <p className="text-zinc-600 text-sm">Loading the collection…</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-zinc-900 rounded-2xl overflow-hidden animate-pulse" style={{ animationDelay: `${i * 120}ms` }}>
+                <div className="w-full bg-zinc-800" style={{ aspectRatio: '2000/1670' }} />
+                <div className="p-4 space-y-3">
+                  <div className="h-5 w-2/3 bg-zinc-800 rounded" />
+                  <div className="h-3 w-1/3 bg-zinc-800 rounded" />
+                  <div className="h-5 w-1/4 bg-zinc-800 rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : paginated.length === 0 ? (
-          <div className="text-center py-24">
+          <div className="text-center py-20">
             <p className="font-display text-3xl font-light mb-3">Nothing matches these filters</p>
             <p className="text-zinc-500 text-sm mb-8">Loosen a filter, or let us source the car for you.</p>
             <button onClick={clearFilters} className="border border-white/30 hover:border-brass text-sm px-8 py-3 rounded-full transition-colors">
@@ -639,70 +711,46 @@ export default function Inventory() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16 md:gap-y-20">
-            {paginated.map((car, i) => {
-              const { amount, currency } = formatPrice(car.price)
-              return (
-                // Middle column drops slightly on large screens for an editorial rhythm
-                <Reveal key={car._id} delay={(i % 3) * 100} className="lg:[&:nth-child(3n+2)]:mt-16">
-                  <a href={`/vehicle/${car._id}`} className="car-card group block">
-                    <div className="relative w-full bg-zinc-900 overflow-hidden" style={{ aspectRatio: '2000/1670' }}>
-                      {car.thumbnail && (
-                        <img
-                          src={urlFor(car.thumbnail).width(1200).url()}
-                          alt={car.title}
-                          className="car-photo w-full h-full object-cover"
-                        />
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-                      <span className="car-arrow absolute bottom-5 right-5 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center">
-                        <ArrowUpRight />
-                      </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {paginated.map((car, i) => (
+              <Reveal key={car._id} delay={(i % 3) * 110}>
+                <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
+                  <div className="w-full bg-zinc-800 overflow-hidden" style={{ aspectRatio: '2000/1670' }}>
+                    {car.thumbnail && (
+                      <img
+                        ref={fadeInImage}
+                        onLoad={(e) => e.currentTarget.classList.add('loaded')}
+                        src={urlFor(car.thumbnail).width(800).url()}
+                        alt={car.title}
+                        className="car-photo img-fade w-full h-full object-cover"
+                      />
+                    )}
+                  </div>
+                  <div className="p-4">
+                    <p className="text-white text-xl font-light mb-3">{car.title}</p>
+                    <div className="flex gap-3 text-xs text-zinc-500 mb-3 flex-wrap">
+                      <span>{car.mileage?.toLocaleString()} km</span>
+                      <span>·</span>
+                      <span>{car.year}</span>
                     </div>
-
-                    <div className="car-rule h-px bg-white/15 mt-6" />
-
-                    <div className="pt-5">
-                      <div className="flex items-start justify-between gap-6">
-                        <h3 className="font-display text-2xl md:text-[1.7rem] font-light leading-tight">{car.title}</h3>
-                        <p className="text-right flex-shrink-0 pt-1">
-                          {currency && <span className="block text-[10px] tracking-[0.2em] text-zinc-500">{currency}</span>}
-                          <span className={currency ? 'text-lg font-light' : 'text-sm text-zinc-400 font-light'}>{amount}</span>
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4 mt-4 text-xs text-zinc-500 font-light">
-                        {car.year && <span>{car.year}</span>}
-                        {car.mileage != null && (
-                          <>
-                            <span className="w-px h-3 bg-white/15" />
-                            <span>{car.mileage.toLocaleString('en-US')} km</span>
-                          </>
-                        )}
-                        {car.bodyType && (
-                          <>
-                            <span className="w-px h-3 bg-white/15" />
-                            <span>{car.bodyType}</span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </a>
-                </Reveal>
-              )
-            })}
+                    <p className="text-white font-medium text-lg">{displayPrice(car.price)}</p>
+                  </div>
+                </a>
+              </Reveal>
+            ))}
           </div>
         )}
 
         {totalPages > 1 && (
-          <div className="flex justify-center items-center gap-2 mt-24">
+          <div className="flex justify-center gap-3 mt-14">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
                 onClick={() => { setPage(i + 1); gridRef.current?.scrollIntoView({ behavior: 'smooth' }) }}
                 aria-label={`Page ${i + 1}`}
                 aria-current={page === i + 1 ? 'page' : undefined}
-                className={`w-10 h-10 text-sm rounded-full transition-all duration-300 ${
-                  page === i + 1 ? 'bg-white text-black' : 'text-zinc-500 hover:text-white'
+                className={`w-9 h-9 text-xs border rounded-full transition-all duration-300 hover:scale-110 ${
+                  page === i + 1 ? 'bg-white text-black border-white' : 'border-zinc-700 text-zinc-400 hover:border-white hover:text-white'
                 }`}
               >
                 {i + 1}
@@ -714,7 +762,7 @@ export default function Inventory() {
 
       <BrandSlider />
 
-      {/* SOURCING BAND — the one big moment after the grid */}
+      {/* SOURCING BAND */}
       <section className="relative min-h-[80vh] w-full overflow-hidden flex items-center">
         <div
           className="absolute inset-0 bg-cover bg-center"
@@ -727,28 +775,35 @@ export default function Inventory() {
             text="Not here? We will find it."
             className="font-display font-light text-5xl md:text-7xl leading-[1] mb-8"
           />
-          <p className="text-zinc-300 text-base font-light leading-relaxed max-w-md mb-10">
-            Our network reaches well beyond what is listed. Tell us the make, the specification and the budget, and we will search for it on your behalf.
-          </p>
-          <a
-            href="/contact"
-            className="inline-block bg-white text-black text-sm px-10 py-4 rounded-full hover:bg-brass transition-colors duration-500"
-          >
-            Start a search
-          </a>
+          <DrawLine className="mb-8" />
+          <Reveal delay={200}>
+            <p className="text-zinc-300 text-base font-light leading-relaxed max-w-md mb-10">
+              Our network reaches well beyond what is listed. Tell us the make, the specification and the budget, and we will search for it on your behalf.
+            </p>
+          </Reveal>
+          <Reveal delay={350}>
+            <a href="/contact" className="hero-btn hero-btn-solid">
+              Start a search
+            </a>
+          </Reveal>
         </div>
       </section>
 
       {/* NEWS */}
       <section className="bg-black py-24 px-6 md:px-16 border-t border-white/10">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
-          <h2 className="font-display text-5xl md:text-6xl font-light leading-none">News &amp; reviews</h2>
+          <div>
+            <Reveal>
+              <h2 className="font-display text-5xl md:text-6xl font-light leading-none">News &amp; reviews</h2>
+            </Reveal>
+            <DrawLine className="mt-8" />
+          </div>
           <div className="flex gap-2">
             {['All', 'News', 'Reviews'].map((f) => (
               <button
                 key={f}
                 onClick={() => setNewsFilter(f)}
-                className={`px-5 py-2 text-xs tracking-wide border rounded-full transition-colors ${
+                className={`px-5 py-2 text-xs tracking-wide border rounded-full transition-all duration-300 hover:scale-105 ${
                   newsFilter === f ? 'bg-white text-black border-white' : 'border-white/15 text-zinc-400 hover:border-brass hover:text-white'
                 }`}
               >
@@ -763,14 +818,14 @@ export default function Inventory() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-14">
             {filteredNews.map((news, i) => (
-              <Reveal key={i} delay={(i % 4) * 80} className={i === 0 ? 'lg:col-span-2' : ''}>
-                <a href={news.link} target="_blank" rel="noopener noreferrer" className="car-card group block">
+              <Reveal key={`${newsFilter}-${i}`} delay={(i % 4) * 90} className={i === 0 ? 'lg:col-span-2' : ''}>
+                <a href={news.link} target="_blank" rel="noopener noreferrer" className="news-card block">
                   <div className={`w-full bg-zinc-900 overflow-hidden flex items-center justify-center text-zinc-700 text-xs ${i === 0 ? 'aspect-[16/10]' : 'aspect-[4/3]'}`}>
                     {news.img
                       ? <img src={news.img} alt={news.title} className="car-photo w-full h-full object-cover" />
                       : <span>Automotive Hub</span>}
                   </div>
-                  <div className="car-rule h-px bg-white/15 mt-5" />
+                  <div className="news-rule h-px bg-white/15 mt-5" />
                   <div className="pt-4">
                     <p className="text-brass text-xs mb-3">{news.category}</p>
                     <p className={`font-display font-light leading-snug mb-3 ${i === 0 ? 'text-3xl' : 'text-xl'}`}>{news.title}</p>
@@ -784,30 +839,16 @@ export default function Inventory() {
       </section>
 
       {/* NEWSLETTER */}
-      <section className="bg-zinc-950 py-28 px-6 md:px-16 border-t border-white/10">
-        <div className="max-w-2xl">
-          <h3 className="font-display text-4xl md:text-5xl font-light leading-tight mb-4">First sight of new arrivals</h3>
-          <p className="text-zinc-500 text-sm font-light mb-10 max-w-md">
-            New cars are shared with subscribers before they are listed. One short email, only when something arrives.
-          </p>
-          <form
-            onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
-            className="flex items-center gap-4 border-b border-white/25 focus-within:border-brass transition-colors pb-3"
-          >
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Your email address"
-              aria-label="Email address"
-              className="flex-1 bg-transparent text-white text-base font-light py-2 focus:outline-none placeholder:text-zinc-600"
-            />
-            <button type="submit" className="text-sm text-white hover:text-brass transition-colors px-2">
-              Subscribe
-            </button>
-          </form>
-        </div>
+      <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
+        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
+        <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
+        <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Your email address"
+            className="flex-1 bg-black border border-zinc-700 text-white text-sm px-4 py-3 rounded-lg focus:outline-none focus:border-white placeholder:text-zinc-600" />
+          <button type="submit" className="bg-white text-black text-xs tracking-widest px-6 py-3 rounded-lg hover:bg-zinc-200 transition-colors">
+            SUBSCRIBE
+          </button>
+        </form>
       </section>
 
       <Footer />
