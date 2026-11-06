@@ -8,7 +8,7 @@ import { urlFor } from '../../sanity/lib/imageUrl'
 type CarListItem = {
   _id: string
   title: string
-  price?: number
+  price?: number | string // عشان يقبل رقم أو ستريينج POD
   year?: number
   mileage?: number
   bodyType?: string
@@ -274,7 +274,15 @@ export default function Inventory() {
     videoRef.current.play()
     setVideoEnded(false)
   }
-
+// دالة مساعدة لاستخراج الرقم من السعر
+const parsePriceNumber = (price?: number | string): number => {
+  if (price === undefined || price === null) return 0
+  if (typeof price === 'number') return price
+  
+  // لو ستريينج يحتوي على أرقام فقط نحوله لرقم، لو POD أو النص مش رقم يرجع 0
+  const parsed = parseFloat(price.replace(/[^0-9.]/g, ''))
+  return isNaN(parsed) ? 0 : parsed
+}
   useEffect(() => {
     client
       .fetch(`*[_type == "car" && isAvailable == true] | order(_createdAt desc){
@@ -299,18 +307,26 @@ export default function Inventory() {
 
   const activePriceBand = priceBands.find((p) => p.label === selectedPriceLabel) ?? priceBands[0]
 
-  const filtered = cars
-    .filter((c) => selectedType === 'All body types' || c.bodyType === selectedType)
-    .filter((c) => selectedMake === 'All Brands' || deriveMake(c.title) === selectedMake)
-    .filter((c) => selectedSpecs === 'All specifications' || c.specs === selectedSpecs)
-    .filter((c) => selectedYear === 'All Years' || String(c.year) === selectedYear)
-    .filter((c) => (c.price ?? 0) >= activePriceBand.min && (c.price ?? 0) < (activePriceBand.max === Infinity ? Infinity : activePriceBand.max + 1))
-    .sort((a, b) => {
-      if (sortBy === 'price-asc') return (a.price ?? 0) - (b.price ?? 0)
-      if (sortBy === 'price-desc') return (b.price ?? 0) - (a.price ?? 0)
-      if (sortBy === 'km-asc') return (a.mileage ?? 0) - (b.mileage ?? 0)
-      return (b.year ?? 0) - (a.year ?? 0)
-    })
+ const filtered = cars
+  .filter((c) => selectedType === 'All body types' || c.bodyType === selectedType)
+  .filter((c) => selectedMake === 'All Brands' || deriveMake(c.title) === selectedMake)
+  .filter((c) => selectedSpecs === 'All specifications' || c.specs === selectedSpecs)
+  .filter((c) => selectedYear === 'All Years' || String(c.year) === selectedYear)
+  .filter((c) => {
+    const numPrice = parsePriceNumber(c.price)
+    // لو الفلتر مش "All Prices" والعربية price on demand (سعرها 0)، تقدر تقرر تظهرها أو تخفيها
+    if (selectedPriceLabel !== 'All Prices' && numPrice === 0) return false
+    return numPrice >= activePriceBand.min && numPrice < (activePriceBand.max === Infinity ? Infinity : activePriceBand.max + 1)
+  })
+  .sort((a, b) => {
+    const priceA = parsePriceNumber(a.price)
+    const priceB = parsePriceNumber(b.price)
+    
+    if (sortBy === 'price-asc') return priceA - priceB
+    if (sortBy === 'price-desc') return priceB - priceA
+    if (sortBy === 'km-asc') return (a.mileage ?? 0) - (b.mileage ?? 0)
+    return (b.year ?? 0) - (a.year ?? 0)
+  })
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / CARS_PER_PAGE))
   const paginated = filtered.slice((page - 1) * CARS_PER_PAGE, page * CARS_PER_PAGE)
