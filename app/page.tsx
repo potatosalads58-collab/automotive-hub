@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { urlFor } from '../sanity/lib/imageUrl'
 
-const INSTAGRAM_URL = 'https://instagram.com/goldenneg'
+const INSTAGRAM_URL = 'https://instagram.com/xmotors.me'
 
 const quickLinks = [
   { title: "Available Vehicles", img: "available-vehicles.jpg", href: "/inventory" },
@@ -45,10 +45,10 @@ const instagramPosts: InstagramPost[] = [
   },
   {
     images: ["/instagram/post-3.jpg"],
-    likes: 615,
-    comments: 2,
+    likes: 397,
+    comments: 4,
     date: "",
-    caption: "Replace with your own X Motors posts.",
+    caption: "𝐓𝐡𝐞 𝐀𝐫𝐭 𝐨𝐟 𝐒𝐮𝐛𝐭𝐥𝐞𝐭𝐲. Porsche 911 GT3 Touring: All the precision of a GT3, without the need to announce it.",
   },
   {
     images: ["/instagram/post-4.jpg"],
@@ -288,8 +288,7 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
         <div className="flex items-center gap-3 px-5 pt-5">
           <img src="/logo-full-bg.png" alt="X Motors" className="w-9 h-9 object-contain rounded-full" />
           <div className="leading-tight">
-            <p className="text-white text-sm font-medium">goldenn_eg</p>
-            <p className="text-zinc-500 text-xs tracking-widest">SHOWROOM SINCE 1984</p>
+            <p className="text-white text-sm font-medium">xmotors.me</p>
           </div>
         </div>
         <p className="px-5 pt-4 text-zinc-400 text-sm leading-relaxed whitespace-pre-line">{post.caption}</p>
