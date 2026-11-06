@@ -4,14 +4,90 @@ import { useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
-const pageMarkup = String.raw`<div id="progress"></div>
+const pageStyles = String.raw`
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500;600;800&display=swap');
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#000;color:#fff;overflow-x:hidden}
+.font-display{font-family:'Cormorant Garamond',serif}
+
+#progress{position:fixed;top:0;left:0;height:2px;width:0;background:#fff;z-index:70;mix-blend-mode:difference}
+#nav{position:fixed;top:0;left:0;right:0;z-index:55;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;transition:background .5s,border-color .5s;border-bottom:1px solid transparent}
+#nav.solid{background:#000;border-bottom-color:#27272a}
+.burger span{display:block;width:24px;height:1px;background:#fff;margin:5px 0}
+.wordmark{font-weight:800;letter-spacing:.22em;font-size:14px}
+
+[data-reveal]{opacity:0;transform:translateY(28px);filter:blur(6px);transition:opacity .8s ease var(--d,0ms),transform .8s cubic-bezier(.16,1,.3,1) var(--d,0ms),filter .8s ease var(--d,0ms)}
+[data-reveal].in{opacity:1;transform:none;filter:none}
+.w{display:inline-block;overflow:hidden;margin-right:.28em;vertical-align:bottom;padding-bottom:.08em}
+.wi{display:inline-block;transform:translateY(115%);opacity:0;transition:transform .75s cubic-bezier(.16,1,.3,1) calc(var(--i)*70ms),opacity .6s ease calc(var(--i)*70ms)}
+.vis .wi{transform:none;opacity:1}
+.l{display:inline-block;opacity:0;transform:translateY(10px);filter:blur(3px);transition:opacity .5s ease calc(var(--i)*22ms),transform .5s ease calc(var(--i)*22ms),filter .5s ease calc(var(--i)*22ms)}
+.vis .l{opacity:1;transform:none;filter:none}
+
+.hero-bg{position:absolute;inset:0;background:radial-gradient(60% 50% at 75% 28%,rgba(255,255,255,.14),transparent 60%),radial-gradient(40% 35% at 18% 72%,rgba(255,255,255,.05),transparent 70%),linear-gradient(160deg,#181818 0%,#070707 60%,#000 100%);animation:ken 14s ease-out forwards}
+@keyframes ken{from{transform:scale(1.12)}to{transform:scale(1)}}
+.streak{position:absolute;top:-20%;bottom:-20%;width:16%;left:-30%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent);transform:skewX(-18deg);animation:streak 6.5s ease-in-out infinite}
+@keyframes streak{0%{left:-30%}60%,100%{left:130%}}
+.chip{position:absolute;left:16px;top:86px;font-size:9px;letter-spacing:.14em;border:1px solid #333;padding:6px 10px;color:#777;z-index:5;text-transform:uppercase}
+.cue{width:1px;height:48px;background:rgba(255,255,255,.75);animation:cue 2.2s ease-in-out infinite}
+@keyframes cue{0%{transform:scaleY(0);transform-origin:top}45%{transform:scaleY(1);transform-origin:top}55%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+.marquee{overflow:hidden;white-space:nowrap}
+.mtrack{display:flex;width:max-content;animation:mq 32s linear infinite}
+.mitem{display:flex;align-items:center;flex-shrink:0}
+.mitem span.t{padding:0 24px;font-size:11px;letter-spacing:.4em}
+.mitem i{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.5}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+.wedge{height:56px;width:100%}
+@media(min-width:768px){.wedge{height:96px}}
+
+.giant-word{color:transparent;-webkit-text-stroke:1px #0a0a0a;transition:color .9s ease .15s;white-space:nowrap}
+.vis .giant-word{color:#0a0a0a}
+.giant-line{transform:scaleX(0);transform-origin:left;transition:transform 1.1s cubic-bezier(.16,1,.3,1) .2s}
+.vis .giant-line{transform:scaleX(1)}
+.giant-cap{opacity:0;transform:translateY(8px);transition:all .7s ease .5s}
+.vis .giant-cap{opacity:1;transform:none}
+
+.race{position:relative;overflow:hidden;border-top:1px solid #27272a}
+.race-word{color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.85);transition:color .9s ease .25s,letter-spacing .6s ease}
+.vis .race-word{color:#fff}
+.race:hover .race-word{letter-spacing:.05em}
+.sweep{position:absolute;top:0;bottom:0;left:0;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.16),transparent);transform:translateX(-120%);pointer-events:none}
+.vis .sweep{animation:sweep 1.4s cubic-bezier(.65,0,.35,1) forwards}
+@keyframes sweep{to{transform:translateX(380%)}}
+
+[data-wipe]{clip-path:inset(100% 0 0 0);transition:clip-path 1.3s cubic-bezier(.77,0,.175,1) var(--d,0ms)}
+[data-wipe].in{clip-path:inset(0 0 0 0)}
+.pxwrap{position:relative;overflow:hidden;width:100%;height:100%}
+.px{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;will-change:transform;transform:scale(1.18)}
+.ph{background:repeating-linear-gradient(135deg,#121212 0 2px,#0b0b0b 2px 14px);position:absolute;inset:0;will-change:transform;transform:scale(1.18)}
+.ph-tag{position:absolute;left:14px;bottom:14px;z-index:3;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#8a8a8a;border:1px solid #333;padding:6px 10px;background:rgba(0,0,0,.5)}
+
+.ghost{position:absolute;left:50%;top:50%;font-family:'Cormorant Garamond',serif;font-size:min(95vw,860px);line-height:1;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.08);transform:translate(-50%,-50%);animation:gf 9s ease-in-out infinite;pointer-events:none;user-select:none}
+@keyframes gf{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-53%) scale(1.05)}}
+.dgrow{height:1px;background:#52525b;width:0;transition:width 1.1s cubic-bezier(.16,1,.3,1) .2s;margin:0 auto}
+.dgrow.in{width:140px}
+.btn{display:inline-block;border:1px solid rgba(255,255,255,.7);padding:14px 40px;font-size:12px;letter-spacing:.3em;transition:all .3s}
+.btn:hover{background:#fff;color:#000}
+.arrow{display:inline-block;transition:transform .3s}
+.lnk:hover .arrow{transform:translateX(6px)}
+
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.62}
+.detail-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.px{display:block}
+`;
+
+const pageMarkup = String.raw`
+<div id="progress"></div>
 
 
 
 <!-- HERO -->
 <section class="relative w-full overflow-hidden bg-black" style="height:100svh;min-height:620px">
-  <div class="hero-bg" style="background-image:linear-gradient(160deg,rgba(0,0,0,.25),rgba(0,0,0,.65)),url('/images/xm-about-hero.jpg')"></div>
+  <div class="hero-bg"></div>
   <div class="streak"></div>
+  <img src="/images/xm-about-hero.jpg" alt="X Motors luxury car" class="hero-photo" />
   <div class="absolute inset-0" style="background-image:linear-gradient(to top,rgba(0,0,0,.95) 0%,rgba(0,0,0,.35) 45%,rgba(0,0,0,.2) 100%)"></div>
 
   <div class="absolute inset-x-0 bottom-0 px-6" style="padding-bottom:92px">
@@ -83,10 +159,10 @@ const pageMarkup = String.raw`<div id="progress"></div>
 
     <div class="mt-20">
       <div data-wipe class="w-full" style="aspect-ratio:1280/830">
-        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-about-detail-1.jpg" alt=""></div>
+        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-about-detail-1.jpg" alt="X Motors detail 1" /></div>
       </div>
       <div data-wipe style="--d:250ms;aspect-ratio:1280/1320;width:62%;margin-left:auto;margin-top:-48px;border:6px solid #fff;position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)">
-        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-about-detail-2.jpg" alt=""></div>
+        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-about-detail-2.jpg" alt="X Motors detail 2" /></div>
       </div>
     </div>
 
@@ -105,7 +181,7 @@ const pageMarkup = String.raw`<div id="progress"></div>
 
     <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-start mb-20">
       <div data-wipe style="aspect-ratio:4/5;position:relative;overflow:hidden">
-        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-founder.jpg" alt="Founder"></div>
+        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-founder.jpg" alt="X Motors founder" /></div>
       </div>
       <div>
         <p data-reveal class="font-display font-light text-2xl md:text-3xl leading-snug mb-6">Our founder is not only an avid car collector &mdash; he has vast racing experience.</p>
@@ -124,7 +200,7 @@ const pageMarkup = String.raw`<div id="progress"></div>
 
 <!-- TRACK BAND -->
 <section class="relative w-full overflow-hidden" style="height:70vh;min-height:420px">
-  <div class="pxwrap" data-parallax><img class="px" src="/images/xm-track.jpg" alt="Race track"></div>
+  <div class="pxwrap" data-parallax><img class="px" src="/images/xm-track.jpg" alt="Racing track" /></div>
   <div class="absolute inset-0" style="background:rgba(0,0,0,.5)"></div>
   <div class="absolute inset-0 flex items-center justify-center text-center px-6">
     <h3 data-words class="font-display font-light leading-snug max-w-xl" style="font-size:clamp(1.8rem,6vw,3.2rem)">The track teaches what | no spec sheet can.</h3>
@@ -146,7 +222,9 @@ const pageMarkup = String.raw`<div id="progress"></div>
 
 
 
-<script>
+`;
+
+const pageScript = String.raw`
 const mqItems=['LUXURY CARS','PERFORMANCE','ENGINEERING','DUBAI'];
 const mqRow=mqItems.map(t=>'<div class="mitem"><span class="t">'+t+'</span><i></i></div>').join('');
 document.getElementById('mq1').innerHTML='<div class="mtrack">'+mqRow.repeat(8)+'</div>';
@@ -181,9 +259,9 @@ function upd(){const vh=innerHeight;pxs.forEach(w=>{const r=w.getBoundingClientR
   const img=w.querySelector('.px,.ph');let p=(r.top+r.height/2-vh/2)/vh;p=Math.max(-.8,Math.min(.8,p));
   img.style.transform='translate3d(0,'+(-p*40).toFixed(1)+'px,0) scale(1.18)'})}
 const prog=document.getElementById('progress'),nav=document.getElementById('nav');
-function onS(){const h=document.documentElement.scrollHeight-innerHeight;prog.style.width=(h>0?scrollY/h*100:0)+'%';nav.classList.toggle('solid',scrollY>80);requestAnimationFrame(upd)}
+function onS(){const h=document.documentElement.scrollHeight-innerHeight;prog.style.width=(h>0?scrollY/h*100:0)+'%';if(nav)nav.classList.toggle('solid',scrollY>80);requestAnimationFrame(upd)}
 addEventListener('scroll',onS,{passive:true});addEventListener('resize',upd);onS();upd();
-</script>`;
+`;
 
 export default function AboutPage() {
   const pageRef = useRef<HTMLDivElement>(null);
@@ -191,139 +269,19 @@ export default function AboutPage() {
   useEffect(() => {
     const root = pageRef.current;
     if (!root) return;
-
-    const observers: IntersectionObserver[] = [];
-    const cleanups: Array<() => void> = [];
-
-    const makeObserver = (className: string, threshold: number, once = false) => {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add(className);
-            if (once) observer.unobserve(entry.target);
-          } else if (!once) {
-            entry.target.classList.remove(className);
-          }
-        });
-      }, { threshold });
-      observers.push(observer);
-      return observer;
-    };
-
-    const vis = makeObserver("vis", 0.3);
-    const reveal = makeObserver("in", 0.15);
-    const giant = makeObserver("vis", 0.45);
-    const wipe = makeObserver("in", 0.2, true);
-
-    root.querySelectorAll<HTMLElement>("[data-words]").forEach((el) => {
-      const tokens = el.textContent?.trim().split(/\\s+/) ?? [];
-      el.replaceChildren();
-      let index = 0;
-      tokens.forEach((token) => {
-        if (token === "|") {
-          el.appendChild(document.createElement("br"));
-          return;
-        }
-        const wrapper = document.createElement("span");
-        wrapper.className = "w";
-        const word = document.createElement("span");
-        word.className = "wi";
-        word.style.setProperty("--i", String(index++));
-        word.textContent = token;
-        wrapper.appendChild(word);
-        el.appendChild(wrapper);
-      });
-      vis.observe(el);
-    });
-
-    root.querySelectorAll<HTMLElement>("[data-letters]").forEach((el) => {
-      const value = el.textContent ?? "";
-      el.replaceChildren();
-      [...value].forEach((character, index) => {
-        const span = document.createElement("span");
-        span.className = "l";
-        span.style.setProperty("--i", String(index));
-        span.innerHTML = character === " " ? "&nbsp;" : character;
-        el.appendChild(span);
-      });
-      vis.observe(el);
-    });
-
-    root.querySelectorAll("[data-reveal], [data-draw]").forEach((el) => reveal.observe(el));
-    root.querySelectorAll("[data-vis]").forEach((el) => giant.observe(el));
-    root.querySelectorAll("[data-wipe]").forEach((el) => wipe.observe(el));
-
-    root.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
-      const from = Number(el.dataset.from ?? 0);
-      const to = Number(el.dataset.to ?? 0);
-      const suffix = el.dataset.suffix ?? "";
-      let frame = 0;
-      let animationId = 0;
-
-      const counterObserver = new IntersectionObserver(([entry]) => {
-        cancelAnimationFrame(animationId);
-        if (entry.isIntersecting) {
-          const startedAt = performance.now();
-          const animate = (now: number) => {
-            const progress = Math.min((now - startedAt) / 1500, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            el.textContent = `${Math.round(from + (to - from) * eased)}${suffix}`;
-            if (progress < 1) animationId = requestAnimationFrame(animate);
-          };
-          animationId = requestAnimationFrame(animate);
-        } else {
-          el.textContent = `${from}${suffix}`;
-        }
-      }, { threshold: 0.5 });
-
-      counterObserver.observe(el);
-      observers.push(counterObserver);
-      cleanups.push(() => {
-        cancelAnimationFrame(animationId);
-        counterObserver.disconnect();
-      });
-    });
-
-    const parallaxItems = [...root.querySelectorAll<HTMLElement>("[data-parallax]")];
-    const updateParallax = () => {
-      const viewportHeight = window.innerHeight;
-      parallaxItems.forEach((wrapper) => {
-        const rect = wrapper.getBoundingClientRect();
-        if (rect.bottom < -100 || rect.top > viewportHeight + 100) return;
-        const image = wrapper.querySelector<HTMLElement>(".px, .ph");
-        if (!image) return;
-        let progress = (rect.top + rect.height / 2 - viewportHeight / 2) / viewportHeight;
-        progress = Math.max(-0.8, Math.min(0.8, progress));
-        image.style.transform = `translate3d(0, ${(-progress * 40).toFixed(1)}px, 0) scale(1.18)`;
-      });
-    };
-
-    const progressBar = root.querySelector<HTMLElement>("#progress");
-    const onScroll = () => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (progressBar) progressBar.style.width = `${maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0}%`;
-      requestAnimationFrame(updateParallax);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", updateParallax);
-    cleanups.push(() => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", updateParallax);
-    });
-    onScroll();
-    updateParallax();
-
+    const run = new Function("root", pageScript);
+    run(root);
     return () => {
-      observers.forEach((observer) => observer.disconnect());
-      cleanups.forEach((cleanup) => cleanup());
+      // Disconnect observers and listeners when the page unmounts.
+      window.dispatchEvent(new Event("xmotors-about-cleanup"));
     };
   }, []);
 
   return (
     <>
+      <style>{pageStyles}</style>
       <Navbar />
-      <main ref={pageRef} className="xm-about" dangerouslySetInnerHTML={{ __html: pageMarkup }} />
+      <div ref={pageRef} dangerouslySetInnerHTML={{ __html: pageMarkup }} />
       <Footer />
     </>
   );
