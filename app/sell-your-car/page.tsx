@@ -178,7 +178,7 @@ export default function SellYourCarPage() {
       `New Sell Your Car submission:\n\n` +
       `${details.make} ${details.model} (${details.year})\n` +
       `Odometer: ${details.odometer} km\nVIN: ${details.vin}\nEngine: ${details.engine}\n` +
-      `Transmission: ${details.transmission}\nAsking Price: EGP ${details.price}\n\n` +
+      `Transmission: ${details.transmission}\nAsking Price: AED ${details.price}\n\n` +
       `${details.description}\n\n` +
       `Photos: ${exterior.length} exterior, ${interior.length} interior, 2 license\n\n` +
       `Contact: ${contact.name} · ${contact.phone} · ${contact.email}`
@@ -336,9 +336,9 @@ export default function SellYourCarPage() {
             </div>
 
             <div>
-              <label className="text-[10px] tracking-[0.3em] text-zinc-500 mb-2 block">ASKING PRICE (EGP)*</label>
+              <label className="text-[10px] tracking-[0.3em] text-zinc-500 mb-2 block">ASKING PRICE (AED)*</label>
               <input required type="number" value={details.price} onChange={e => setDetails(d => ({ ...d, price: e.target.value }))}
-                className="field-input w-full bg-transparent border-b border-zinc-700 text-white text-sm py-2.5 focus:outline-none focus:border-white placeholder:text-zinc-600" placeholder="e.g. 23,000,000" />
+                className="field-input w-full bg-transparent border-b border-zinc-700 text-white text-sm py-2.5 focus:outline-none focus:border-white placeholder:text-zinc-600" placeholder="AED 3,000,000" />
             </div>
 
             <div>
@@ -454,7 +454,7 @@ export default function SellYourCarPage() {
               <div>
                 <label className="text-[10px] tracking-[0.3em] text-zinc-500 mb-2 block">PHONE NUMBER*</label>
                 <input required value={contact.phone} onChange={e => setContact(c => ({ ...c, phone: e.target.value }))}
-                  className="field-input w-full bg-transparent border-b border-zinc-700 text-white text-sm py-2.5 focus:outline-none focus:border-white placeholder:text-zinc-600" placeholder="+20 100 123 4567" />
+                  className="field-input w-full bg-transparent border-b border-zinc-700 text-white text-sm py-2.5 focus:outline-none focus:border-white placeholder:text-zinc-600" placeholder="+971 100 123 457" />
               </div>
 
               <div className="flex gap-3 mt-2">
