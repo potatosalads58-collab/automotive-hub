@@ -82,7 +82,7 @@ export default function Footer() {
 
           <div>
             <p className="text-[11px] tracking-[0.3em] text-zinc-500 mb-5">
-              GOLDEN N
+              X Motors
             </p>
 
             <div className="flex flex-col gap-3.5">
@@ -251,12 +251,12 @@ export default function Footer() {
 
         <Link
           href="/"
-          aria-label="Golden N Home"
+          aria-label="X Motors Home"
           className="inline-flex"
         >
           <img
             src="/X-Motors-Logo.png"
-            alt="Golden N"
+            alt="X Motors"
             className="h-10 w-auto opacity-60 hover:opacity-85 transition-opacity"
           />
         </Link>
