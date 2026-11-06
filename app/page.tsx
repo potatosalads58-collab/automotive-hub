@@ -8,7 +8,7 @@ import { urlFor } from '../sanity/lib/imageUrl'
 const INSTAGRAM_URL = 'https://instagram.com/xmotors.me'
 const CURRENCY = 'AED'
 const EXPERIENCE_SINCE = 2011
-const FOUNDED_YEAR = 2024
+const FOUNDED_YEAR = 2023
 const FOLLOWERS_K = 750
 
 const quickLinks = [

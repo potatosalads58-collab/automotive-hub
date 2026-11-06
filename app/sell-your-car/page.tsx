@@ -14,8 +14,8 @@ const CAR_MAKES = [
   'Volkswagen', 'Volvo', 'Other',
 ]
 
-const PHONE = '01200072666'
-const WA_NUMBER = '20' + PHONE.slice(1)
+const PHONE = '+971567411888'
+const WA_NUMBER =  PHONE
 
 function AnimatedTitle({ text }: { text: string }) {
   return (
