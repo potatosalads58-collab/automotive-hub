@@ -52,10 +52,10 @@ const instagramPosts: InstagramPost[] = [
   },
   {
     images: ["/instagram/post-4.jpg"],
-    likes: 158,
-    comments: 5,
-    date: "",
-    caption: "Replace with your own X Motors posts.",
+    likes: 6602,
+    comments: 26,
+    date: "11 JAN",
+    caption: "𝐓𝐰𝐨 𝐓𝐢𝐦𝐞𝐥𝐞𝐬𝐬 𝐈𝐜𝐨𝐧𝐬 When the Mercedes McLaren SLR was launch in 2004, it rocked the hypercar world with its F1 inspired looks and usable approach to a hypercar. With over two decades of grandeur later, it has become a timeless icon, surprisingly comfortable and with its hyper GT attitude it continues to be as good as it was in cross continental travels as it is to look at. And what a looker it is! These two well kept Icons are available at X Motors for viewing & sale. DM to get in touch with us.",
   },
   {
     images: ["/instagram/post-5.jpg"],
