@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import "./about.css";
 
 const pageMarkup = String.raw`<div id="progress"></div>
 
