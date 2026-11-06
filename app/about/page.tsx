@@ -1,1051 +1,331 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import "./about.css";
+
+const pageMarkup = String.raw`<div id="progress"></div>
+
+
+
+<!-- HERO -->
+<section class="relative w-full overflow-hidden bg-black" style="height:100svh;min-height:620px">
+  <div class="hero-bg" style="background-image:linear-gradient(160deg,rgba(0,0,0,.25),rgba(0,0,0,.65)),url('/images/xm-about-hero.jpg')"></div>
+  <div class="streak"></div>
+  <div class="absolute inset-0" style="background-image:linear-gradient(to top,rgba(0,0,0,.95) 0%,rgba(0,0,0,.35) 45%,rgba(0,0,0,.2) 100%)"></div>
+
+  <div class="absolute inset-x-0 bottom-0 px-6" style="padding-bottom:92px">
+    <p data-letters class="text-xs tracking-[0.4em] text-zinc-400 mb-5">ABOUT X MOTORS</p>
+    <h1 data-words class="font-display font-light leading-[1.02] mb-6 max-w-2xl" style="font-size:clamp(2.7rem,11vw,6.5rem)">Cars Are Not | Just Objects.</h1>
+    <p data-reveal style="--d:350ms" class="text-sm text-zinc-300 leading-relaxed max-w-xs md:max-w-md">A team of luxury car specialists with fifteen years of international experience — based in Dubai.</p>
+  </div>
+  <div class="absolute right-6 flex flex-col items-center gap-3" style="bottom:84px">
+    <span class="text-[9px] tracking-[0.3em] text-zinc-400" style="writing-mode:vertical-rl">SCROLL</span>
+    <div class="cue"></div>
+  </div>
+  <div class="absolute bottom-0 inset-x-0 border-t border-white/15 py-3 text-zinc-400 marquee" id="mq1"></div>
+</section>
+
+<div class="wedge" style="background:linear-gradient(to bottom right,#000 50%,#fff 50%)"></div>
+
+<!-- WHITE -->
+<section class="bg-white text-black px-6 pt-10 pb-24">
+  <div class="max-w-5xl mx-auto">
+
+    <div data-reveal class="flex items-center gap-4 mb-12">
+      <span class="text-xs tracking-[0.3em] text-zinc-500">01 / THE TEAM</span><span class="h-px flex-1 bg-zinc-300"></span>
+    </div>
+
+    <div class="font-display font-light leading-[1.12]" style="font-size:clamp(1.8rem,6.6vw,3.8rem)">
+      <p data-words>We are a group of experts</p>
+      <p data-words style="margin-left:10%">specialized in luxury car sales</p>
+      <p data-words style="margin-left:20%">with 15 years of international experience.</p>
+    </div>
+
+    <div data-reveal class="grid grid-cols-3 mt-16 border-y border-zinc-300 text-center" style="--d:100ms">
+      <div class="py-8 border-r border-zinc-300">
+        <p class="font-display font-light leading-none mb-3" style="font-size:clamp(2rem,8vw,3.4rem)"><span data-count data-from="0" data-to="15" data-suffix="+">0+</span></p>
+        <p class="text-[10px] tracking-[0.25em] text-zinc-500">YEARS INTERNATIONAL</p>
+      </div>
+      <div class="py-8 border-r border-zinc-300">
+        <p class="font-display font-light leading-none mb-3" style="font-size:clamp(2rem,8vw,3.4rem)"><span data-count data-from="0" data-to="750" data-suffix="K+">0K+</span></p>
+        <p class="text-[10px] tracking-[0.25em] text-zinc-500">FOLLOWERS</p>
+      </div>
+      <div class="py-8">
+        <p class="font-display font-light leading-none mb-3" style="font-size:clamp(2rem,8vw,3.4rem)">DXB</p>
+        <p class="text-[10px] tracking-[0.25em] text-zinc-500">BASED IN DUBAI</p>
+      </div>
+    </div>
+
+    <div data-reveal class="flex items-center gap-4 mt-28 mb-10">
+      <span class="text-xs tracking-[0.3em] text-zinc-500">02 / PHILOSOPHY</span><span class="h-px flex-1 bg-zinc-300"></span>
+    </div>
+    <h2 data-words class="font-display font-light leading-[1.05] mb-6" style="font-size:clamp(2.2rem,9vw,5rem)">Not Assets. | A Way of Life.</h2>
+    <p data-reveal class="text-sm text-zinc-600 leading-relaxed max-w-md mb-14">Cars are not just objects to us. We don&rsquo;t treat them solely as assets &mdash; they&rsquo;re an inseparable part of our lifestyles.</p>
+
+    <div>
+      <div data-vis class="py-7 border-t border-zinc-300">
+        <div class="flex items-center justify-between mb-3"><span class="text-[10px] tracking-[0.35em] text-zinc-500">01</span><span class="giant-cap text-[11px] text-zinc-500 text-right">The first thing you notice.</span></div>
+        <p class="giant-word font-display font-light uppercase leading-[0.9]" style="font-size:clamp(2.4rem,12vw,8rem)">Looks</p>
+        <div class="giant-line h-px bg-black mt-5"></div>
+      </div>
+      <div data-vis class="py-7 border-t border-zinc-300">
+        <div class="flex items-center justify-between mb-3"><span class="text-[10px] tracking-[0.35em] text-zinc-500">02</span><span class="giant-cap text-[11px] text-zinc-500 text-right">Why it works the way it does.</span></div>
+        <p class="giant-word font-display font-light uppercase leading-[0.9]" style="font-size:clamp(2.4rem,12vw,8rem)">Engineering</p>
+        <div class="giant-line h-px bg-black mt-5"></div>
+      </div>
+      <div data-vis class="py-7 border-t border-zinc-300">
+        <div class="flex items-center justify-between mb-3"><span class="text-[10px] tracking-[0.35em] text-zinc-500">03</span><span class="giant-cap text-[11px] text-zinc-500 text-right">How it feels when it matters.</span></div>
+        <p class="giant-word font-display font-light uppercase leading-[0.9]" style="font-size:clamp(2.4rem,12vw,8rem)">Handling</p>
+        <div class="giant-line h-px bg-black mt-5"></div>
+      </div>
+    </div>
+
+    <div class="mt-20">
+      <div data-wipe class="w-full" style="aspect-ratio:1280/830">
+        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-about-detail-1.jpg" alt=""></div>
+      </div>
+      <div data-wipe style="--d:250ms;aspect-ratio:1280/1320;width:62%;margin-left:auto;margin-top:-48px;border:6px solid #fff;position:relative;box-shadow:0 30px 60px -30px rgba(0,0,0,.35)">
+        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-about-detail-2.jpg" alt=""></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="wedge" style="background:linear-gradient(to bottom left,#fff 50%,#000 50%)"></div>
+
+<!-- FOUNDER -->
+<section class="bg-black px-6 pt-10 pb-24">
+  <div class="max-w-5xl mx-auto">
+    <div data-reveal class="flex items-center gap-4 mb-10">
+      <span class="text-xs tracking-[0.3em] text-zinc-500">03 / THE FOUNDER</span><span class="h-px flex-1 bg-zinc-800"></span>
+    </div>
+    <h2 data-words class="font-display font-light leading-[1.02] mb-14" style="font-size:clamp(2.6rem,11vw,6.5rem)">Collector. | Racer. | Founder.</h2>
+
+    <div class="grid md:grid-cols-2 gap-10 md:gap-16 items-start mb-20">
+      <div data-wipe style="aspect-ratio:4/5;position:relative;overflow:hidden">
+        <div class="pxwrap" data-parallax><img class="px" src="/images/xm-founder.jpg" alt="Founder"></div>
+      </div>
+      <div>
+        <p data-reveal class="font-display font-light text-2xl md:text-3xl leading-snug mb-6">Our founder is not only an avid car collector &mdash; he has vast racing experience.</p>
+        <p data-reveal style="--d:150ms" class="text-sm text-zinc-400 leading-relaxed mb-10">When he isn&rsquo;t in the office, he&rsquo;s racing.</p>
+        <p data-reveal style="--d:250ms" class="font-display italic font-light text-xl text-zinc-300">He&rsquo;s been there and done that.</p>
+      </div>
+    </div>
+
+    <div>
+      <div data-vis class="race py-6 md:py-8"><div class="sweep"></div><div class="relative flex items-baseline gap-5"><span class="font-display text-sm text-zinc-600 w-8">01</span><span class="race-word font-display font-light uppercase leading-[0.95]" style="font-size:clamp(1.9rem,8vw,5rem)">Radicals</span></div></div>
+      <div data-vis class="race py-6 md:py-8"><div class="sweep" style="animation-delay:120ms"></div><div class="relative flex items-baseline gap-5"><span class="font-display text-sm text-zinc-600 w-8">02</span><span class="race-word font-display font-light uppercase leading-[0.95]" style="font-size:clamp(1.9rem,8vw,5rem)">GT3 Racers</span></div></div>
+      <div data-vis class="race py-6 md:py-8" style="border-bottom:1px solid #27272a"><div class="sweep" style="animation-delay:240ms"></div><div class="relative flex items-baseline gap-5"><span class="font-display text-sm text-zinc-600 w-8">03</span><span class="race-word font-display font-light uppercase leading-[0.95]" style="font-size:clamp(1.9rem,8vw,5rem)">Le Mans Prototypes</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACK BAND -->
+<section class="relative w-full overflow-hidden" style="height:70vh;min-height:420px">
+  <div class="pxwrap" data-parallax><img class="px" src="/images/xm-track.jpg" alt="Race track"></div>
+  <div class="absolute inset-0" style="background:rgba(0,0,0,.5)"></div>
+  <div class="absolute inset-0 flex items-center justify-center text-center px-6">
+    <h3 data-words class="font-display font-light leading-snug max-w-xl" style="font-size:clamp(1.8rem,6vw,3.2rem)">The track teaches what | no spec sheet can.</h3>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="relative px-6 py-32 bg-zinc-950 border-t border-zinc-900 text-center overflow-hidden">
+  <div class="ghost">X</div>
+  <div class="relative">
+    <div data-draw class="dgrow mb-10"></div>
+    <h3 data-words class="font-display font-light leading-[1.08] mb-10" style="font-size:clamp(2.2rem,8vw,4.5rem)">Find the one | that moves you.</h3>
+    <div data-reveal style="--d:200ms" class="flex flex-col items-center gap-6">
+      <a href="#" class="btn">EXPLORE INVENTORY</a>
+      <a href="#" class="lnk text-xs tracking-[0.3em] text-zinc-400 hover:text-white transition-colors">VISIT THE SHOWROOM <span class="arrow">&rarr;</span></a>
+    </div>
+  </div>
+</section>
+
+
+
+<script>
+const mqItems=['LUXURY CARS','PERFORMANCE','ENGINEERING','DUBAI'];
+const mqRow=mqItems.map(t=>'<div class="mitem"><span class="t">'+t+'</span><i></i></div>').join('');
+document.getElementById('mq1').innerHTML='<div class="mtrack">'+mqRow.repeat(8)+'</div>';
+
+const toggle=(cls,th)=>new IntersectionObserver(es=>es.forEach(e=>e.target.classList.toggle(cls,e.isIntersecting)),{threshold:th});
+const vis=toggle('vis',.3), rev=toggle('in',.15), giant=toggle('vis',.45);
+const once=new IntersectionObserver((es,o)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}}),{threshold:.2});
+
+document.querySelectorAll('[data-words]').forEach(el=>{
+  const toks=el.textContent.trim().split(/\s+/);let i=0;el.innerHTML='';
+  toks.forEach(t=>{if(t==='|'){el.appendChild(document.createElement('br'));return}
+    const w=document.createElement('span');w.className='w';const s=document.createElement('span');s.className='wi';s.style.setProperty('--i',i++);s.textContent=t;w.appendChild(s);el.appendChild(w)});
+  vis.observe(el)});
+document.querySelectorAll('[data-letters]').forEach(el=>{
+  const txt=el.textContent;el.innerHTML='';
+  [...txt].forEach((ch,i)=>{const s=document.createElement('span');s.className='l';s.style.setProperty('--i',i);s.innerHTML=ch===' '?'&nbsp;':ch;el.appendChild(s)});
+  vis.observe(el)});
+document.querySelectorAll('[data-reveal]').forEach(el=>rev.observe(el));
+document.querySelectorAll('[data-vis]').forEach(el=>giant.observe(el));
+document.querySelectorAll('[data-wipe]').forEach(el=>once.observe(el));
+document.querySelectorAll('[data-draw]').forEach(el=>rev.observe(el));
+
+document.querySelectorAll('[data-count]').forEach(el=>{
+  const from=+el.dataset.from||0,to=+el.dataset.to,suf=el.dataset.suffix||'',dur=1500;let raf;
+  el.textContent=from+suf;
+  new IntersectionObserver(([e])=>{cancelAnimationFrame(raf);
+    if(e.isIntersecting){const t0=performance.now();const step=n=>{const p=Math.min((n-t0)/dur,1);const k=1-Math.pow(1-p,3);el.textContent=Math.round(from+(to-from)*k)+suf;if(p<1)raf=requestAnimationFrame(step)};raf=requestAnimationFrame(step)}
+    else el.textContent=from+suf},{threshold:.5}).observe(el)});
+
+const pxs=[...document.querySelectorAll('[data-parallax]')];
+function upd(){const vh=innerHeight;pxs.forEach(w=>{const r=w.getBoundingClientRect();if(r.bottom<-100||r.top>vh+100)return;
+  const img=w.querySelector('.px,.ph');let p=(r.top+r.height/2-vh/2)/vh;p=Math.max(-.8,Math.min(.8,p));
+  img.style.transform='translate3d(0,'+(-p*40).toFixed(1)+'px,0) scale(1.18)'})}
+const prog=document.getElementById('progress'),nav=document.getElementById('nav');
+function onS(){const h=document.documentElement.scrollHeight-innerHeight;prog.style.width=(h>0?scrollY/h*100:0)+'%';nav.classList.toggle('solid',scrollY>80);requestAnimationFrame(upd)}
+addEventListener('scroll',onS,{passive:true});addEventListener('resize',upd);onS();upd();
+</script>`;
 
 export default function AboutPage() {
+  const pageRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
+    const root = pageRef.current;
+    if (!root) return;
+
     const observers: IntersectionObserver[] = [];
+    const cleanups: Array<() => void> = [];
 
-    const revealObserver = new IntersectionObserver(
-      (entries) => {
+    const makeObserver = (className: string, threshold: number, once = false) => {
+      const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add("in");
+            entry.target.classList.add(className);
+            if (once) observer.unobserve(entry.target);
+          } else if (!once) {
+            entry.target.classList.remove(className);
           }
         });
-      },
-      { threshold: 0.15 }
-    );
+      }, { threshold });
+      observers.push(observer);
+      return observer;
+    };
 
-    const wordObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("vis");
-          }
-        });
-      },
-      { threshold: 0.25 }
-    );
+    const vis = makeObserver("vis", 0.3);
+    const reveal = makeObserver("in", 0.15);
+    const giant = makeObserver("vis", 0.45);
+    const wipe = makeObserver("in", 0.2, true);
 
-    document
-      .querySelectorAll(".about-page [data-reveal], .about-page [data-wipe]")
-      .forEach((el) => revealObserver.observe(el));
-
-    document
-      .querySelectorAll(".about-page [data-words], .about-page [data-vis]")
-      .forEach((el) => wordObserver.observe(el));
-
-    // Word animations
-    document.querySelectorAll(".about-page [data-words]").forEach((el) => {
-      const element = el as HTMLElement;
-      const words = element.textContent?.trim().split(/\s+/) || [];
-      element.innerHTML = "";
-
+    root.querySelectorAll<HTMLElement>("[data-words]").forEach((el) => {
+      const tokens = el.textContent?.trim().split(/\\s+/) ?? [];
+      el.replaceChildren();
       let index = 0;
-
-      words.forEach((word) => {
-        if (word === "|") {
-          element.appendChild(document.createElement("br"));
+      tokens.forEach((token) => {
+        if (token === "|") {
+          el.appendChild(document.createElement("br"));
           return;
         }
-
         const wrapper = document.createElement("span");
-        wrapper.className = "word-wrapper";
-
-        const inner = document.createElement("span");
-        inner.className = "word-inner";
-        inner.style.setProperty("--i", String(index++));
-        inner.textContent = word;
-
-        wrapper.appendChild(inner);
-        element.appendChild(wrapper);
+        wrapper.className = "w";
+        const word = document.createElement("span");
+        word.className = "wi";
+        word.style.setProperty("--i", String(index++));
+        word.textContent = token;
+        wrapper.appendChild(word);
+        el.appendChild(wrapper);
       });
+      vis.observe(el);
     });
 
-    // Letter animations
-    document.querySelectorAll(".about-page [data-letters]").forEach((el) => {
-      const element = el as HTMLElement;
-      const text = element.textContent || "";
-      element.innerHTML = "";
-
-      [...text].forEach((letter, index) => {
+    root.querySelectorAll<HTMLElement>("[data-letters]").forEach((el) => {
+      const value = el.textContent ?? "";
+      el.replaceChildren();
+      [...value].forEach((character, index) => {
         const span = document.createElement("span");
-        span.className = "letter";
+        span.className = "l";
         span.style.setProperty("--i", String(index));
-        span.textContent = letter === " " ? "\u00a0" : letter;
-        element.appendChild(span);
+        span.innerHTML = character === " " ? "&nbsp;" : character;
+        el.appendChild(span);
+      });
+      vis.observe(el);
+    });
+
+    root.querySelectorAll("[data-reveal], [data-draw]").forEach((el) => reveal.observe(el));
+    root.querySelectorAll("[data-vis]").forEach((el) => giant.observe(el));
+    root.querySelectorAll("[data-wipe]").forEach((el) => wipe.observe(el));
+
+    root.querySelectorAll<HTMLElement>("[data-count]").forEach((el) => {
+      const from = Number(el.dataset.from ?? 0);
+      const to = Number(el.dataset.to ?? 0);
+      const suffix = el.dataset.suffix ?? "";
+      let frame = 0;
+      let animationId = 0;
+
+      const counterObserver = new IntersectionObserver(([entry]) => {
+        cancelAnimationFrame(animationId);
+        if (entry.isIntersecting) {
+          const startedAt = performance.now();
+          const animate = (now: number) => {
+            const progress = Math.min((now - startedAt) / 1500, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = `${Math.round(from + (to - from) * eased)}${suffix}`;
+            if (progress < 1) animationId = requestAnimationFrame(animate);
+          };
+          animationId = requestAnimationFrame(animate);
+        } else {
+          el.textContent = `${from}${suffix}`;
+        }
+      }, { threshold: 0.5 });
+
+      counterObserver.observe(el);
+      observers.push(counterObserver);
+      cleanups.push(() => {
+        cancelAnimationFrame(animationId);
+        counterObserver.disconnect();
       });
     });
 
-    // Counter animation
-    const counterObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-
-          const el = entry.target as HTMLElement;
-          const from = Number(el.dataset.from || 0);
-          const to = Number(el.dataset.to || 0);
-          const suffix = el.dataset.suffix || "";
-          const duration = 1500;
-          const start = performance.now();
-
-          const animate = (now: number) => {
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-
-            el.textContent =
-              Math.round(from + (to - from) * eased) + suffix;
-
-            if (progress < 1) {
-              requestAnimationFrame(animate);
-            }
-          };
-
-          requestAnimationFrame(animate);
-          counterObserver.unobserve(el);
-        });
-      },
-      { threshold: 0.5 }
-    );
-
-    document
-      .querySelectorAll(".about-page [data-count]")
-      .forEach((el) => counterObserver.observe(el));
-
-    // Marquee
-    const marquee = document.querySelector(".about-page .marquee-track");
-
-    if (marquee) {
-      const items = ["LUXURY CARS", "PERFORMANCE", "ENGINEERING", "DUBAI"];
-
-      marquee.innerHTML = Array(8)
-        .fill(
-          items
-            .map(
-              (item) =>
-                `<div class="marquee-item"><span>${item}</span><i></i></div>`
-            )
-            .join("")
-        )
-        .join("");
-    }
-
-    // Scroll progress + navbar background
-    const progress = document.querySelector(
-      ".about-page .scroll-progress"
-    ) as HTMLElement;
-
-    const handleScroll = () => {
-      const maxScroll =
-        document.documentElement.scrollHeight - window.innerHeight;
-
-      if (progress) {
-        progress.style.width =
-          (maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0) + "%";
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    // Parallax
+    const parallaxItems = [...root.querySelectorAll<HTMLElement>("[data-parallax]")];
     const updateParallax = () => {
-      document
-        .querySelectorAll(".about-page [data-parallax]")
-        .forEach((wrapper) => {
-          const rect = wrapper.getBoundingClientRect();
-
-          if (
-            rect.bottom < -100 ||
-            rect.top > window.innerHeight + 100
-          )
-            return;
-
-          const image = wrapper.querySelector("img, .placeholder");
-          if (!image) return;
-
-          const position =
-            (rect.top + rect.height / 2 - window.innerHeight / 2) /
-            window.innerHeight;
-
-          const offset = Math.max(-0.8, Math.min(0.8, position));
-
-          (image as HTMLElement).style.transform =
-            `translate3d(0, ${-offset * 40}px, 0) scale(1.18)`;
-        });
+      const viewportHeight = window.innerHeight;
+      parallaxItems.forEach((wrapper) => {
+        const rect = wrapper.getBoundingClientRect();
+        if (rect.bottom < -100 || rect.top > viewportHeight + 100) return;
+        const image = wrapper.querySelector<HTMLElement>(".px, .ph");
+        if (!image) return;
+        let progress = (rect.top + rect.height / 2 - viewportHeight / 2) / viewportHeight;
+        progress = Math.max(-0.8, Math.min(0.8, progress));
+        image.style.transform = `translate3d(0, ${(-progress * 40).toFixed(1)}px, 0) scale(1.18)`;
+      });
     };
 
-    window.addEventListener("scroll", updateParallax, { passive: true });
+    const progressBar = root.querySelector<HTMLElement>("#progress");
+    const onScroll = () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (progressBar) progressBar.style.width = `${maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0}%`;
+      requestAnimationFrame(updateParallax);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", updateParallax);
+    cleanups.push(() => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", updateParallax);
+    });
+    onScroll();
     updateParallax();
 
     return () => {
-      revealObserver.disconnect();
-      wordObserver.disconnect();
-      counterObserver.disconnect();
-
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("scroll", updateParallax);
-      window.removeEventListener("resize", updateParallax);
+      observers.forEach((observer) => observer.disconnect());
+      cleanups.forEach((cleanup) => cleanup());
     };
   }, []);
 
   return (
-    <main className="about-page">
-      <div className="scroll-progress" />
-
+    <>
       <Navbar />
-
-      {/* HERO */}
-      <section className="hero">
-        <div className="hero-bg" />
-        <div className="hero-streak" />
-        <div className="hero-overlay" />
-
-        <div className="hero-content">
-          <p data-letters className="hero-label">
-            ABOUT X MOTORS
-          </p>
-
-          <h1 data-words className="hero-title">
-            Cars Are Not | Just Objects.
-          </h1>
-
-          <p data-reveal className="hero-description">
-            A team of luxury car specialists with fifteen years of
-            international experience — based in Dubai.
-          </p>
-        </div>
-
-        <div className="scroll-cue">
-          <span>SCROLL</span>
-          <div />
-        </div>
-
-        <div className="marquee">
-          <div className="marquee-track" />
-        </div>
-      </section>
-
-      <div className="wedge wedge-white" />
-
-      {/* THE TEAM + PHILOSOPHY */}
-      <section className="white-section">
-        <div className="container">
-          <div data-reveal className="section-label">
-            <span>01 / THE TEAM</span>
-            <i />
-          </div>
-
-          <div className="team-heading">
-            <p data-words>We are a group of experts</p>
-            <p data-words className="indent-one">
-              specialized in luxury car sales
-            </p>
-            <p data-words className="indent-two">
-              with 15 years of international experience.
-            </p>
-          </div>
-
-          <div data-reveal className="stats">
-            <div>
-              <h3>
-                <span data-count data-from="0" data-to="15" data-suffix="+">
-                  0+
-                </span>
-              </h3>
-              <p>YEARS INTERNATIONAL</p>
-            </div>
-
-            <div>
-              <h3>
-                <span data-count data-from="0" data-to="750" data-suffix="K+">
-                  0K+
-                </span>
-              </h3>
-              <p>FOLLOWERS</p>
-            </div>
-
-            <div>
-              <h3>DXB</h3>
-              <p>BASED IN DUBAI</p>
-            </div>
-          </div>
-
-          <div data-reveal className="section-label philosophy-label">
-            <span>02 / PHILOSOPHY</span>
-            <i />
-          </div>
-
-          <h2 data-words className="philosophy-heading">
-            Not Assets. | A Way of Life.
-          </h2>
-
-          <p data-reveal className="philosophy-description">
-            Cars are not just objects to us. We don’t treat them solely
-            as assets — they’re an inseparable part of our lifestyles.
-          </p>
-
-          <div className="values">
-            {[
-              ["01", "Looks", "The first thing you notice."],
-              ["02", "Engineering", "Why it works the way it does."],
-              ["03", "Handling", "How it feels when it matters."],
-            ].map(([number, title, description]) => (
-              <div data-vis className="value-item" key={number}>
-                <div className="value-top">
-                  <span>{number}</span>
-                  <span>{description}</span>
-                </div>
-
-                <h3 className="giant-word">{title}</h3>
-                <div className="giant-line" />
-              </div>
-            ))}
-          </div>
-
-          <div data-wipe className="detail-image" data-parallax>
-            <img
-              src="/images/xm-about-detail-1.jpeg"
-              alt="X Motors luxury cars"
-            />
-          </div>
-        </div>
-      </section>
-
-      <div className="wedge wedge-black" />
-
-      {/* FOUNDER */}
-      <section className="founder-section">
-        <div className="container">
-          <div data-reveal className="section-label">
-            <span>03 / THE FOUNDER</span>
-            <i />
-          </div>
-
-          <h2 data-words className="founder-heading">
-            Collector. | Racer. | Founder.
-          </h2>
-
-          <div className="founder-grid">
-            <div data-wipe className="founder-image" data-parallax>
-              <img src="/images/xm-founder.jpg" alt="X Motors founder" />
-            </div>
-
-            <div className="founder-text">
-              <p data-reveal className="founder-intro">
-                Our founder is not only an avid car collector — he has
-                vast racing experience.
-              </p>
-
-              <p data-reveal>
-                When he isn’t in the office, he’s racing.
-              </p>
-
-              <p data-reveal className="founder-quote">
-                He’s been there and done that.
-              </p>
-            </div>
-          </div>
-
-          <div className="racing-list">
-            {["Radicals", "GT3 Racers", "Le Mans Prototypes"].map(
-              (item, index) => (
-                <div data-vis className="race-item" key={item}>
-                  <div className="race-sweep" />
-                  <span>0{index + 1}</span>
-                  <h3>{item}</h3>
-                </div>
-              )
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* TRACK */}
-      <section className="track-section" data-parallax>
-        <img src="/images/xm-track.jpg" alt="Racing track" />
-
-        <div className="track-overlay" />
-
-        <h2 data-words>
-          The track teaches what | no spec sheet can.
-        </h2>
-      </section>
-
-      {/* CTA */}
-      <section className="cta-section">
-        <div className="ghost">X</div>
-
-        <div className="cta-content">
-          <div data-reveal className="cta-line" />
-
-          <h2 data-words>
-            Find the one | that moves you.
-          </h2>
-
-          <div data-reveal className="cta-links">
-            <a href="#" className="cta-button">
-              EXPLORE INVENTORY
-            </a>
-
-            <a href="#" className="showroom-link">
-              VISIT THE SHOWROOM <span>→</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
+      <main ref={pageRef} className="xm-about" dangerouslySetInnerHTML={{ __html: pageMarkup }} />
       <Footer />
-
-      <style jsx global>{`
-        @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Inter:wght@300;400;500;600;800&display=swap");
-
-        .about-page {
-          background: #000;
-          color: #fff;
-          font-family: "Inter", sans-serif;
-          overflow: hidden;
-        }
-
-        .about-page * {
-          box-sizing: border-box;
-        }
-
-        .scroll-progress {
-          position: fixed;
-          top: 0;
-          left: 0;
-          height: 2px;
-          width: 0;
-          background: white;
-          z-index: 9999;
-        }
-
-        .about-page .hero {
-          position: relative;
-          height: 100svh;
-          min-height: 620px;
-          overflow: hidden;
-          background: #000;
-        }
-
-        .hero-bg {
-          position: absolute;
-          inset: 0;
-          background:
-            radial-gradient(
-              60% 50% at 75% 28%,
-              rgba(255, 255, 255, 0.14),
-              transparent 60%
-            ),
-            linear-gradient(160deg, #181818, #070707 60%, #000);
-          animation: ken 14s ease-out forwards;
-        }
-
-        @keyframes ken {
-          from { transform: scale(1.12); }
-          to { transform: scale(1); }
-        }
-
-        .hero-streak {
-          position: absolute;
-          top: -20%;
-          bottom: -20%;
-          width: 16%;
-          left: -30%;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.09),
-            transparent
-          );
-          transform: skewX(-18deg);
-          animation: streak 6.5s ease-in-out infinite;
-        }
-
-        @keyframes streak {
-          0% { left: -30%; }
-          60%, 100% { left: 130%; }
-        }
-
-        .hero-overlay {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            to top,
-            rgba(0, 0, 0, 0.95),
-            rgba(0, 0, 0, 0.35) 45%,
-            rgba(0, 0, 0, 0.2)
-          );
-        }
-
-        .hero-content {
-          position: absolute;
-          bottom: 100px;
-          left: 6%;
-          right: 6%;
-          z-index: 2;
-        }
-
-        .hero-label {
-          font-size: 12px;
-          letter-spacing: 0.4em;
-          color: #a1a1aa;
-          margin-bottom: 20px;
-        }
-
-        .hero-title {
-          font-family: "Cormorant Garamond", serif;
-          font-weight: 300;
-          line-height: 1.02;
-          font-size: clamp(2.7rem, 11vw, 6.5rem);
-          max-width: 850px;
-          margin-bottom: 24px;
-        }
-
-        .hero-description {
-          color: #d4d4d8;
-          font-size: 14px;
-          line-height: 1.8;
-          max-width: 430px;
-        }
-
-        .scroll-cue {
-          position: absolute;
-          right: 6%;
-          bottom: 90px;
-          z-index: 2;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 14px;
-        }
-
-        .scroll-cue span {
-          writing-mode: vertical-rl;
-          font-size: 9px;
-          letter-spacing: 0.3em;
-          color: #a1a1aa;
-        }
-
-        .scroll-cue div {
-          width: 1px;
-          height: 48px;
-          background: white;
-          animation: cue 2.2s ease-in-out infinite;
-        }
-
-        @keyframes cue {
-          0% { transform: scaleY(0); transform-origin: top; }
-          45% { transform: scaleY(1); transform-origin: top; }
-          55% { transform: scaleY(1); transform-origin: bottom; }
-          100% { transform: scaleY(0); transform-origin: bottom; }
-        }
-
-        .marquee {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          overflow: hidden;
-          white-space: nowrap;
-          border-top: 1px solid rgba(255,255,255,.15);
-          padding: 13px 0;
-          color: #a1a1aa;
-          z-index: 3;
-        }
-
-        .marquee-track {
-          display: flex;
-          width: max-content;
-          animation: marquee 32s linear infinite;
-        }
-
-        .marquee-item {
-          display: flex;
-          align-items: center;
-          flex-shrink: 0;
-        }
-
-        .marquee-item span {
-          padding: 0 24px;
-          font-size: 11px;
-          letter-spacing: .4em;
-        }
-
-        .marquee-item i {
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background: currentColor;
-        }
-
-        @keyframes marquee {
-          to { transform: translateX(-50%); }
-        }
-
-        .wedge {
-          width: 100%;
-          height: 56px;
-        }
-
-        .wedge-white {
-          background: linear-gradient(to bottom right, #000 50%, #fff 50%);
-        }
-
-        .wedge-black {
-          background: linear-gradient(to bottom left, #fff 50%, #000 50%);
-        }
-
-        .white-section {
-          background: white;
-          color: black;
-          padding: 40px 24px 100px;
-        }
-
-        .container {
-          max-width: 1050px;
-          margin: auto;
-        }
-
-        .section-label {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          margin-bottom: 48px;
-          font-size: 11px;
-          letter-spacing: .3em;
-          color: #71717a;
-        }
-
-        .section-label i {
-          flex: 1;
-          height: 1px;
-          background: #d4d4d8;
-        }
-
-        .team-heading,
-        .philosophy-heading,
-        .founder-heading,
-        .cta-content h2 {
-          font-family: "Cormorant Garamond", serif;
-          font-weight: 300;
-        }
-
-        .team-heading {
-          font-size: clamp(1.8rem, 6.6vw, 3.8rem);
-          line-height: 1.12;
-        }
-
-        .indent-one { margin-left: 10%; }
-        .indent-two { margin-left: 20%; }
-
-        .stats {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          text-align: center;
-          border-top: 1px solid #d4d4d8;
-          border-bottom: 1px solid #d4d4d8;
-          margin-top: 64px;
-        }
-
-        .stats > div {
-          padding: 32px 8px;
-          border-right: 1px solid #d4d4d8;
-        }
-
-        .stats > div:last-child { border: 0; }
-
-        .stats h3 {
-          font-family: "Cormorant Garamond", serif;
-          font-size: clamp(2rem, 8vw, 3.4rem);
-          font-weight: 300;
-          margin-bottom: 12px;
-        }
-
-        .stats p {
-          font-size: 9px;
-          letter-spacing: .2em;
-          color: #71717a;
-        }
-
-        .philosophy-label { margin-top: 110px; }
-
-        .philosophy-heading {
-          font-size: clamp(2.2rem, 9vw, 5rem);
-          line-height: 1.05;
-          margin-bottom: 24px;
-        }
-
-        .philosophy-description {
-          color: #52525b;
-          font-size: 14px;
-          line-height: 1.8;
-          max-width: 440px;
-          margin-bottom: 60px;
-        }
-
-        .value-item {
-          padding: 28px 0;
-          border-top: 1px solid #d4d4d8;
-        }
-
-        .value-top {
-          display: flex;
-          justify-content: space-between;
-          gap: 20px;
-          margin-bottom: 12px;
-          color: #71717a;
-          font-size: 10px;
-          letter-spacing: .2em;
-        }
-
-        .giant-word {
-          color: transparent;
-          -webkit-text-stroke: 1px #0a0a0a;
-          font-family: "Cormorant Garamond", serif;
-          font-size: clamp(2.4rem, 12vw, 8rem);
-          font-weight: 300;
-          text-transform: uppercase;
-          line-height: .9;
-          transition: color .9s ease;
-        }
-
-        .value-item.vis .giant-word { color: #0a0a0a; }
-
-        .giant-line {
-          height: 1px;
-          background: black;
-          margin-top: 20px;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 1.1s ease;
-        }
-
-        .value-item.vis .giant-line { transform: scaleX(1); }
-
-        .detail-image {
-          position: relative;
-          overflow: hidden;
-          width: 100%;
-          aspect-ratio: 1280 / 830;
-          margin-top: 80px;
-        }
-
-        .detail-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transform: scale(1.18);
-        }
-
-        .founder-section {
-          background: #000;
-          padding: 40px 24px 100px;
-        }
-
-        .founder-heading {
-          font-size: clamp(2.6rem, 11vw, 6.5rem);
-          line-height: 1.02;
-          margin-bottom: 55px;
-        }
-
-        .founder-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 50px;
-          align-items: start;
-          margin-bottom: 80px;
-        }
-
-        .founder-image {
-          aspect-ratio: 4 / 5;
-          overflow: hidden;
-        }
-
-        .founder-image img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .founder-text {
-          padding-top: 10px;
-          color: #a1a1aa;
-          font-size: 14px;
-          line-height: 1.8;
-        }
-
-        .founder-intro {
-          font-family: "Cormorant Garamond", serif;
-          font-size: 28px;
-          color: white;
-          line-height: 1.3;
-          margin-bottom: 24px;
-        }
-
-        .founder-quote {
-          font-family: "Cormorant Garamond", serif;
-          font-style: italic;
-          font-size: 22px;
-          color: #d4d4d8;
-          margin-top: 40px;
-        }
-
-        .race-item {
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          align-items: baseline;
-          gap: 24px;
-          padding: 25px 0;
-          border-top: 1px solid #27272a;
-        }
-
-        .race-item:last-child {
-          border-bottom: 1px solid #27272a;
-        }
-
-        .race-item > span {
-          color: #52525b;
-          font-size: 13px;
-        }
-
-        .race-item h3 {
-          color: transparent;
-          -webkit-text-stroke: 1px rgba(255,255,255,.85);
-          font-family: "Cormorant Garamond", serif;
-          font-size: clamp(1.9rem, 8vw, 5rem);
-          font-weight: 300;
-          text-transform: uppercase;
-          transition: color .8s ease;
-        }
-
-        .race-item.vis h3 { color: white; }
-
-        .race-sweep {
-          position: absolute;
-          inset: 0 auto 0 0;
-          width: 35%;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.16),
-            transparent
-          );
-          transform: translateX(-120%);
-        }
-
-        .race-item.vis .race-sweep {
-          animation: sweep 1.4s ease forwards;
-        }
-
-        @keyframes sweep {
-          to { transform: translateX(380%); }
-        }
-
-        .track-section {
-          position: relative;
-          height: 70vh;
-          min-height: 420px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          text-align: center;
-          padding: 24px;
-        }
-
-        .track-section img {
-          position: absolute;
-          inset: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transform: scale(1.18);
-        }
-
-        .track-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(0,0,0,.55);
-        }
-
-        .track-section h2 {
-          position: relative;
-          z-index: 2;
-          max-width: 650px;
-          font-family: "Cormorant Garamond", serif;
-          font-size: clamp(1.8rem, 6vw, 3.2rem);
-          font-weight: 300;
-          line-height: 1.3;
-        }
-
-        .cta-section {
-          position: relative;
-          overflow: hidden;
-          background: #090909;
-          border-top: 1px solid #27272a;
-          padding: 120px 24px;
-          text-align: center;
-        }
-
-        .ghost {
-          position: absolute;
-          left: 50%;
-          top: 50%;
-          transform: translate(-50%, -50%);
-          font-family: "Cormorant Garamond", serif;
-          font-size: min(95vw, 860px);
-          color: transparent;
-          -webkit-text-stroke: 1px rgba(255,255,255,.08);
-          pointer-events: none;
-        }
-
-        .cta-content {
-          position: relative;
-          z-index: 1;
-        }
-
-        .cta-line {
-          width: 140px;
-          height: 1px;
-          background: #52525b;
-          margin: 0 auto 40px;
-        }
-
-        .cta-content h2 {
-          font-size: clamp(2.2rem, 8vw, 4.5rem);
-          line-height: 1.08;
-          margin-bottom: 40px;
-        }
-
-        .cta-links {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 24px;
-        }
-
-        .cta-button {
-          display: inline-block;
-          border: 1px solid rgba(255,255,255,.7);
-          padding: 14px 40px;
-          font-size: 11px;
-          letter-spacing: .3em;
-          transition: .3s;
-        }
-
-        .cta-button:hover {
-          background: white;
-          color: black;
-        }
-
-        .showroom-link {
-          font-size: 11px;
-          letter-spacing: .3em;
-          color: #a1a1aa;
-        }
-
-        .showroom-link span {
-          display: inline-block;
-          transition: transform .3s;
-        }
-
-        .showroom-link:hover span {
-          transform: translateX(6px);
-        }
-
-        .word-wrapper {
-          display: inline-block;
-          overflow: hidden;
-          margin-right: .28em;
-          vertical-align: bottom;
-          padding-bottom: .08em;
-        }
-
-        .word-inner {
-          display: inline-block;
-          transform: translateY(115%);
-          opacity: 0;
-          transition:
-            transform .75s cubic-bezier(.16,1,.3,1) calc(var(--i) * 70ms),
-            opacity .6s ease calc(var(--i) * 70ms);
-        }
-
-        .vis .word-inner {
-          transform: none;
-          opacity: 1;
-        }
-
-        .letter {
-          display: inline-block;
-          opacity: 0;
-          transform: translateY(10px);
-          transition: .5s ease calc(var(--i) * 22ms);
-        }
-
-        .hero-label.vis .letter {
-          opacity: 1;
-          transform: none;
-        }
-
-        [data-reveal],
-        [data-wipe] {
-          opacity: 0;
-          transform: translateY(28px);
-          filter: blur(6px);
-          transition: .8s ease;
-        }
-
-        [data-reveal].in,
-        [data-wipe].in {
-          opacity: 1;
-          transform: none;
-          filter: none;
-        }
-
-        @media (max-width: 767px) {
-          .founder-grid {
-            grid-template-columns: 1fr;
-            gap: 30px;
-          }
-
-          .founder-image {
-            max-height: 600px;
-          }
-
-          .team-heading .indent-one { margin-left: 5%; }
-          .team-heading .indent-two { margin-left: 10%; }
-
-          .stats > div {
-            padding: 24px 4px;
-          }
-
-          .stats p {
-            font-size: 7px;
-            letter-spacing: .12em;
-          }
-
-          .hero-content {
-            bottom: 100px;
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .about-page *,
-          .about-page *::before,
-          .about-page *::after {
-            animation-duration: .01ms !important;
-            transition-duration: .01ms !important;
-          }
-        }
-      `}</style>
-    </main>
+    </>
   );
 }

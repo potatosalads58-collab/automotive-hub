@@ -594,7 +594,7 @@ export default function Home() {
           <h2 className="font-display text-3xl font-light mb-4">X Motors on Instagram</h2>
           <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"
             className="text-white text-sm tracking-widest hover:text-zinc-400 transition-colors duration-300">
-            @goldenn_eg
+            @xmotors.me
           </a>
         </div>
 
