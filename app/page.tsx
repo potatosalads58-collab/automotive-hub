@@ -6,10 +6,20 @@ import Footer from '@/components/Footer'
 import { urlFor } from '../sanity/lib/imageUrl'
 
 const INSTAGRAM_URL = 'https://instagram.com/xmotors.me'
+const CURRENCY = 'AED'
+const EXPERIENCE_SINCE = 2011
+const FOUNDED_YEAR = 2024
+const FOLLOWERS_K = 750
 
 const quickLinks = [
   { title: "Available Vehicles", img: "available-vehicles.jpg", href: "/inventory" },
   { title: "Sell Your Car", img: "Sell-your-car.jpg", href: "/sell-your-car" },
+]
+
+const showcase = [
+  { n: '01', title: 'Classic Supercars', line: 'Icons that earned their reputation.', img: '/Xmotors-classic.jpg' },
+  { n: '02', title: 'Hypercars', line: 'The extreme end of what is possible.', img: '/Xmotors-modern.jpg' },
+  { n: '03', title: 'Luxury', line: 'Refinement, without compromise.', img: '/Xmotors-luxury.jpg' },
 ]
 
 type MotorNewsItem = {
@@ -120,9 +130,9 @@ function ReplayIcon() {
   )
 }
 
-/* ============ ANIMATION ============ */
+/* ============ ANIMATION TOOLKIT ============ */
 
-function useInView<T extends HTMLElement>(threshold = 0.15): [React.RefObject<T | null>, boolean] {
+function useInView<T extends HTMLElement>(threshold = 0.15, once = false): [React.RefObject<T | null>, boolean] {
   const ref = useRef<T>(null)
   const [visible, setVisible] = useState(false)
 
@@ -130,12 +140,19 @@ function useInView<T extends HTMLElement>(threshold = 0.15): [React.RefObject<T 
     const el = ref.current
     if (!el) return
     const obs = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          if (once) obs.disconnect()
+        } else if (!once) {
+          setVisible(false)
+        }
+      },
       { threshold }
     )
     obs.observe(el)
     return () => obs.disconnect()
-  }, [threshold])
+  }, [threshold, once])
 
   return [ref, visible]
 }
@@ -147,7 +164,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
       ref={ref}
       className={className}
       style={{
-        transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms, filter 0.7s ease ${delay}ms`,
+        transition: `opacity 0.8s ease ${delay}ms, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms, filter 0.8s ease ${delay}ms`,
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0px)' : 'translateY(28px)',
         filter: visible ? 'blur(0px)' : 'blur(6px)',
@@ -157,6 +174,7 @@ function Reveal({ children, delay = 0, className = '' }: { children: ReactNode; 
     </div>
   )
 }
+
 function NofadeReveal({ children, delay = 0, className = '' }: { children: ReactNode; delay?: number; className?: string }) {
   const [ref, visible] = useInView<HTMLDivElement>()
   return (
@@ -174,43 +192,38 @@ function NofadeReveal({ children, delay = 0, className = '' }: { children: React
   )
 }
 
+// Word-by-word heading. Use "|" inside the text to force a line break.
 function RevealHeading({
   text, as = 'h2', className = '', wordDelay = 70,
-}: { text: string; as?: 'h1' | 'h2'; className?: string; wordDelay?: number }) {
-  const ref = useRef<HTMLHeadingElement>(null)
-  const [visible, setVisible] = useState(false)
+}: { text: string; as?: 'h1' | 'h2' | 'h3'; className?: string; wordDelay?: number }) {
+  const [ref, visible] = useInView<HTMLHeadingElement>(0.3)
+  let index = 0
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const obs = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting),
-      { threshold: 0.3 }
-    )
-    obs.observe(el)
-    return () => obs.disconnect()
-  }, [])
-
-  const content = text.split(' ').map((word, i) => (
-    <span key={i} className="inline-block overflow-hidden mr-[0.28em] align-bottom">
-      <span
-        className="inline-block"
-        style={{
-          transition: `transform 0.75s cubic-bezier(0.16,1,0.3,1) ${i * wordDelay}ms, opacity 0.6s ease ${i * wordDelay}ms`,
-          opacity: visible ? 1 : 0,
-          transform: visible ? 'translateY(0%)' : 'translateY(115%)',
-        }}
-      >
-        {word}
+  const content = text.split(' ').map((word, i) => {
+    if (word === '|') return <br key={`br-${i}`} />
+    const d = index * wordDelay
+    index += 1
+    return (
+      <span key={i} className="inline-block overflow-hidden mr-[0.28em] align-bottom pb-[0.08em]">
+        <span
+          className="inline-block"
+          style={{
+            transition: `transform 0.75s cubic-bezier(0.16,1,0.3,1) ${d}ms, opacity 0.6s ease ${d}ms`,
+            opacity: visible ? 1 : 0,
+            transform: visible ? 'translateY(0%)' : 'translateY(115%)',
+          }}
+        >
+          {word}
+        </span>
       </span>
-    </span>
-  ))
+    )
+  })
 
   if (as === 'h1') return <h1 ref={ref} className={className}>{content}</h1>
+  if (as === 'h3') return <h3 ref={ref} className={className}>{content}</h3>
   return <h2 ref={ref} className={className}>{content}</h2>
 }
 
-// Letter-by-letter reveal — used for short punchy labels only.
 function LetterReveal({ text, className = '' }: { text: string; className?: string }) {
   const [ref, visible] = useInView<HTMLParagraphElement>(0.5)
   return (
@@ -233,8 +246,10 @@ function LetterReveal({ text, className = '' }: { text: string; className?: stri
   )
 }
 
-// Counts a number up or down whenever it scrolls into view, every time.
-function CountNumber({ from, to, suffix = '', duration = 1500 }: { from: number; to: number; suffix?: string; duration?: number }) {
+// Counts up or down every time it scrolls into view.
+function CountNumber({
+  from, to, suffix = '', duration = 1500,
+}: { from: number; to: number; suffix?: string; duration?: number }) {
   const [ref, visible] = useInView<HTMLSpanElement>(0.5)
   const [value, setValue] = useState(from)
   const frameRef = useRef<number | null>(null)
@@ -252,10 +267,157 @@ function CountNumber({ from, to, suffix = '', duration = 1500 }: { from: number;
       if (progress < 1) frameRef.current = requestAnimationFrame(animate)
     }
     frameRef.current = requestAnimationFrame(animate)
-    return () => { if (frameRef.current) cancelAnimationFrame(frameRef.current) }
+    return () => {
+      if (frameRef.current) cancelAnimationFrame(frameRef.current)
+    }
   }, [visible, from, to, duration])
 
   return <span ref={ref}>{value}{suffix}</span>
+}
+
+function ScrollProgress() {
+  const [p, setP] = useState(0)
+  useEffect(() => {
+    const onScroll = () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight
+      setP(h > 0 ? window.scrollY / h : 0)
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  return (
+    <div
+      aria-hidden
+      className="fixed top-0 left-0 z-[70] h-[2px] bg-white mix-blend-difference"
+      style={{ width: `${p * 100}%` }}
+    />
+  )
+}
+
+function Marquee({
+  items, className = '', itemClassName = '', speed = 32,
+}: { items: string[]; className?: string; itemClassName?: string; speed?: number }) {
+  const row = items.map((t, i) => (
+    <span key={i} className="flex shrink-0 items-center">
+      <span className={itemClassName}>{t}</span>
+      <span className="mx-6 h-1 w-1 rounded-full bg-current opacity-50" />
+    </span>
+  ))
+  return (
+    <div className={`overflow-hidden whitespace-nowrap ${className}`}>
+      <div className="marquee-track flex w-max" style={{ animationDuration: `${speed}s` }}>
+        {[0, 1, 2, 3].map((k) => (
+          <div key={k} className="flex shrink-0 items-center">{row}</div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ParallaxImage({
+  src, alt, className = '', strength = 1, scale = 1.15,
+}: { src: string; alt: string; className?: string; strength?: number; scale?: number }) {
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    let raf = 0
+    const update = () => {
+      const wrap = wrapRef.current
+      const img = imgRef.current
+      if (!wrap || !img) return
+      const rect = wrap.getBoundingClientRect()
+      const vh = window.innerHeight
+      if (rect.bottom < -100 || rect.top > vh + 100) return
+      let p = (rect.top + rect.height / 2 - vh / 2) / vh
+      p = Math.max(-0.8, Math.min(0.8, p))
+      img.style.transform = `translate3d(0, ${(-p * 40 * strength).toFixed(1)}px, 0) scale(${scale})`
+    }
+    const onScroll = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(update)
+    }
+    update()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [strength, scale])
+
+  return (
+    <div ref={wrapRef} className={`relative overflow-hidden ${className}`}>
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        className="absolute inset-0 h-full w-full object-cover will-change-transform"
+        style={{ transform: `scale(${scale})` }}
+      />
+    </div>
+  )
+}
+
+function WipeFrame({ children, className = '', delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const [ref, visible] = useInView<HTMLDivElement>(0.15, true)
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        clipPath: visible ? 'inset(0% 0% 0% 0%)' : 'inset(100% 0% 0% 0%)',
+        transition: `clip-path 1.3s cubic-bezier(0.77,0,0.175,1) ${delay}ms`,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Diagonal colour shift between sections.
+function Wedge({ from, to, dir = 'right' }: { from: string; to: string; dir?: 'right' | 'left' }) {
+  return (
+    <div
+      aria-hidden
+      className="h-12 w-full md:h-24"
+      style={{ background: `linear-gradient(to bottom ${dir}, ${from} 50%, ${to} 50%)` }}
+    />
+  )
+}
+
+function ShowcaseCard({ item, index }: { item: (typeof showcase)[number]; index: number }) {
+  const [ref, visible] = useInView<HTMLDivElement>(0.3)
+  return (
+    <div
+      ref={ref}
+      className={`relative ${index % 2 === 1 ? 'ml-[10%]' : 'mr-[10%]'} md:mx-0 ${index === 1 ? 'md:mt-24' : ''}`}
+    >
+      <p
+        className="mb-3 select-none font-display font-light leading-none"
+        style={{
+          fontSize: 'clamp(3rem,14vw,5rem)',
+          color: visible ? '#0a0a0a' : 'transparent',
+          WebkitTextStroke: '1px #0a0a0a',
+          transition: 'color 0.9s ease 0.2s',
+        }}
+      >
+        {item.n}
+      </p>
+      <WipeFrame delay={index * 120}>
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200">
+          <ParallaxImage src={item.img} alt={item.title} className="h-full w-full" strength={0.8} scale={1.08} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 p-5">
+            <p className="mb-1 text-xs tracking-[0.3em] text-white">{item.title.toUpperCase()}</p>
+            <p className="text-xs text-zinc-300">{item.line}</p>
+          </div>
+        </div>
+      </WipeFrame>
+    </div>
+  )
 }
 
 function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () => void }) {
@@ -264,7 +426,7 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
   const prev = () => setImgIndex((i) => (i - 1 + post.images.length) % post.images.length)
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="relative w-full max-w-[640px] max-h-[90vh] overflow-y-auto bg-zinc-900 rounded-2xl border border-zinc-800" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} aria-label="Close" className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center bg-black/60 border border-zinc-700 text-white hover:bg-black transition-colors">✕</button>
         <div className="relative bg-black">
@@ -314,7 +476,7 @@ export default function Home() {
   const [videoEnded, setVideoEnded] = useState(false)
 
   const currentYear = new Date().getFullYear()
-  const yearsOfTrust = currentYear - 2011
+  const yearsOfExperience = currentYear - EXPERIENCE_SINCE
 
   useEffect(() => {
     client.fetch(`*[_type == "car"] | order(_createdAt desc)[0...6]`)
@@ -365,126 +527,164 @@ export default function Home() {
           100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
         }
         .sound-pulse { animation: pulseRing 2.2s ease-out infinite; }
+        @keyframes marquee { to { transform: translateX(-50%); } }
+        .marquee-track { animation: marquee 32s linear infinite; }
+        .outline-text { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.32); }
+        @keyframes cue {
+          0% { transform: scaleY(0); transform-origin: top; }
+          45% { transform: scaleY(1); transform-origin: top; }
+          55% { transform: scaleY(1); transform-origin: bottom; }
+          100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+        .cue-line { animation: cue 2.2s ease-in-out infinite; }
         .news-scroll::-webkit-scrollbar { display: none; }
         .news-scroll { -ms-overflow-style: none; scrollbar-width: none; }
         .quick-link-img { transition: filter 0.4s ease, transform 0.5s ease; }
         .quick-link:hover .quick-link-img { filter: brightness(1.15); transform: scale(1.03); }
-        .heritage-diag-top { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% - 64px)); }
-        .heritage-diag-bottom { clip-path: polygon(0 64px, 100% 0, 100% 100%, 0 100%); }
-        .heritage-img { transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); }
-        .heritage-img:hover { transform: scale(1.03); }
-        .divider-grow { transition: width 1.1s cubic-bezier(0.16,1,0.3,1) 200ms; }
       `}</style>
 
+      <ScrollProgress />
       <Navbar />
 
-      {/* HERO — video only, no poster, autoplay muted, sound toggle, no auto-loop */}
+      {/* HERO */}
       <section className="relative h-screen w-full overflow-hidden bg-black">
         <video
           ref={videoRef}
           autoPlay
           muted
-          loop
           playsInline
+          onEnded={() => setVideoEnded(true)}
           className={`hero-video-zoom absolute inset-0 w-full h-full object-cover object-center z-0 transition-[filter] duration-700 ${videoEnded ? 'blur-md' : ''}`}
         >
           <source src="/hero-video.mp4" type="video/mp4" />
         </video>
 
-        <div className="absolute inset-0 z-10" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 40%, rgba(0,0,0,0.6) 70%, rgba(0,0,0,1) 100%)' }} />
+        <div
+          className="absolute inset-0 z-10"
+          style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 28%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.92) 100%)' }}
+        />
 
-        <div className="absolute bottom-24 left-0 right-0 text-center px-6 z-20 animate-fadeUp">
-          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4">Dubai's&apos;S MOST COMPLETE SHOWROOM</p>
+        {/* sound toggle */}
+        <button
+          onClick={toggleSound}
+          aria-label="Toggle sound"
+          className={`absolute top-24 right-6 z-30 w-12 h-12 rounded-full border border-white/70 bg-black/40 flex items-center justify-center text-white transition-colors duration-300 ${!soundOn ? 'sound-pulse' : ''}`}
+        >
+          {soundOn ? <SoundOnIcon /> : <SoundOffIcon />}
+        </button>
+        <p className="absolute top-[7.7rem] right-6 z-30 text-[9px] tracking-[0.25em] text-zinc-300">
+          {soundOn ? 'SOUND ON' : 'TAP FOR SOUND'}
+        </p>
+
+        {/* replay when the video ends */}
+        {videoEnded && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center animate-fadeUp">
+            <button
+              onClick={replay}
+              aria-label="Replay video"
+              className="w-16 h-16 rounded-full border border-white/80 bg-black/50 flex items-center justify-center text-white hover:bg-white hover:text-black transition-colors duration-300"
+            >
+              <ReplayIcon />
+            </button>
+          </div>
+        )}
+
+        <div className="absolute bottom-24 left-0 right-0 z-20 px-6 text-center">
+          <LetterReveal text="DUBAI · LUXURY · PERFORMANCE" className="mb-5 text-[11px] tracking-[0.4em] text-zinc-300" />
           <RevealHeading
             as="h1"
-            text="EVERY CAR. EVERY ERA."
-            className="font-display text-4xl md:text-5xl font-light tracking-wider mb-8 leading-tight text-white"
+            text="EXTRAORDINARY CARS. | EXPERT HANDS."
+            className="mb-6 font-display font-light leading-[1.05] tracking-wider text-white text-[clamp(2.2rem,9.5vw,4.6rem)]"
           />
-          <a href="/inventory"
-            className="inline-block border border-white/70 text-white px-10 py-3.5 text-xs tracking-[0.3em] hover:bg-white hover:text-black transition-all duration-300">
-            EXPLORE INVENTORY
-          </a>
+          <Reveal delay={400}>
+            <p className="mx-auto mb-8 max-w-sm text-sm leading-relaxed text-zinc-300">
+              Supercars, hypercars and refined luxury, handled by specialists with {yearsOfExperience} years of international experience.
+            </p>
+          </Reveal>
+          <Reveal delay={550}>
+            <a
+              href="/inventory"
+              className="inline-block border border-white/70 px-10 py-3.5 text-xs tracking-[0.3em] text-white transition-all duration-300 hover:bg-white hover:text-black"
+            >
+              EXPLORE INVENTORY
+            </a>
+          </Reveal>
+        </div>
+
+        {/* scroll cue */}
+        <div className="absolute right-6 bottom-16 z-20 flex flex-col items-center gap-3">
+          <span className="text-[9px] tracking-[0.3em] text-zinc-400" style={{ writingMode: 'vertical-rl' }}>SCROLL</span>
+          <div className="cue-line h-12 w-px bg-white/75" />
+        </div>
+
+        {/* marquee strip */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 border-t border-white/15 py-3 text-zinc-400">
+          <Marquee
+            items={['CLASSIC SUPERCARS', 'HYPERCARS', 'LUXURY', 'DUBAI']}
+            itemClassName="text-[11px] tracking-[0.4em]"
+          />
         </div>
       </section>
 
-      {/* HERITAGE — white section, diagonal shift, no misleading years on the photos */}
-      <section className="relative bg-black overflow-hidden">
-        <div className="relative bg-white text-black -mt-16 pt-24 pb-24 heritage-diag-top">
-          <div className="text-center mb-14 px-6">
+      <Wedge from="#000" to="#fff" dir="right" />
 
+      {/* THE COLLECTION — white section */}
+      <section className="bg-white px-6 pb-28 pt-10 text-black">
+        <div className="mx-auto max-w-5xl">
+
+          <div className="mb-20 text-center">
+            <LetterReveal text="THE COLLECTION" className="mb-5 text-xs tracking-[0.5em] text-zinc-500" />
             <RevealHeading
               as="h2"
-              text="Every Class. Every Era. One Address."
-              className="font-display text-3xl md:text-5xl font-light leading-tight"
+              text="Three Worlds. | One Standard."
+              className="font-display text-4xl font-light leading-[1.05] md:text-6xl"
             />
             <Reveal delay={150}>
-              <p className="text-zinc-600 text-sm max-w-md mx-auto mt-5 leading-relaxed">
-                From the icons that built our name over four decades ago to the newest arrivals
-                on the floor today — X motors has never stopped at one category. It never will.
+              <p className="mx-auto mt-6 max-w-md text-sm leading-relaxed text-zinc-600">
+                From timeless supercar icons to the newest hypercars and refined luxury, every car on our floor
+                is chosen by people who have spent {yearsOfExperience} years in this world. We know what to look for.
+                And what to walk away from.
               </p>
             </Reveal>
           </div>
-        
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 max-w-5xl mx-auto">
-            <Reveal delay={100}>
-              <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/Xmotors-classic.jpg" alt="X Motors heritage" className="heritage-img w-full h-full object-cover" />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-                  <p className="text-white text-xs tracking-[0.3em]">Classic Supercars</p>
-                </div>
-              </div>
-            </Reveal>
-            <Reveal delay={220}>
-              <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/Xmotors-modern.jpg" alt="X Motors today" className="heritage-img w-full h-full object-cover" />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-                  <p className="text-white text-xs tracking-[0.3em]">Hypercars</p>
-                </div>
-              </div>
-            </Reveal>
+          <div className="grid grid-cols-1 gap-14 md:grid-cols-3 md:items-start md:gap-8">
+            {showcase.map((item, i) => (
+              <ShowcaseCard key={item.n} item={item} index={i} />
+            ))}
           </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-6 max-w-5xl mx-auto">
-            <Reveal delay={340}>
-              <div className="relative rounded-2xl overflow-hidden border border-zinc-200">
-                <img src="/Xmotors-luxury.jpg" alt="X motors Luxury" className="heritage-img w-full h-full object-cover" />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-5">
-                  <p className="text-white text-xs tracking-[0.3em]">Luxury</p>
-                </div>
-              </div>
-            </Reveal>
 
-          <Reveal delay={300} className="flex justify-center mt-16 mb-10">
-            <DividerGrow />
+          <Reveal delay={100}>
+            <div className="mx-auto mt-28 grid max-w-xl grid-cols-3 border-y border-zinc-300 text-center">
+              <div className="border-r border-zinc-300 px-2 py-8">
+                <p className="mb-3 font-display font-light leading-none text-[clamp(2rem,8vw,3.2rem)]">
+                  <CountNumber from={0} to={yearsOfExperience} suffix="+" />
+                </p>
+                <p className="text-[10px] leading-relaxed tracking-[0.25em] text-zinc-500">YEARS OF EXPERIENCE</p>
+              </div>
+              <div className="border-r border-zinc-300 px-2 py-8">
+                <p className="mb-3 font-display font-light leading-none text-[clamp(2rem,8vw,3.2rem)]">
+                  <CountNumber from={0} to={FOLLOWERS_K} suffix="K+" />
+                </p>
+                <p className="text-[10px] leading-relaxed tracking-[0.25em] text-zinc-500">FOLLOWERS</p>
+              </div>
+              <div className="px-2 py-8">
+                <p className="mb-3 font-display font-light leading-none text-[clamp(2rem,8vw,3.2rem)]">
+                  <CountNumber from={FOUNDED_YEAR + 11} to={FOUNDED_YEAR} duration={1800} />
+                </p>
+                <p className="text-[10px] leading-relaxed tracking-[0.25em] text-zinc-500">ESTABLISHED</p>
+              </div>
+            </div>
           </Reveal>
-
-          <div className="grid grid-cols-3 gap-4 max-w-md mx-auto text-center px-6">
-            <div>
-              <p className="text-2xl font-display font-light mb-1">
-                <CountNumber from={0} to={yearsOfTrust} suffix="+" />
-              </p>
-              <p className="text-zinc-500 text-[10px] tracking-widest">YEARS OF TRUST</p>
-            </div>
-            <div className="border-x border-zinc-200">
-              <p className="text-2xl font-display font-light mb-1">ALL</p>
-              <p className="text-zinc-500 text-[10px] tracking-widest">SEGMENTS</p>
-            </div>
-            <div>
-              <p className="text-2xl font-display font-light mb-1">
-                <CountNumber from={2035} to={2024} duration={1800} />
-              </p>
-              <p className="text-zinc-500 text-[10px] tracking-widest">FOUNDED</p>
-            </div>
-          </div>
         </div>
-        </div>
-        <div className="relative -mt-16 pt-24 pb-4 heritage-diag-bottom bg-black" />
       </section>
 
+      <Wedge from="#fff" to="#000" dir="left" />
+
       {/* FEATURED CARS */}
-      <section className="bg-black px-6 py-16">
-        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">AVAILABLE NOW</p>
-        <h2 className="font-display text-3xl font-light mb-10">Featured Cars</h2>
+      <section className="bg-black px-6 pb-16 pt-8">
+        <LetterReveal text="AVAILABLE NOW" className="mb-3 text-xs tracking-[0.4em] text-zinc-500" />
+        <RevealHeading as="h2" text="Featured Cars" className="mb-10 font-display text-4xl font-light" />
         {cars.length === 0 ? (
           <p className="text-zinc-600 text-sm">Loading...</p>
         ) : (
@@ -492,11 +692,17 @@ export default function Home() {
             {cars.map((car, i) => (
               <Reveal key={car._id} delay={i * 80}>
                 <a href={`/vehicle/${car._id}`} className="car-card bg-zinc-900 rounded-2xl overflow-hidden block">
-                  <div className="w-full bg-zinc-800 overflow-hidden" style={{ aspectRatio: '2000/1670' }}>
+                  <div className="relative w-full bg-zinc-800 overflow-hidden" style={{ aspectRatio: '2000/1670' }}>
                     {car.thumbnail && (
-                      <img src={urlFor(car.thumbnail).width(800).url()} alt={car.title}
-                        className="w-full h-full object-cover" />
+                      <img
+                        src={urlFor(car.thumbnail).width(800).url()}
+                        alt={car.title}
+                        className="w-full h-full object-cover"
+                      />
                     )}
+                    <span className="absolute left-4 top-4 rounded-full bg-black/50 px-2.5 py-1 text-[10px] tracking-[0.3em] text-white/90 backdrop-blur">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
                   </div>
                   <div className="p-4">
                     <p className="text-white text-xl font-light mb-3">{car.title}</p>
@@ -505,30 +711,46 @@ export default function Home() {
                       <span>·</span>
                       <span>{car.year}</span>
                     </div>
-                    <p className="text-white font-medium text-lg"> {car.price?.toLocaleString()}</p>
+                    <p className="text-white font-medium text-lg">{CURRENCY} {car.price?.toLocaleString()}</p>
                   </div>
                 </a>
               </Reveal>
             ))}
           </div>
         )}
-        <a href="/inventory"
-          className="block text-center border border-zinc-700 text-zinc-400 py-4 mt-10 text-xs tracking-[0.3em] hover:border-white hover:text-white transition-all duration-300">
-          SEE ALL CARS
+        <a
+          href="/inventory"
+          className="group mt-10 block border border-zinc-700 py-4 text-center text-xs tracking-[0.3em] text-zinc-400 transition-all duration-300 hover:border-white hover:text-white"
+        >
+          SEE ALL CARS{' '}
+          <span className="inline-block transition-transform duration-300 group-hover:translate-x-1.5">→</span>
         </a>
       </section>
 
+      {/* BIG OUTLINE MARQUEE */}
+      <section className="overflow-hidden border-y border-zinc-900 bg-black py-10">
+        <Marquee
+          items={['X MOTORS', 'EXTRAORDINARY CARS', 'EXPERT HANDS']}
+          itemClassName="outline-text font-display font-light uppercase leading-none text-[clamp(2.8rem,11vw,7rem)]"
+          speed={55}
+        />
+      </section>
+
       {/* QUICK LINKS */}
-      <section className="bg-black px-6 pb-16">
+      <section className="bg-black px-6 pb-16 pt-16">
         <div className="grid grid-cols-1 gap-5">
           {quickLinks.map((link, i) => (
             <Reveal key={i} delay={i * 100}>
               <a href={link.href} className="quick-link relative overflow-hidden rounded-2xl block h-80 group">
-                <img src={`/${link.img}`} alt={link.title}
-                  className="quick-link-img absolute inset-0 w-full h-full object-cover" />
+                <img
+                  src={`/${link.img}`}
+                  alt={link.title}
+                  className="quick-link-img absolute inset-0 w-full h-full object-cover"
+                />
                 <div className="absolute inset-0 bg-black/50" />
-                <div className="absolute bottom-5 left-5">
+                <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between">
                   <p className="text-white text-xl font-light font-display">{link.title}</p>
+                  <span className="text-white text-xl transition-transform duration-300 group-hover:translate-x-1.5">→</span>
                 </div>
               </a>
             </Reveal>
@@ -539,8 +761,8 @@ export default function Home() {
       {/* NEWS SECTION */}
       <section className="bg-zinc-950 py-16 border-t border-zinc-900">
         <div className="px-6 mb-8">
-          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-2">STAY UPDATED</p>
-          <h2 className="font-display text-3xl font-light mb-6">News &amp; Reviews</h2>
+          <LetterReveal text="STAY UPDATED" className="mb-2 text-xs tracking-[0.4em] text-zinc-500" />
+          <RevealHeading as="h2" text="News & Reviews" className="mb-6 font-display text-3xl font-light" />
           <div className="flex gap-3">
             {['All', 'News', 'Reviews'].map(f => (
               <button key={f} onClick={() => setNewsFilter(f)}
@@ -589,8 +811,9 @@ export default function Home() {
       {/* INSTAGRAM */}
       <section className="bg-black py-16 px-6 border-t border-zinc-900">
         <div className="text-center mb-10">
-          <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY CONNECTED</p>
-          <h2 className="font-display text-3xl font-light mb-4">X Motors on Instagram</h2>
+          <LetterReveal text="STAY CONNECTED" className="mb-3 text-xs tracking-[0.4em] text-zinc-500" />
+          <RevealHeading as="h2" text="X Motors on Instagram" className="mb-4 font-display text-3xl font-light" />
+          <p className="mb-3 text-sm text-zinc-500">{FOLLOWERS_K}K+ enthusiasts follow the journey.</p>
           <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer"
             className="text-white text-sm tracking-widest hover:text-zinc-400 transition-colors duration-300">
             @xmotors.me
@@ -625,7 +848,7 @@ export default function Home() {
 
       {/* NEWSLETTER */}
       <section className="bg-zinc-950 py-16 px-6 border-t border-zinc-900 text-center">
-        <p className="text-xs tracking-[0.4em] text-zinc-500 mb-3">STAY IN THE LOOP</p>
+        <LetterReveal text="STAY IN THE LOOP" className="mb-3 text-xs tracking-[0.4em] text-zinc-500" />
         <h3 className="font-display text-2xl font-light mb-6">Subscribe to our Newsletter</h3>
         <form onSubmit={(e) => { e.preventDefault(); alert('Subscribed!') }}
           className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
@@ -647,16 +870,5 @@ export default function Home() {
       <Footer />
 
     </main>
-  )
-}
-
-function DividerGrow() {
-  const [ref, visible] = useInView<HTMLDivElement>(0.6)
-  return (
-    <div
-      ref={ref}
-      className="divider-grow h-px bg-zinc-300"
-      style={{ width: visible ? '140px' : '0px' }}
-    />
   )
 }
