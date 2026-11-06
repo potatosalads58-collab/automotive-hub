@@ -83,7 +83,7 @@ export default function PrivacyPolicyPage() {
         <h1 className="font-display text-4xl md:text-5xl font-light tracking-wide text-white">
           Privacy Policy &amp; Terms
         </h1>
-        <p className="text-zinc-500 text-xs mt-4">Last updated: September 2026</p>
+        <p className="text-zinc-500 text-xs mt-4">Last updated: November 2026</p>
       </section>
 
       {/* TAB SWITCHER */}

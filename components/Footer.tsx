@@ -45,7 +45,7 @@ export default function Footer() {
 
         {/* Brand statement */}
         <p className="font-display text-2xl font-light text-white leading-snug mb-12 max-w-sm">
-          Egypt&apos;s trusted destination for exceptional automobiles.
+         trusted destination for exceptional automobiles.
         </p>
 
         {/* Navigation */}
