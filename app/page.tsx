@@ -17,9 +17,9 @@ const quickLinks = [
 ]
 
 const showcase = [
-  { n: '01', title: 'Classic Supercars', line: 'Icons that earned their reputation.', img: '/Xmotors-classic.jpg' },
-  { n: '02', title: 'Hypercars', line: 'The extreme end of what is possible.', img: '/Xmotors-modern.jpg' },
-  { n: '03', title: 'Luxury', line: 'Refinement, without compromise.', img: '/Xmotors-luxury.jpg' },
+  { n: '01', title: 'Classic Supercars', line: 'Icons that earned their reputation.', img: '/xmotors-classic.jpg' },
+  { n: '02', title: 'Hypercars', line: 'The extreme end of what is possible.', img: '/xmotors-modern.jpg' },
+  { n: '03', title: 'Luxury', line: 'Refinement, without compromise.', img: '/xmotors-luxury.jpg' },
 ]
 
 type MotorNewsItem = {
@@ -563,18 +563,6 @@ export default function Home() {
           className="absolute inset-0 z-10"
           style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.05) 28%, rgba(0,0,0,0.25) 55%, rgba(0,0,0,0.92) 100%)' }}
         />
-
-        {/* sound toggle */}
-        <button
-          onClick={toggleSound}
-          aria-label="Toggle sound"
-          className={`absolute top-24 right-6 z-30 w-12 h-12 rounded-full border border-white/70 bg-black/40 flex items-center justify-center text-white transition-colors duration-300 ${!soundOn ? 'sound-pulse' : ''}`}
-        >
-          {soundOn ? <SoundOnIcon /> : <SoundOffIcon />}
-        </button>
-        <p className="absolute top-[7.7rem] right-6 z-30 text-[9px] tracking-[0.25em] text-zinc-300">
-          {soundOn ? 'SOUND ON' : 'TAP FOR SOUND'}
-        </p>
 
         {/* replay when the video ends */}
         {videoEnded && (
