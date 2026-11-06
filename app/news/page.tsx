@@ -114,8 +114,8 @@ export default function NewsPage() {
         />
         <div className="absolute inset-0" style={{ backgroundImage: 'linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.85) 85%, rgba(0,0,0,1) 100%)' }} />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 px-6 text-center">
-          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4 animate-fadeUp">EGYPT&apos;S EXOTICS, MADE SENSE OF</p>
-          <AnimatedTitle text="THE REDLINE" />
+          <p className="text-xs tracking-[0.4em] text-zinc-400 mb-4 animate-fadeUp">THE PINNACLE OF LUXURY MOTORS</p>
+          <AnimatedTitle text="DEFINING EXOTICS" />
         </div>
       </section>
 
