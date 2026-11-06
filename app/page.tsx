@@ -406,7 +406,7 @@ function ShowcaseCard({ item, index }: { item: (typeof showcase)[number]; index:
       >
         {item.n}
       </p>
-      <WipeFrame delay={index * 120}>
+      
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-zinc-200">
           <ParallaxImage src={item.img} alt={item.title} className="h-full w-full" strength={0.8} scale={1.08} />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
@@ -415,7 +415,7 @@ function ShowcaseCard({ item, index }: { item: (typeof showcase)[number]; index:
             <p className="text-xs text-zinc-300">{item.line}</p>
           </div>
         </div>
-      </WipeFrame>
+      
     </div>
   )
 }
@@ -448,7 +448,7 @@ function InstagramModal({ post, onClose }: { post: InstagramPost; onClose: () =>
           )}
         </div>
         <div className="flex items-center gap-3 px-5 pt-5">
-          <img src="/logo-full-bg.png" alt="X Motors" className="w-9 h-9 object-contain rounded-full" />
+          <img src="/instagram/logo-full-bg.png" alt="X Motors" className="w-9 h-9 object-contain rounded-full" />
           <div className="leading-tight">
             <p className="text-white text-sm font-medium">xmotors.me</p>
           </div>
