@@ -17,9 +17,9 @@ const quickLinks = [
 ]
 
 const showcase = [
-  { n: '01', title: 'Classic Supercars', line: 'Icons that earned their reputation.', img: '/xmotors-classic.jpg' },
-  { n: '02', title: 'Hypercars', line: 'The extreme end of what is possible.', img: '/xmotors-modern.jpg' },
-  { n: '03', title: 'Luxury', line: 'Refinement, without compromise.', img: '/xmotors-luxury.jpg' },
+  { n: '01', title: 'Classic Supercars', line: 'Icons that earned their reputation.', img: '/Xmotors-classic.jpg' },
+  { n: '02', title: 'Hypercars', line: 'The extreme end of what is possible.', img: '/Xmotors-modern.jpg' },
+  { n: '03', title: 'Luxury', line: 'Refinement, without compromise.', img: '/Xmotors-luxury.jpg' },
 ]
 
 type MotorNewsItem = {
