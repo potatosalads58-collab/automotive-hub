@@ -41,17 +41,17 @@ type InstagramPost = {
 const instagramPosts: InstagramPost[] = [
   {
     images: ["/instagram/post-1.jpg"],
-    likes: 327,
-    comments: 7,
-    date: "January 16",
-    caption: "Replace with your own X Motors posts.",
+    likes: 11800,
+    comments: 51,
+    date: "3 NOV",
+    caption: "Aston Martin Valkyrie: There are hypercars, and then there is the Aston Martin Valkyrie. Born from the mind of Formula 1 design genius Adrian Newey, the Valkyrie is perhaps the closest a road-legal machine has come to capturing the engineering philosophy of a modern prototype racer.",
   },
   {
     images: ["/instagram/post-2.jpg"],
-    likes: 230,
-    comments: 6,
-    date: "",
-    caption: "Replace with your own X Motors posts.",
+    likes: 8240,
+    comments: 20,
+    date: "13 DEC 2025",
+    caption: "𝗧𝗵𝗲 𝗟𝗮𝗺𝗯𝗼𝗿𝗴𝗵𝗶𝗻𝗶 𝗗𝗶𝗮𝗯𝗹𝗼 𝗩𝗧 𝟲.𝟬 : 𝗙𝗶𝗻𝗮𝗹 𝗮𝗻𝗱 𝗮𝗿𝗴𝘂𝗮𝗯𝗹𝘆 𝗯𝗲𝘀𝘁 𝘃𝗲𝗿𝘀𝗶𝗼𝗻 𝗼𝗳 𝗟𝗮𝗺𝗯𝗼’𝘀 𝗗𝗲𝘃𝗶𝗹𝗶𝘀𝗵 𝗩-𝟭𝟮 𝗪𝗲𝗱𝗴𝗲",
   },
   {
     images: ["/instagram/post-3.jpg"],
@@ -69,17 +69,17 @@ const instagramPosts: InstagramPost[] = [
   },
   {
     images: ["/instagram/post-5.jpg"],
-    likes: 890,
-    comments: 5,
-    date: "",
-    caption: "Replace with your own X Motors posts.",
+    likes: 2600,
+    comments: 26,
+    date: "14 JUN 2025",
+    caption: "The Chiron represents a last gasp for Bugatti’s quad-turbo W16 formula, and its astonishing numbers are only half the story. These Two models represent two polar opposites of Chiron lineup.",
   },
   {
     images: ["/instagram/post-6.jpg"],
-    likes: 689,
-    comments: 5,
-    date: "",
-    caption: "Replace with your own X Motors posts.",
+    likes: 309,
+    comments: 16,
+    date: "9 MAY",
+    caption: "Some machines are built for the road, but others are born to dominate the track.",
   },
 ]
 
