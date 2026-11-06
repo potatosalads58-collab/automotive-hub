@@ -227,18 +227,24 @@ function ParallaxImage({
 function WipeFrame({
   children, className = '', style, delay = 0,
 }: { children: ReactNode; className?: string; style?: React.CSSProperties; delay?: number }) {
-  const [ref, visible] = useInView<HTMLDivElement>(0.15, true)
+  const [ref, visible] = useInView<HTMLDivElement>(0.05, true)
   return (
     <div
       ref={ref}
-      className={className}
-      style={{
-        ...style,
-        clipPath: visible ? 'inset(0% 0% 0% 0%)' : 'inset(100% 0% 0% 0%)',
-        transition: `clip-path 1.3s cubic-bezier(0.77,0,0.175,1) ${delay}ms`,
-      }}
+      className={`relative overflow-hidden ${className || ''}`}
+      style={style}
     >
+      {/* الصورة أو المحتوى الحقيقي قاعد في مكانه وثابت ومستحيل يختفي */}
       {children}
+      
+      {/* طبقة الستارة البيضاء اللي بتعمل أنيميشن الـ Wipe لفوق */}
+      <div
+        className="pointer-events-none absolute inset-0 z-20 bg-white"
+        style={{
+          transform: visible ? 'translateY(-101%)' : 'translateY(0%)',
+          transition: `transform 1.3s cubic-bezier(0.77,0,0.175,1) ${delay}ms`,
+        }}
+      />
     </div>
   )
 }
