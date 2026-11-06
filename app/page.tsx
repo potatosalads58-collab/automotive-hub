@@ -13,7 +13,7 @@ const FOLLOWERS_K = 750
 
 const quickLinks = [
   { title: "Available Vehicles", img: "available-vehicles.jpg", href: "/inventory" },
-  { title: "Sell Your Car", img: "Sell-your-car.jpg", href: "/sell-your-car" },
+  { title: "Sell Your Car", img: "sell-your-car.jpg", href: "/sell-your-car" },
 ]
 
 const showcase = [
