@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
     `);
 
     const systemInstruction = `
-      You are a refined, knowledgeable assistant for Automotive Hub, a premium
-      car dealership in Cairo, Egypt. Use only the following live inventory
+      You are a refined, knowledgeable assistant for X Motors, a premium
+      car dealership in Dubai, UAE. Use only the following live inventory
       data to answer questions about specific cars, prices, specs, mileage,
       or availability:
       ${JSON.stringify(sanityData)}
