@@ -141,7 +141,7 @@ export default function PrivacyPolicyPage() {
               <p>Information and photos submitted through our Sell Your Car form are used solely to evaluate and list your vehicle. Submitting a vehicle does not guarantee acceptance, listing, or a specific offer price.</p>
             </Section>
             <Section title="Pricing">
-              <p>All prices displayed are in Egyptian Pounds (EGP) unless otherwise stated, and are subject to change. Final pricing is confirmed directly with our sales team.</p>
+              <p>All prices displayed are in  (AED) unless otherwise stated, and are subject to change. Final pricing is confirmed directly with our sales team.</p>
             </Section>
             <Section title="Intellectual Property">
               <p>All content on this website, including images, logos, and text, is the property of X Motors and may not be reproduced or used without written permission.</p>
@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
               <p>X Motors is not liable for any indirect or consequential loss arising from the use of this website or reliance on the information provided herein.</p>
             </Section>
             <Section title="Governing Law">
-              <p>These Terms &amp; Conditions are governed by the laws of the Arab Republic of Egypt.</p>
+              <p>These Terms &amp; Conditions are governed by the laws of the United Arab Emirates.</p>
             </Section>
           </RevealOnScroll>
         )}
